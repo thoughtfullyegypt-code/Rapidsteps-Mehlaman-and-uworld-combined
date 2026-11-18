@@ -576,9 +576,9 @@ export function MoreMenu({
           {/* Legal and disclaimer */}
           <div className="pt-4 border-t border-slate-100 dark:border-white/10 text-xs text-slate-400 space-y-2">
             <div className="flex gap-4">
-              <a href="/terms" className="hover:underline">Terms</a>
-              <a href="/privacy" className="hover:underline">Privacy</a>
-              <a href="/refunds" className="hover:underline">Refunds</a>
+              <a href={`${import.meta.env.BASE_URL}terms`} className="hover:underline">Terms</a>
+              <a href={`${import.meta.env.BASE_URL}privacy`} className="hover:underline">Privacy</a>
+              <a href={`${import.meta.env.BASE_URL}refunds`} className="hover:underline">Refunds</a>
               <a href="mailto:support@rapidsteps.tech" className="hover:underline">Help & Support</a>
             </div>
             <p className="leading-normal">

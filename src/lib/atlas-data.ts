@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import rawManifest from './atlas-manifest.json';
+import { publicUrl } from './paths';
 import type {
   CardioBlock,
   CardioChapter,
@@ -123,6 +124,27 @@ const SYSTEM_CACHE = new Map<string, SystemAtlasPayload>();
 
 const INFLIGHT = new Map<string, Promise<SystemAtlasPayload>>();
 
+// Rewrite root-absolute media paths in a fetched payload so images and
+// videos resolve when the app is served from a sub-path (GitHub Pages).
+// Runs once per payload, before it enters the cache, so every consumer
+// (Atlas Hub, Drill, lightboxes) sees prefixed paths.
+function prefixPayloadMedia(payload: SystemAtlasPayload): void {
+  for (const t of payload.topics) {
+    for (const b of t.blocks) {
+      if (b.kind === 'img' && b.src) b.src = publicUrl(b.src);
+    }
+    for (const im of t.hyImages || []) {
+      if (im.src) im.src = publicUrl(im.src);
+    }
+    for (const v of t.videos || []) {
+      if (v.src) v.src = publicUrl(v.src);
+    }
+  }
+  for (const qa of payload.rapidFireQAs) {
+    if (qa.images) qa.images = qa.images.map(publicUrl);
+  }
+}
+
 export async function loadSystemAtlas(systemId: string): Promise<SystemAtlasPayload> {
   const cached = SYSTEM_CACHE.get(systemId);
   if (cached) return cached;
@@ -130,12 +152,13 @@ export async function loadSystemAtlas(systemId: string): Promise<SystemAtlasPayl
   const existing = INFLIGHT.get(systemId);
   if (existing) return existing;
 
-  const req = fetch(`/data/systems/${systemId}.json`)
+  const req = fetch(publicUrl(`/data/systems/${systemId}.json`))
     .then((res) => {
       if (!res.ok) throw new Error(`Failed to load system ${systemId}: ${res.status}`);
       return res.json() as Promise<SystemAtlasPayload>;
     })
     .then((payload) => {
+      prefixPayloadMedia(payload);
       SYSTEM_CACHE.set(systemId, payload);
       INFLIGHT.delete(systemId);
       return payload;

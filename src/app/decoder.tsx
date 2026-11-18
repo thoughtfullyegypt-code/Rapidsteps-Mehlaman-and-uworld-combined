@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ATLAS_MANIFEST } from '@/lib/atlas-data';
+import { publicUrl } from '@/lib/paths';
 import {
   SystemIcon,
   IconShield,
@@ -107,9 +108,12 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
       return;
     }
     let cancelled = false;
-    fetch('/data/decoder-index.json')
+    fetch(publicUrl('/data/decoder-index.json'))
       .then((r) => r.json())
       .then((d: DecoderIndexPayload) => {
+        for (const v of d.vignettes) {
+          if (v.img) v.img = publicUrl(v.img);
+        }
         CACHED_DECODER_INDEX = d;
         if (!cancelled) {
           setIndexData(d);

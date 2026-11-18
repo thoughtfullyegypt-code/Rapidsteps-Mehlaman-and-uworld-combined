@@ -37,7 +37,7 @@ export default class ErrorBoundary extends React.Component<
   };
 
   handleGoHome = (): void => {
-    window.location.href = '/';
+    window.location.href = import.meta.env.BASE_URL;
   };
 
   render(): React.ReactNode {

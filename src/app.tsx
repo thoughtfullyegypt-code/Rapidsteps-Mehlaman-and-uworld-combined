@@ -13,8 +13,10 @@ import NotFoundPage from './pages/not-found/NotFoundPage';
 const AppShell = lazy(() => import('./app/shell'));
 
 export default function App() {
+  // Match the Vite base so routing works on sub-path hosting (GitHub Pages).
+  // BASE_URL is '/' at root ('/' -> '' after trimming) or '/<repo>/'.
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <Suspense
         fallback={
           <div className="min-h-screen bg-navy-950 text-white flex items-center justify-center font-display font-bold text-sm">

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
+import { publicUrl } from '@/lib/paths';
 
 interface FrameworksProps {
   onSelectCase: (caseId: string) => void;
@@ -180,7 +181,7 @@ export default function Frameworks({ onSelectCase, onBack }: FrameworksProps) {
   useEffect(() => {
     if (CACHED_FRAMEWORKS_DATA) return;
     let cancelled = false;
-    fetch('/data/frameworks-rapidsteps.json')
+    fetch(publicUrl('/data/frameworks-rapidsteps.json'))
       .then((r) => r.json())
       .then((d: FrameworksPayload) => {
         CACHED_FRAMEWORKS_DATA = d;

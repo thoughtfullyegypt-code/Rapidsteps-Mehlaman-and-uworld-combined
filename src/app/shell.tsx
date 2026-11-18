@@ -327,7 +327,7 @@ export default function AppShell() {
         >
           {/* Left: Brand Logo & Desktop Nav */}
           <div className="flex items-center gap-5">
-            <a href="/" className="brand flex items-center gap-2 group" aria-label="Rapid Steps home">
+            <a href={import.meta.env.BASE_URL} className="brand flex items-center gap-2 group" aria-label="Rapid Steps home">
               <Logo width={70} height={28} variant="default" />
             </a>
 
