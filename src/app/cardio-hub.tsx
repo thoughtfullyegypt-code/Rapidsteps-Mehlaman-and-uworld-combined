@@ -226,7 +226,7 @@ export function CardioTopicReader({
                         src={b.src}
                         alt={b.caption}
                         loading="lazy"
-                        className="max-h-[380px] w-auto mx-auto rounded-lg object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+                        className="max-h-[62vh] md:max-h-[380px] w-auto max-w-full mx-auto rounded-lg object-contain transition-transform duration-200 group-hover:scale-[1.02]"
                       />
                       <span className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-navy-950/75 text-white text-[10px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm inline-flex items-center gap-1">
                         <IconZoomIn size={11} /> Zoom
@@ -322,7 +322,7 @@ export function CardioTopicReader({
                       src={im.src}
                       alt={im.caption}
                       loading="lazy"
-                      className="max-h-[260px] w-auto mx-auto rounded-lg object-contain bg-white p-1"
+                      className="max-h-[52vh] md:max-h-[260px] w-auto max-w-full mx-auto rounded-lg object-contain bg-white p-1"
                     />
                   </button>
                   <figcaption className="text-xs text-slate-700 dark:text-slate-200 font-semibold mt-2 px-1 leading-snug">
@@ -388,6 +388,10 @@ export default function CardioHub({
   const { data: sysData, loading } = useSystemAtlas(currentSysId);
 
   const [mode, setMode] = useState<HubMode>('chapters');
+  // Mobile (<md): the chapters view is a single column, so the topic list and
+  // the reader stack — the reader ends up squeezed below the list. On phones,
+  // show one at a time: tapping a topic opens the reader full-screen.
+  const [mobileReaderOpen, setMobileReaderOpen] = useState(false);
   const [chapterFilter, setChapterFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [lightbox, setLightbox] = useState<{ src: string; caption: string } | null>(null);
@@ -406,6 +410,7 @@ export default function CardioHub({
     setSearchQuery('');
     setQaSearch('');
     setQaTypeFilter('all');
+    setMobileReaderOpen(false);
     if (mode === 'videos' && currentSysId !== 'cardio') {
       setMode('chapters');
     }
@@ -654,7 +659,7 @@ export default function CardioHub({
 
       {/* Chapter Filter Strip */}
       {(mode === 'chapters' || mode === 'images') && (
-        <div className="flex-shrink-0 px-4 md:px-5 py-2 bg-white/60 dark:bg-navy-900/40 border-b border-slate-200/60 dark:border-white/[0.06] flex flex-wrap items-center gap-2">
+        <div className={cn('flex-shrink-0 px-4 md:px-5 py-2 bg-white/60 dark:bg-navy-900/40 border-b border-slate-200/60 dark:border-white/[0.06] flex flex-wrap items-center gap-2', mobileReaderOpen && mode === 'chapters' && 'hidden md:flex')}>
           <div className="relative flex-shrink-0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
               <circle cx="11" cy="11" r="8" />
@@ -718,7 +723,7 @@ export default function CardioHub({
       {sysData && mode === 'chapters' && (
         <div className="flex-1 overflow-hidden grid md:grid-cols-[320px_1fr] lg:grid-cols-[360px_1fr]">
           {/* Left Topic Index */}
-          <div className="h-full overflow-y-auto border-r border-slate-200 dark:border-white/10 p-2.5 space-y-1 bg-white/50 dark:bg-navy-900/30">
+          <div className={cn('h-full overflow-y-auto border-r border-slate-200 dark:border-white/10 p-2.5 space-y-1 bg-white/50 dark:bg-navy-900/30', mobileReaderOpen && 'hidden md:block')}>
             <div className="px-2 py-1 text-[10px] font-mono font-bold uppercase text-slate-400 flex items-center justify-between">
               <span>{filteredTopics.length} topics</span>
               <span className="text-emerald-600 dark:text-emerald-400">{masteredCount} mastered</span>
@@ -732,7 +737,7 @@ export default function CardioHub({
                   key={t.id}
                   ref={isSelected ? activeTopicRef : undefined}
                   type="button"
-                  onClick={() => onSelectTopic(t.id)}
+                  onClick={() => { onSelectTopic(t.id); setMobileReaderOpen(true); }}
                   className={cn(
                     'rs-topic-card rs-scroll-into-view w-full text-left p-2.5 rounded-xl border',
                     isSelected
@@ -780,7 +785,19 @@ export default function CardioHub({
           </div>
 
           {/* Right Multimedia Reader */}
-          <div className="h-full overflow-y-auto p-4 md:p-6 lg:p-8">
+          <div className={cn('h-full overflow-y-auto p-4 md:p-6 lg:p-8', !mobileReaderOpen && 'hidden md:block')}>
+            {mobileReaderOpen && (
+              <div className="md:hidden sticky top-0 -mx-4 -mt-4 px-4 py-2 mb-3 bg-slate-50/95 dark:bg-navy-950/95 backdrop-blur border-b border-slate-200 dark:border-white/10 z-10">
+                <button
+                  type="button"
+                  onClick={() => setMobileReaderOpen(false)}
+                  className="min-h-[44px] inline-flex items-center gap-1.5 text-sm font-bold text-navy-DEFAULT dark:text-orange-DEFAULT"
+                  aria-label="Back to topics"
+                >
+                  <span aria-hidden="true">←</span> Topics
+                </button>
+              </div>
+            )}
             {activeTopic && (
               <div className="max-w-4xl mx-auto">
                 <CardioTopicReader
