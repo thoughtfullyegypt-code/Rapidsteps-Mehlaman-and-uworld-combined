@@ -615,7 +615,7 @@ export const SYSTEMS: SystemDef[] = [
     id: 'cardio', name: 'Cardiology & Vascular', shortName: 'Cardio',
     cases: 108, syndromes: 11,
     color: '#E11D48', bgTint: '#FFF1F2', borderTint: '#FECDD3', badgeText: '#9F1239',
-    description: 'Complete Step 1 multimedia module: 11 chapters, 108 topics, 254 clinical figures, 12 auscultation/echo videos & 283 Q&As',
+    description: 'Complete Step 1 multimedia module: 11 chapters, 108 topics, 254 clinical figures, 12 auscultation/echo videos & 393 Q&As',
     freeCases: [DEMO_CASES.hocm],
     paidCaseSample: [],
   },
@@ -761,6 +761,39 @@ export const SYSTEMS: SystemDef[] = [
     ],
   },
 ];
+
+// ————————————————————————————
+// CROSS-SYSTEM REPEAT LABEL ("alsoIn")
+//
+// Some rapid-fire questions deliberately repeat in more than one system as
+// spaced repetition. The data marks those items with `alsoIn: string[]`
+// (system ids). This helper turns that field into the label shown in Drill
+// and in the Atlas Hub Q&A list. Returns null when there is nothing to show.
+// ————————————————————————————
+
+const SYSTEM_NAME_MAP = new Map<string, string>(SYSTEMS.map((s) => [s.id, s.name]));
+
+/** Map a system id to its display name (falls back to the raw id). */
+export function getSystemName(systemId: string): string {
+  return SYSTEM_NAME_MAP.get(systemId) ?? systemId;
+}
+
+/**
+ * Label for a question that also appears in other systems.
+ * - alsoIn lists other systems → "Also in <Name>, <Name> — spaced repetition"
+ * - alsoIn lists only the current system → "Repeated in this system — spaced repetition"
+ * - no alsoIn / empty → null (render nothing)
+ */
+export function getAlsoInLabel(
+  alsoIn: string[] | undefined,
+  currentSystemId: string | null | undefined
+): string | null {
+  if (!alsoIn || alsoIn.length === 0) return null;
+  const others = alsoIn.filter((id) => id !== currentSystemId);
+  if (others.length === 0) return 'Repeated in this system — spaced repetition';
+  const names = others.map((id) => getSystemName(id));
+  return `Also in ${names.join(', ')} — spaced repetition`;
+}
 
 // ————————————————————————————
 // 5-STEP DIAGNOSTIC FRAMEWORKS

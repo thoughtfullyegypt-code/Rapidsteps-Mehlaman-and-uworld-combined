@@ -20,7 +20,7 @@ When `prefers-reduced-motion: reduce` is detected (via CSS media query `@media (
 1. **Springs, flips, shakes, and 3D tilts are completely disabled.**
 2. Transitions collapse to simple opacity fades with a cap of `≤ 150ms`.
 3. Particle canvas simulation halts rendering animation frames.
-4. Smooth inertial scrolling (Lenis) is disabled in favor of native instant scrolling.
+4. Smooth scrolling falls back to native instant scrolling.
 5. Custom cursor morphing is suppressed.
 
 ---

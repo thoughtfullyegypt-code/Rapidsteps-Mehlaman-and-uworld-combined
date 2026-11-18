@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { ATLAS_MANIFEST } from '@/lib/atlas-data';
 import Logo from '../logo/Logo';
 import ThemeToggle from '../theme-toggle/ThemeToggle';
 import { cn } from '@/lib/cn';
@@ -51,7 +52,7 @@ export default function Nav() {
               {/* Live catalog badge */}
               <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold text-slate-200 bg-white/8 border border-white/12">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT animate-pulse-led" />
-                1,610 topics · 16 systems
+                {ATLAS_MANIFEST.totals.topics.toLocaleString()} topics · 16 systems
               </div>
             </div>
 
@@ -118,7 +119,7 @@ export default function Nav() {
         <div className="flex items-center justify-between pb-3 mb-2 border-b border-white/10 sm:hidden">
           <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT" />
-            1,610 topics across 16 organ systems
+            {ATLAS_MANIFEST.totals.topics.toLocaleString()} topics across 16 organ systems
           </span>
         </div>
 

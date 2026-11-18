@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { DEMO_CASES } from '@/lib/catalog';
-import { useSystemAtlas } from '@/lib/atlas-data';
+import { DEMO_CASES, getAlsoInLabel } from '@/lib/catalog';
+import { ATLAS_MANIFEST, useSystemAtlas } from '@/lib/atlas-data';
 import { getDrillScore, updateDrillScore, resetDrillScore, DrillScore } from '@/lib/storage';
 import { IconCheck, IconX } from '@/components/icons/Icons';
 import { cn } from '@/lib/cn';
@@ -20,6 +20,8 @@ interface UnifiedDrillQuestion {
   explanation: string;
   trap?: string;
   images?: string[];
+  /** System ids this question also appears in (cross-system spaced repetition). */
+  alsoIn?: string[];
 }
 
 const CORE_DRILL_QUESTIONS: UnifiedDrillQuestion[] = Object.values(DEMO_CASES).map((c) => ({
@@ -35,9 +37,9 @@ const CORE_DRILL_QUESTIONS: UnifiedDrillQuestion[] = Object.values(DEMO_CASES).m
 
 const MCQ_BANKS = [
   { id: 'mixed', label: 'Core Multi-System Vignettes' },
-  { id: 'epi', label: 'Biostatistics & Medical Ethics MCQs (131)' },
-  { id: 'biochem', label: 'Medical Genetics & Hardy-Weinberg MCQs (50)' },
-  { id: 'neuro', label: 'Ophthalmology & Neurolocalization MCQs (50)' },
+  { id: 'epi', label: 'Biostatistics & Medical Ethics MCQs' },
+  { id: 'biochem', label: 'Medical Genetics & Hardy-Weinberg MCQs' },
+  { id: 'neuro', label: 'Ophthalmology & Neurolocalization MCQs' },
 ];
 
 export default function Drill({ onSelectCase }: DrillProps) {
@@ -63,6 +65,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
         correct: q.correctIndex!,
         explanation: q.explanation || q.a,
         images: q.images,
+        alsoIn: q.alsoIn,
       }));
   }, [bankId, sysAtlas]);
 
@@ -112,7 +115,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 setSelectedOption(null);
                 setSubmitted(false);
               }}
-              className="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-navy-900 text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none"
+              className="min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-navy-900 text-xs font-bold text-slate-700 dark:text-slate-200"
             >
               {MCQ_BANKS.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -130,7 +133,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
             <button
               type="button"
               onClick={handleResetScore}
-              className="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+              className="min-h-[44px] px-2 inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
             >
               Reset
             </button>
@@ -143,9 +146,20 @@ export default function Drill({ onSelectCase }: DrillProps) {
           </div>
         )}
 
+        {!loading && questions.length === 0 && (
+          <div className="py-16 text-center space-y-2">
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+              No MCQs in this bank yet
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Try another question bank, or practice every Q&amp;A in the Atlas Hub.
+            </p>
+          </div>
+        )}
+
         {!loading && currentQ && (
           <div className="space-y-5">
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center justify-between gap-2 text-xs">
               <span className="font-mono uppercase tracking-wider font-bold text-orange-rust dark:text-orange-DEFAULT">
                 Question {currentIndex + 1} of {questions.length} · {currentQ.systemName}
               </span>
@@ -153,12 +167,26 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 <button
                   type="button"
                   onClick={() => onSelectCase(currentQ.caseRefId!)}
-                  className="text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline font-bold"
+                  className="min-h-[44px] px-1 inline-flex items-center shrink-0 text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline font-bold"
                 >
                   Open related topic →
                 </button>
               )}
             </div>
+
+            {(() => {
+              const repeatLabel = getAlsoInLabel(
+                currentQ.alsoIn,
+                bankId === 'mixed' ? null : bankId
+              );
+              return repeatLabel ? (
+                <div>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800">
+                    {repeatLabel}
+                  </span>
+                </div>
+              ) : null;
+            })()}
 
             <div className="p-6 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 shadow-sm space-y-4">
               <p className="text-vignette text-slate-800 dark:text-slate-100 text-base md:text-lg leading-relaxed">
@@ -240,7 +268,11 @@ export default function Drill({ onSelectCase }: DrillProps) {
             </div>
 
             {submitted && (
-              <div className="p-6 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 space-y-3 rs-fade-in">
+              <div
+                role="status"
+                aria-live="polite"
+                className="p-6 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 space-y-3 rs-fade-in"
+              >
                 <div
                   className={cn(
                     'text-sm font-extrabold inline-flex items-center gap-1.5',
@@ -268,7 +300,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
       </div>
 
       <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-        <span>Switch to Atlas Hub → Q&amp;A to practice all 3,880 vignettes, MCQs &amp; physiological arrow drills across all 16 systems.</span>
+        <span>Switch to Atlas Hub → Q&amp;A to practice all {ATLAS_MANIFEST.totals.rapidFireQAs.toLocaleString()} vignettes, MCQs &amp; physiological arrow drills across all 16 systems.</span>
       </div>
       </div>
     </div>

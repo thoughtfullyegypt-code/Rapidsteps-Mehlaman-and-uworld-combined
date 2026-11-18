@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import rawManifest from './atlas-manifest.json';
-import rawCardio from './cardio-master.json';
 import type {
   CardioBlock,
   CardioChapter,
@@ -21,6 +20,8 @@ export interface AtlasQAItem {
   explanation?: string;
   images?: string[];
   topicId?: string;
+  /** System ids this question also appears in (cross-system spaced repetition). */
+  alsoIn?: string[];
 }
 
 export interface SystemAtlasStats {
@@ -116,14 +117,9 @@ export function findTopicLocation(topicId: string | null | undefined): TopicLoca
   return TOPIC_LOC_MAP.get(topicId);
 }
 
-// In-memory cache pre-seeded with Cardiology
+// In-memory cache of fetched system payloads. All 16 systems (cardio included)
+// load from /data/systems/<id>.json at runtime; no system data is bundled.
 const SYSTEM_CACHE = new Map<string, SystemAtlasPayload>();
-SYSTEM_CACHE.set('cardio', {
-  systemId: 'cardio',
-  title: 'Cardiology & Vascular',
-  short: 'CV',
-  ...(rawCardio as unknown as Omit<SystemAtlasPayload, 'systemId' | 'title' | 'short'>),
-});
 
 const INFLIGHT = new Map<string, Promise<SystemAtlasPayload>>();
 

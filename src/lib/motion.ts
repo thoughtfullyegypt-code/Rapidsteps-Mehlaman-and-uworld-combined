@@ -37,14 +37,6 @@ export function isCoarsePointer(): boolean {
   return window.matchMedia('(pointer: coarse)').matches;
 }
 
-/** GSAP-compatible ease strings */
-export const GSAP_EASINGS = {
-  standard:   'power3.out',
-  spring:     'back.out(1.4)',
-  emphasized: 'expo.out',
-  exit:       'power2.in',
-} as const;
-
 /** Lerp helper (cursor smoothing) */
 export function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;

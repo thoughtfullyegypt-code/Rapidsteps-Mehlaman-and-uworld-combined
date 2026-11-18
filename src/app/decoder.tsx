@@ -227,7 +227,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-orange-rust dark:text-orange-DEFAULT">
               <IconScan size={14} />
-              <span>16-System Weighted Corpus Engine · 1,610 Topics + 3,857 Vignettes</span>
+              <span>16-System Weighted Corpus Engine · {ATLAS_MANIFEST.totals.topics.toLocaleString()} Topics + 3,857 Vignettes</span>
             </div>
             <h1 id="stem-decoder-title" className="text-xl md:text-2xl font-extrabold font-display text-navy-DEFAULT dark:text-white">
               Clinical Stem &amp; Buzzword Decoder
@@ -390,7 +390,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
 
             {!inputText.trim() ? (
               <div className="p-8 rounded-2xl bg-white dark:bg-navy-900 border border-dashed border-slate-200 dark:border-white/10 text-center text-sm text-slate-500">
-                Select any sample vignette above or type clinical buzzwords to rank differentials across all 1,610 topics.
+                Select any sample vignette above or type clinical buzzwords to rank differentials across all {ATLAS_MANIFEST.totals.topics.toLocaleString()} topics.
               </div>
             ) : analysis.topTopics.length === 0 ? (
               <div className="p-8 rounded-2xl bg-white dark:bg-navy-900 border border-dashed border-slate-200 dark:border-white/10 text-center space-y-1.5">
@@ -569,7 +569,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
               <button
                 type="button"
                 onClick={() => setLightbox(null)}
-                className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold"
+                className="min-h-[44px] px-3 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold flex items-center"
               >
                 Close
               </button>

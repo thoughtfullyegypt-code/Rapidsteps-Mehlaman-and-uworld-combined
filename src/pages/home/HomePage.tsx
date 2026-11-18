@@ -1914,7 +1914,7 @@ function PricingSection() {
           </p>
 
           <p className="text-xs text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Transparent notes: Paid plans sync account entitlement across devices via email OTP; study mastery/bookmark logs stay private in your browser&apos;s local storage. Anti-scraping fair-use cap of 150 newly opened paid cases per day.
+            Transparent notes: Paid plans sync account entitlement across devices via email OTP; study mastery/bookmark logs stay private in your browser&apos;s local storage. There is no per-day cap on opening cases.
           </p>
         </div>
       </div>
@@ -1990,7 +1990,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Does the app work offline?',
-    a: 'An internet connection is required to load paid case facts from the catalog API (with a fair-use limit of 150 newly opened paid cases per day to prevent automated scraping). Once loaded in your session, navigation and stem decoding are instant.',
+    a: 'An internet connection is required: case content loads from this site over the web, and there is no offline download yet. Once loaded in your session, navigation and stem decoding are instant.',
   },
   {
     q: 'How do I sign in without a password?',

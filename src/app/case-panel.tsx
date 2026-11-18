@@ -127,7 +127,7 @@ export default function CasePanel({
               type="button"
               onClick={() => onToggleFlag(caseId)}
               className={cn(
-                'p-1.5 rounded-lg transition-colors',
+                'min-h-[44px] min-w-[44px] flex items-center justify-center p-1.5 rounded-lg transition-colors',
                 isFlagged ? 'text-red-500 bg-red-50 dark:bg-red-950/30' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10'
               )}
               title="Flag (X)"
@@ -138,7 +138,7 @@ export default function CasePanel({
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
               aria-label="Close panel"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -177,7 +177,7 @@ export default function CasePanel({
             type="button"
             onClick={() => onToggleMaster(caseId)}
             className={cn(
-              'py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border',
+              'min-h-[44px] py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border',
               isMastered
                 ? 'bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-600 dark:text-emerald-300'
                 : 'border-slate-200 dark:border-white/15 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10'
@@ -192,7 +192,7 @@ export default function CasePanel({
             <button
               type="button"
               onClick={onPrevCase}
-              className="p-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center p-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
               title="Previous"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -202,7 +202,7 @@ export default function CasePanel({
             <button
               type="button"
               onClick={onNextCase}
-              className="p-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center p-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
               title="Next"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -229,7 +229,7 @@ export default function CasePanel({
                 <button
                   type="button"
                   onClick={() => setLightbox(null)}
-                  className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold flex items-center gap-1.5"
+                  className="min-h-[44px] px-3 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold flex items-center gap-1.5"
                 >
                   Close <span className="rs-kbd">Esc</span>
                 </button>
@@ -285,7 +285,7 @@ export default function CasePanel({
             type="button"
             onClick={() => onToggleBookmark(caseId)}
             className={cn(
-              'p-1.5 rounded-lg transition-colors',
+              'min-h-[44px] min-w-[44px] flex items-center justify-center p-1.5 rounded-lg transition-colors',
               isBookmarked ? 'text-orange-DEFAULT bg-orange-light dark:bg-orange-DEFAULT/20' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10'
             )}
             title="Bookmark (B)"
@@ -296,7 +296,7 @@ export default function CasePanel({
             type="button"
             onClick={() => onToggleFlag(caseId)}
             className={cn(
-              'p-1.5 rounded-lg transition-colors',
+              'min-h-[44px] min-w-[44px] flex items-center justify-center p-1.5 rounded-lg transition-colors',
               isFlagged ? 'text-red-500 bg-red-50 dark:bg-red-950/30' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10'
             )}
             title="Flag (X)"
@@ -481,7 +481,7 @@ export default function CasePanel({
           type="button"
           onClick={() => onToggleMaster(caseId)}
           className={cn(
-            'py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border',
+            'min-h-[44px] py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border',
             isMastered
               ? 'bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-600 dark:text-emerald-300'
               : 'border-slate-200 dark:border-white/15 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10'
@@ -496,7 +496,7 @@ export default function CasePanel({
           <button
             type="button"
             onClick={onPrevCase}
-            className="p-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center p-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
             title="Previous"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -506,7 +506,7 @@ export default function CasePanel({
           <button
             type="button"
             onClick={onNextCase}
-            className="p-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center p-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
             title="Next"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

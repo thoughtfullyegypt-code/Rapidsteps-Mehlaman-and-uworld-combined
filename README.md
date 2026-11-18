@@ -1,6 +1,6 @@
 # Rapid Steps v2 — USMLE Step 1 Buzzword Atlas
 
-A production-grade, cinematic web application and clinical atlas for medical students studying for the USMLE Step 1 exam. Built with Vite, React 18, TypeScript, Tailwind CSS, GSAP, and Lenis.
+A production-grade, cinematic web application and clinical atlas for medical students studying for the USMLE Step 1 exam. Built with Vite, React 18, TypeScript, and Tailwind CSS.
 
 ---
 
@@ -39,14 +39,14 @@ Production assets are generated in `dist/`.
 
 ### 1. Theme Management
 - **Automatic System Preference**: Reads `window.matchMedia('(prefers-color-scheme: dark)')` on first boot.
-- **Persistent Toggle**: Stored in `localStorage` under key `rapidsteps_dark_mode` (`"true"` | `"false"`).
+- **Persistent Toggle**: Stored in `localStorage` under key `rapidsteps_dark_mode` (`"1"` = dark, `"0"` = light; absent = follow system preference).
 - **CSS Strategy**: Applies `.dark` class to `document.documentElement` to trigger Tailwind's `dark:` selectors seamlessly.
 
 ### 2. Motion & Accessibility
 - **Reduced Motion**: Full adherence to `window.matchMedia('(prefers-reduced-motion: reduce)')`.
 - When active:
   - Particle neural canvas halts rendering loops.
-  - Smooth inertial scrolling (Lenis) is disabled.
+  - Smooth scrolling falls back to instant jumps.
   - Spring-based animations and 3D tilts collapse into instant cuts or simple fades (`≤ 150ms`).
   - Custom pointer cursor is disabled.
 - **Touch Devices**: Automatically disables custom cursor on coarse-pointer screens (`(pointer: coarse)`).
@@ -96,14 +96,14 @@ To prevent breaking analytics, legacy scripts (`landing.js`, `nav-auth.js`), or 
 
 | Key | Type | Description |
 | :--- | :--- | :--- |
-| `rapidsteps_dark_mode` | `"true"` \| `"false"` | Dark mode state |
-| `rapidsteps_recall_mode` | `"true"` \| `"false"` | Active Recall masking mode |
-| `rapidsteps_view_mode` | `"learn"` \| `"map"` \| `"drill"` \| `"decoder"` \| `"frameworks"` | Active shell view tab |
+| `rapidsteps_dark_mode` | `"1"` \| `"0"` \| absent | Dark mode state (`"1"` dark, `"0"` light, absent = system preference) |
+| `rapidsteps_recall_mode` | `"1"` \| `"0"` | Active Recall masking mode |
+| `rapidsteps_view_mode` | `"tree"` \| `"map"` | Atlas view mode |
 | `step1_mastered_cases` | `string[]` (JSON) | Array of mastered case IDs |
 | `rapidsteps_bookmarks` | `string[]` (JSON) | Array of bookmarked case IDs |
 | `rapidsteps_flags` | `string[]` (JSON) | Array of flagged/review case IDs |
-| `rapidsteps_focus_mode` | `"true"` \| `"false"` | Fullscreen zen mode state |
-| `rapidsteps_study_size` | `"compact"` \| `"normal"` \| `"large"` | Text scaling preference |
+| `rapidsteps_focus_mode` | `"1"` \| absent | Fullscreen zen mode state |
+| `rapidsteps_study_size` | `"normal"` \| `"large"` | Text scaling preference |
 | `rapidsteps_review_log` | `Record<string, { timestamp: number, correct: boolean }>` | Spaced repetition log |
 
 ---
@@ -136,16 +136,18 @@ rapidsteps-v2/
 │   │   ├── shortcuts-modal.tsx # Keyboard cheatsheet modal (?)
 │   │   └── account.tsx         # Supabase magic-link auth & unlock dialogs
 │   ├── components/             # Shared presentation components
+│   │   ├── ErrorBoundary.tsx   # Friendly fallback UI for render errors
 │   │   ├── canvas-network/     # Neural vascular particle canvas
 │   │   ├── footer/             # Site footer with legal links
 │   │   ├── logo/               # Vector wordmark component
 │   │   ├── nav/                # Glassmorphic top navigation bar
 │   │   └── theme-toggle/       # Dark/light theme switcher
 │   ├── lib/                    # Foundation utilities & medical catalog
+│   │   ├── atlas-data.ts       # Manifest + runtime system loader (fetch from /data/systems/)
+│   │   ├── cardio-data.ts      # Shared atlas content types
 │   │   ├── catalog.ts          # 16 systems, sample cases, frameworks, stems
 │   │   ├── cn.ts               # Tailwind class merger
 │   │   ├── cursor.ts           # Interactive lerping cursor
-│   │   ├── lenis.ts            # Smooth inertial scroll controller
 │   │   ├── motion.ts           # Cubic bezier curves and motion helpers
 │   │   └── storage.ts          # Typed local storage wrapper
 │   ├── pages/                  # Public marketing & legal routes

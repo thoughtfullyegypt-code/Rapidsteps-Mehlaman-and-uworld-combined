@@ -190,7 +190,7 @@ export default function PricingPage() {
                 within 14 days for a no-questions-asked refund (<Link to="/refunds" className="underline font-semibold">Refund Policy</Link>).
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Fair-use &amp; storage note: Account access transfers across devices via email OTP; personal study checkmarks &amp; bookmarks stay private in each browser&apos;s local storage. Fair-use cap of 150 newly opened paid cases/day.
+                Storage note: Account access transfers across devices via email OTP; personal study checkmarks &amp; bookmarks stay private in each browser&apos;s local storage. There is no per-day cap on opening cases.
               </p>
             </div>
           </div>

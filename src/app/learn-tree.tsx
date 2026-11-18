@@ -99,7 +99,7 @@ export default function LearnTree({
               <button
                 type="button"
                 onClick={() => toggleExpand(ms.systemId)}
-                className="w-full flex items-center justify-between p-3 text-left focus:outline-none group"
+                className="w-full flex items-center justify-between p-3 text-left group"
                 aria-expanded={isExpanded}
               >
                 <div className="flex items-center gap-2.5 min-w-0">

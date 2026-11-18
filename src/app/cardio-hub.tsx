@@ -10,7 +10,7 @@ import {
   CardioChapter,
   AtlasQAItem,
 } from '@/lib/atlas-data';
-import { SYSTEMS } from '@/lib/catalog';
+import { SYSTEMS, getAlsoInLabel } from '@/lib/catalog';
 import {
   SystemIcon,
   IconBookOpen,
@@ -526,7 +526,7 @@ export default function CardioHub({
                 type="button"
                 onClick={() => handleSystemSwitch(sys.systemId)}
                 className={cn(
-                  'px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all inline-flex items-center gap-1.5 border',
+                  'min-h-[44px] px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all inline-flex items-center gap-1.5 border',
                   active
                     ? 'bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-navy-DEFAULT dark:border-orange-DEFAULT shadow-xs'
                     : 'bg-white dark:bg-navy-900 text-slate-600 dark:text-slate-300 border-slate-200/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20'
@@ -586,7 +586,7 @@ export default function CardioHub({
               type="button"
               onClick={() => setMode('chapters')}
               className={cn(
-                'px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
+                'min-h-[44px] px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
                 mode === 'chapters'
                   ? 'bg-navy-DEFAULT text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
@@ -602,7 +602,7 @@ export default function CardioHub({
                 type="button"
                 onClick={() => setMode('videos')}
                 className={cn(
-                  'px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
+                  'min-h-[44px] px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
                   mode === 'videos'
                     ? 'bg-navy-DEFAULT text-white shadow-sm'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
@@ -618,7 +618,7 @@ export default function CardioHub({
               type="button"
               onClick={() => setMode('images')}
               className={cn(
-                'px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
+                'min-h-[44px] px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
                 mode === 'images'
                   ? 'bg-navy-DEFAULT text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
@@ -633,7 +633,7 @@ export default function CardioHub({
               type="button"
               onClick={() => setMode('qa')}
               className={cn(
-                'px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
+                'min-h-[44px] px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
                 mode === 'qa'
                   ? 'bg-navy-DEFAULT text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
@@ -957,7 +957,7 @@ export default function CardioHub({
                   type="button"
                   onClick={() => setQaTypeFilter('all')}
                   className={cn(
-                    'px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
+                    'min-h-[44px] px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
                     qaTypeFilter === 'all' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300'
                   )}
                 >
@@ -968,7 +968,7 @@ export default function CardioHub({
                     type="button"
                     onClick={() => setQaTypeFilter('qa')}
                     className={cn(
-                      'px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
+                      'min-h-[44px] px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
                       qaTypeFilter === 'qa' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300'
                     )}
                   >
@@ -980,7 +980,7 @@ export default function CardioHub({
                     type="button"
                     onClick={() => setQaTypeFilter('mcq')}
                     className={cn(
-                      'px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
+                      'min-h-[44px] px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
                       qaTypeFilter === 'mcq' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300'
                     )}
                   >
@@ -992,7 +992,7 @@ export default function CardioHub({
                     type="button"
                     onClick={() => setQaTypeFilter('arrow')}
                     className={cn(
-                      'px-2.5 py-1 rounded-lg text-xs font-bold transition-colors inline-flex items-center gap-1',
+                      'min-h-[44px] px-2.5 py-1 rounded-lg text-xs font-bold transition-colors inline-flex items-center gap-1',
                       qaTypeFilter === 'arrow' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300'
                     )}
                   >
@@ -1051,6 +1051,14 @@ export default function CardioHub({
                               {item.sourceTag}
                             </span>
                           )}
+                          {(() => {
+                            const repeatLabel = getAlsoInLabel(item.alsoIn, currentSysId);
+                            return repeatLabel ? (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800">
+                                {repeatLabel}
+                              </span>
+                            ) : null;
+                          })()}
                           {item.topicId && (
                             <button
                               type="button"
@@ -1059,7 +1067,7 @@ export default function CardioHub({
                                 onSelectTopic(item.topicId!);
                                 setMode('chapters');
                               }}
-                              className="text-[10px] font-bold text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline"
+                              className="min-h-[44px] px-1 inline-flex items-center text-[10px] font-bold text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline"
                             >
                               Related Topic →
                             </button>
@@ -1165,7 +1173,7 @@ export default function CardioHub({
               <button
                 type="button"
                 onClick={() => setLightbox(null)}
-                className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold text-slate-700 dark:text-white hover:bg-slate-200 flex items-center gap-1.5"
+                className="min-h-[44px] px-3 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold text-slate-700 dark:text-white hover:bg-slate-200 flex items-center gap-1.5"
               >
                 Close <span className="rs-kbd">Esc</span>
               </button>

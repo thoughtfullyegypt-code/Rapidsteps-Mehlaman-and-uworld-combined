@@ -1,4 +1,9 @@
-import rawCardio from './cardio-master.json';
+// lib/cardio-data.ts — Shared atlas content types (types only).
+//
+// System data is NOT bundled here: all 16 systems load at runtime from
+// /data/systems/<id>.json via loadSystemAtlas() in ./atlas-data.ts.
+// (The former bundled cardio-master.json was a duplicate of
+// public/data/systems/cardio.json and was removed to shrink the bundle.)
 
 export type CardioBlock =
   | { kind: 'p'; text: string; bullet: boolean; level: number }
@@ -58,6 +63,8 @@ export interface CardioRapidQA {
   num: number;
   q: string;
   a: string;
+  /** System ids this question also appears in (cross-system spaced repetition). */
+  alsoIn?: string[];
 }
 
 export interface CardioMasterPayload {
@@ -76,53 +83,3 @@ export interface CardioMasterPayload {
   topics: CardioTopic[];
   rapidFireQAs: CardioRapidQA[];
 }
-
-export const CARDIO_MASTER = rawCardio as unknown as CardioMasterPayload;
-
-const TOPIC_MAP = new Map<string, CardioTopic>(
-  CARDIO_MASTER.topics.map((t) => [t.id, t])
-);
-
-const CHAPTER_MAP = new Map<string, CardioChapter>(
-  CARDIO_MASTER.chapters.map((c) => [c.id, c])
-);
-
-export function getCardioTopic(id: string | null | undefined): CardioTopic | undefined {
-  if (!id) return undefined;
-  return TOPIC_MAP.get(id);
-}
-
-export function getCardioChapter(chapterId: string): CardioChapter | undefined {
-  return CHAPTER_MAP.get(chapterId);
-}
-
-export const ALL_CARDIO_VIDEOS: CardioVideoItem[] = CARDIO_MASTER.topics.flatMap((t) =>
-  t.videos.map((v) => ({
-    ...v,
-    topicId: t.id,
-    topicTitle: t.title,
-    chapterId: t.chapterId,
-  }))
-);
-
-export const ALL_CARDIO_IMAGES: CardioMediaItem[] = CARDIO_MASTER.topics.flatMap((t) => {
-  const docxImgs: CardioMediaItem[] = t.blocks
-    .filter((b): b is Extract<CardioBlock, { kind: 'img' }> => b.kind === 'img')
-    .map((b) => ({
-      src: b.src,
-      caption: b.caption,
-      topicId: t.id,
-      topicTitle: t.title,
-      chapterId: t.chapterId,
-      source: 'docx',
-    }));
-  const pdfImgs: CardioMediaItem[] = t.hyImages.map((im) => ({
-    src: im.src,
-    caption: im.caption,
-    topicId: t.id,
-    topicTitle: t.title,
-    chapterId: t.chapterId,
-    source: 'pdf',
-  }));
-  return [...docxImgs, ...pdfImgs];
-});

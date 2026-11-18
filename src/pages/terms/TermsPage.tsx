@@ -52,7 +52,7 @@ export default function TermsPage() {
                 <li><strong>12 months:</strong> $79 USD one-time (365 days).</li>
               </ul>
               <p className="mt-3">
-                Prices are in USD. Depending on your location, sales tax or VAT is either included or added at checkout; Paddle shows the exact total before you pay. Discount codes, if offered at checkout, reduce the price paid. Payments are processed securely by Paddle. We never see, handle, or store your card details. Buying again before your plan ends adds the new period to the end of the current one. Fair use: paid access allows up to 150 cases to be opened per day. The counter resets at 00:00 UTC.
+                Prices are in USD. Depending on your location, sales tax or VAT is either included or added at checkout; Paddle shows the exact total before you pay. Discount codes, if offered at checkout, reduce the price paid. Payments are processed securely by Paddle. We never see, handle, or store your card details. Buying again before your plan ends adds the new period to the end of the current one. There is no per-day limit on opening cases.
               </p>
             </div>
 

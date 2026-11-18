@@ -42,7 +42,7 @@ export default function SearchModal({ isOpen, onClose, onSelectCase }: SearchMod
     const titleHits: SearchResult[] = [];
     const summaryHits: SearchResult[] = [];
 
-    // 1. Search all 1,610+ topics across all 16 Organ Systems
+    // 1. Search all topics across all 16 Organ Systems
     for (const sys of ATLAS_MANIFEST.systems) {
       const chMap = new Map(sys.chapters.map((c) => [c.id, c]));
       for (const t of sys.topics) {
@@ -136,7 +136,7 @@ export default function SearchModal({ isOpen, onClose, onSelectCase }: SearchMod
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full py-4 px-3 bg-transparent text-slate-800 dark:text-white placeholder-slate-400 text-sm focus:outline-none"
+            className="w-full py-4 px-3 bg-transparent text-slate-800 dark:text-white placeholder-slate-400 text-sm"
           />
           <kbd className="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-navy-800 border border-slate-200 dark:border-white/10 text-slate-400">
             Esc
