@@ -53,29 +53,30 @@ export default function LearnTree({
   const { totals } = ATLAS_MANIFEST;
 
   return (
-    <div className="h-full overflow-y-auto p-3 md:p-5 space-y-2">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+    <div className="h-full overflow-y-auto p-3 md:p-4 space-y-2">
+      {/* Compact Header */}
+      <div className="pb-2 mb-1 border-b border-slate-200/70 dark:border-white/[0.07] flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-base font-bold font-display text-navy-DEFAULT dark:text-white">
+          <h2 className="text-sm font-extrabold font-display text-slate-900 dark:text-white">
             16 Organ Systems · {totals.topics.toLocaleString()} Topics
           </h2>
           <p className="text-[11px] text-slate-500 dark:text-slate-400">
-            {totals.images.toLocaleString()} clinical figures · {totals.tables} tables · {totals.rapidFireQAs.toLocaleString()} Step 1 Q&amp;As
+            {totals.images.toLocaleString()} figures · {totals.rapidFireQAs.toLocaleString()} Q&amp;As
           </p>
         </div>
         {onOpenCardioHub && (
           <button
             type="button"
             onClick={() => onOpenCardioHub(expandedSys || 'cardio')}
-            className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-orange-DEFAULT to-[#FFA23F] text-navy-950 text-xs font-bold hover:shadow-sm transition-all inline-flex items-center gap-1.5"
+            className="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-navy-800 hover:bg-slate-200/80 dark:hover:bg-navy-700 text-navy-DEFAULT dark:text-orange-DEFAULT text-xs font-bold transition-colors inline-flex items-center gap-1.5"
           >
             <IconAtlas size={13} />
-            <span>Open Atlas Hub →</span>
+            <span>Full View →</span>
           </button>
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {ATLAS_MANIFEST.systems.map((ms: ManifestSystem) => {
           const sysStyle = SYSTEMS.find((s) => s.id === ms.systemId);
           const isExpanded = expandedSys === ms.systemId;
@@ -89,117 +90,104 @@ export default function LearnTree({
             <div
               key={ms.systemId}
               className={cn(
-                'rounded-xl border transition-all duration-200 overflow-hidden',
+                'rounded-xl border transition-colors overflow-hidden',
                 isExpanded
-                  ? 'border-navy-DEFAULT/30 dark:border-orange-DEFAULT/30 bg-white dark:bg-navy-900/80 shadow-sm'
-                  : 'border-slate-200/70 dark:border-white/[0.07] bg-white/60 dark:bg-navy-900/30 hover:border-slate-300'
+                  ? 'border-slate-300 dark:border-white/15 bg-white dark:bg-navy-900/90 shadow-xs'
+                  : 'border-slate-200/70 dark:border-white/[0.06] bg-white/70 dark:bg-navy-900/40 hover:border-slate-300'
               )}
             >
-              {/* System Header */}
+              {/* Clean System Row */}
               <button
                 type="button"
                 onClick={() => toggleExpand(ms.systemId)}
-                className="w-full flex items-center justify-between p-3 text-left group"
+                className="w-full flex items-center justify-between px-3 py-2.5 text-left focus:outline-none group"
                 aria-expanded={isExpanded}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{
                       backgroundColor: sysStyle?.bgTint || '#EEF2FF',
                       color: sysStyle?.badgeText || '#1E2A8A',
-                      border: `1px solid ${sysStyle?.borderTint || '#C7D2FE'}`,
                     }}
                   >
-                    <SystemIcon systemId={ms.systemId} size={18} />
+                    <SystemIcon systemId={ms.systemId} size={16} />
                   </div>
                   <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="font-bold text-[13px] text-navy-DEFAULT dark:text-white">
-                        {ms.title}
-                      </span>
-                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-navy-800 text-slate-500 dark:text-slate-400">
-                        {ms.stats.topics} topics
-                      </span>
-                      {ms.stats.totalImages > 0 && (
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-300">
-                          {ms.stats.totalImages} figs
-                        </span>
-                      )}
-                      {ms.stats.rapidFireQAs > 0 && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-DEFAULT/15 text-orange-rust dark:text-orange-DEFAULT">
-                          {ms.stats.rapidFireQAs} Q&amp;As
-                        </span>
-                      )}
-                    </div>
-                    {/* Progress bar */}
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="w-20 rs-progress-bar">
-                        <div
-                          className={cn('rs-progress-fill', progressPct === 100 && 'complete')}
-                          style={{ width: `${progressPct}%` }}
-                        />
-                      </div>
-                      <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">
-                        {sysMastered}/{sysTotal}
-                      </span>
-                    </div>
+                    <span className="font-bold text-[13px] text-slate-900 dark:text-white block truncate">
+                      {ms.title}
+                    </span>
+                    <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                      {ms.stats.chapters} chapters · {ms.stats.topics} topics
+                    </span>
                   </div>
                 </div>
 
-                <IconChevronDown
-                  size={15}
-                  className={cn(
-                    'text-slate-400 transition-transform duration-200 flex-shrink-0 ml-2',
-                    isExpanded && 'rotate-180 text-navy-DEFAULT dark:text-orange-DEFAULT'
-                  )}
-                />
+                <div className="flex items-center gap-2.5 flex-shrink-0 ml-2">
+                  <div className="hidden sm:flex items-center gap-2">
+                    <div className="w-14 rs-progress-bar">
+                      <div
+                        className={cn('rs-progress-fill', progressPct === 100 && 'complete')}
+                        style={{ width: `${progressPct}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 w-9 text-right">
+                      {sysMastered}/{sysTotal}
+                    </span>
+                  </div>
+
+                  <IconChevronDown
+                    size={14}
+                    className={cn(
+                      'text-slate-400 transition-transform duration-150 flex-shrink-0',
+                      isExpanded && 'rotate-180 text-navy-DEFAULT dark:text-orange-DEFAULT'
+                    )}
+                  />
+                </div>
               </button>
 
-              {/* ==================== EXPANDED SYSTEM CHAPTERS & TOPICS ==================== */}
+              {/* Expanded System Chapters & Topics */}
               {isExpanded && (
-                <div className="px-3 pb-3 pt-1.5 border-t border-slate-100 dark:border-white/5 space-y-2 rs-fade-in">
-                  {/* Multimedia Studio Banner */}
-                  {onOpenCardioHub && (
-                    <div className="p-3 rounded-xl bg-gradient-to-r from-[#141C66] to-[#2A3FB5] text-white flex flex-wrap items-center justify-between gap-2">
-                      <div className="text-[11px]">
-                        <div className="font-extrabold text-orange-DEFAULT uppercase tracking-wider text-[10px]">
-                          {ms.short} Multimedia Atlas
-                        </div>
-                        <div className="font-semibold">
-                          {ms.stats.chapters} Chapters · {ms.stats.totalImages} Figures
-                          {ms.stats.videos > 0 ? ` · ${ms.stats.videos} Videos` : ''} · {ms.stats.rapidFireQAs} Q&amp;As
-                        </div>
-                      </div>
+                <div className="px-3 pb-3 pt-2 border-t border-slate-100 dark:border-white/5 space-y-2">
+                  {/* Per-System Filter + Quick Hub Link */}
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      >
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                      </svg>
+                      <input
+                        type="search"
+                        value={filterBySys[ms.systemId] || ''}
+                        onChange={(e) =>
+                          setFilterBySys((prev) => ({ ...prev, [ms.systemId]: e.target.value }))
+                        }
+                        placeholder={`Filter ${ms.short} topics…`}
+                        className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950 text-xs text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-navy-DEFAULT"
+                      />
+                    </div>
+                    {onOpenCardioHub && (
                       <button
                         type="button"
                         onClick={() => onOpenCardioHub(ms.systemId)}
-                        className="px-2.5 py-1.5 rounded-lg bg-orange-DEFAULT text-navy-950 font-bold text-[11px] hover:bg-orange-hover transition-colors whitespace-nowrap"
+                        className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 whitespace-nowrap"
+                        title={`Open ${ms.short} figures & Q&A`}
                       >
-                        Open {ms.short} Hub →
+                        {ms.stats.totalImages} Figs · {ms.stats.rapidFireQAs} Q&amp;As →
                       </button>
-                    </div>
-                  )}
-
-                  {/* Per-System Filter */}
-                  <div className="relative">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                      <circle cx="11" cy="11" r="8" />
-                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                    <input
-                      type="search"
-                      value={filterBySys[ms.systemId] || ''}
-                      onChange={(e) =>
-                        setFilterBySys((prev) => ({ ...prev, [ms.systemId]: e.target.value }))
-                      }
-                      placeholder={`Filter ${ms.stats.topics} ${ms.short} topics…`}
-                      className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950 text-xs text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-navy-DEFAULT"
-                    />
+                    )}
                   </div>
 
                   {/* Chapters Accordion */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     {ms.chapters.map((ch) => {
                       const chTopics = ms.topics.filter(
                         (t) =>
@@ -215,7 +203,7 @@ export default function LearnTree({
                       return (
                         <div
                           key={ch.id}
-                          className="rounded-lg border border-slate-200/70 dark:border-white/[0.06] overflow-hidden bg-slate-50/40 dark:bg-navy-950/20"
+                          className="rounded-lg border border-slate-200/60 dark:border-white/[0.06] overflow-hidden"
                         >
                           <button
                             type="button"
@@ -225,13 +213,13 @@ export default function LearnTree({
                                 [ms.systemId]: prev[ms.systemId] === ch.id ? '' : ch.id,
                               }))
                             }
-                            className="w-full px-3 py-2 flex items-center justify-between text-left hover:bg-slate-100/60 dark:hover:bg-white/[0.03] transition-colors"
+                            className="w-full px-2.5 py-1.5 flex items-center justify-between text-left bg-slate-50/70 dark:bg-navy-950/40 hover:bg-slate-100/70 dark:hover:bg-white/[0.03] transition-colors"
                           >
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-navy-DEFAULT text-white font-bold shrink-0">
+                              <span className="font-mono text-[10px] font-bold text-slate-400 dark:text-slate-500 shrink-0">
                                 {ch.num}
                               </span>
-                              <span className="text-xs font-bold text-navy-DEFAULT dark:text-white truncate">
+                              <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
                                 {ch.title}
                               </span>
                             </div>
@@ -250,7 +238,7 @@ export default function LearnTree({
                           </button>
 
                           {chOpen && (
-                            <div className="p-1.5 border-t border-slate-200/50 dark:border-white/[0.04] space-y-0.5 bg-white dark:bg-navy-900/40 rs-fade-in">
+                            <div className="divide-y divide-slate-100 dark:divide-white/[0.04] bg-white dark:bg-navy-900/40">
                               {chTopics.map((ct) => {
                                 const isSel = selectedCaseId === ct.id;
                                 const isMast = masteredCases.has(ct.id);
@@ -262,48 +250,43 @@ export default function LearnTree({
                                     key={ct.id}
                                     onClick={() => onSelectCase(ct.id)}
                                     className={cn(
-                                      'rs-topic-card p-2 rounded-lg border cursor-pointer transition-all flex items-center justify-between gap-2',
+                                      'px-2.5 py-2 cursor-pointer transition-colors flex items-center justify-between gap-2 border-l-2',
                                       isSel
-                                        ? 'bg-orange-light/60 dark:bg-orange-DEFAULT/15 border-orange-DEFAULT'
-                                        : 'bg-slate-50/40 dark:bg-navy-950/30 border-transparent hover:border-slate-200 dark:hover:border-white/10'
+                                        ? 'border-l-navy-DEFAULT dark:border-l-orange-DEFAULT bg-slate-100/80 dark:bg-white/[0.06]'
+                                        : 'border-l-transparent hover:bg-slate-50 dark:hover:bg-white/[0.03]'
                                     )}
                                   >
                                     <div className="min-w-0 flex items-center gap-2">
                                       <span
                                         className={cn(
-                                          'w-4 h-4 rounded-full flex items-center justify-center shrink-0',
+                                          'w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0',
                                           isMast
                                             ? 'bg-emerald-500 text-white'
-                                            : 'bg-slate-100 dark:bg-navy-800 text-slate-400'
+                                            : 'border border-slate-300 dark:border-slate-600'
                                         )}
                                       >
-                                        {isMast ? (
-                                          <IconCheck size={10} />
-                                        ) : (
-                                          <span className="w-1 h-1 rounded-full bg-current" />
-                                        )}
+                                        {isMast && <IconCheck size={9} />}
                                       </span>
-                                      <div className="min-w-0">
-                                        <div className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
-                                          {ct.title}
-                                        </div>
-                                        <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
-                                          {ct.summary}
-                                        </div>
-                                      </div>
+                                      <span
+                                        className={cn(
+                                          'text-xs truncate',
+                                          isSel
+                                            ? 'font-extrabold text-navy-DEFAULT dark:text-orange-DEFAULT'
+                                            : 'font-semibold text-slate-800 dark:text-slate-200'
+                                        )}
+                                      >
+                                        {ct.title}
+                                      </span>
                                     </div>
 
-                                    <div className="flex items-center gap-1 flex-shrink-0">
+                                    <div className="flex items-center gap-1.5 flex-shrink-0 text-slate-400">
                                       {isBm && <IconBookmark size={11} filled className="text-orange-DEFAULT" />}
                                       {isFl && <IconFlag size={11} filled className="text-red-500" />}
-                                      {ct.videoCount > 0 && (
-                                        <span className="inline-flex items-center px-1 py-0.5 rounded bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300">
-                                          <IconVideo size={10} />
-                                        </span>
-                                      )}
+                                      {ct.videoCount > 0 && <IconVideo size={11} className="text-rose-500" />}
                                       {ct.imageCount > 0 && (
-                                        <span className="inline-flex items-center gap-0.5 text-[9px] font-mono font-bold px-1 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-300">
-                                          <IconImage size={10} /> {ct.imageCount}
+                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-mono">
+                                          <IconImage size={10} />
+                                          {ct.imageCount}
                                         </span>
                                       )}
                                     </div>

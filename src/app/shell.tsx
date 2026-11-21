@@ -14,11 +14,6 @@ const Decoder    = React.lazy(() => import('./decoder'));
 const Frameworks = React.lazy(() => import('./frameworks'));
 const CardioHub  = React.lazy(() => import('./cardio-hub'));
 
-// React Router strips the basename from useLocation().pathname, so history
-// writes must re-add it — otherwise the address bar drops the sub-path on
-// GitHub Pages and a refresh lands on a 404. '' at root, '/<repo>' on Pages.
-const ROUTER_BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
-
 function TabFallback() {
   return (
     <div className="flex-1 flex items-center justify-center min-h-[200px]">
@@ -148,7 +143,7 @@ export default function AppShell() {
     window.history.replaceState(
       {},
       '',
-      `${ROUTER_BASE}${location.pathname}${params.toString() ? '?' + params.toString() : ''}${location.hash}`
+      `${location.pathname}${params.toString() ? '?' + params.toString() : ''}${location.hash}`
     );
 
     if (location.hash) {
@@ -194,7 +189,7 @@ export default function AppShell() {
       setActiveTab('learn');
     }
     setIsMobileSheetOpen(true);
-    window.history.replaceState(null, '', `${ROUTER_BASE}/app/#${id}`);
+    window.history.replaceState(null, '', `/app/#${id}`);
   };
 
   const cycleCase = (dir: 1 | -1) => {
@@ -332,7 +327,7 @@ export default function AppShell() {
         >
           {/* Left: Brand Logo & Desktop Nav */}
           <div className="flex items-center gap-5">
-            <a href={import.meta.env.BASE_URL} className="brand flex items-center gap-2 group" aria-label="Rapid Steps home">
+            <a href="/" className="brand flex items-center gap-2 group" aria-label="Rapid Steps home">
               <Logo width={70} height={28} variant="default" />
             </a>
 
@@ -492,12 +487,14 @@ export default function AppShell() {
                   setSelectedCaseId(tid);
                   const loc = findTopicLocation(tid);
                   if (loc) setHubSystemId(loc.systemId);
-                  window.history.replaceState(null, '', `${ROUTER_BASE}/app/#${tid}`);
+                  window.history.replaceState(null, '', `/app/#${tid}`);
                 }}
                 masteredCases={masteredCases}
                 onToggleMaster={handleToggleMaster}
                 bookmarks={bookmarks}
                 onToggleBookmark={handleToggleBookmark}
+                activeRecall={activeRecall}
+                onToggleActiveRecall={handleToggleActiveRecall}
               />
             </Suspense>
           )}

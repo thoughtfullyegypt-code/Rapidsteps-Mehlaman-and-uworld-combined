@@ -10,13 +10,12 @@ import {
   CardioChapter,
   AtlasQAItem,
 } from '@/lib/atlas-data';
-import { SYSTEMS, getAlsoInLabel } from '@/lib/catalog';
+import { SYSTEMS } from '@/lib/catalog';
 import {
   SystemIcon,
   IconBookOpen,
   IconVideo,
   IconImage,
-  IconTable,
   IconZap,
   IconBookmark,
   IconCheck,
@@ -24,6 +23,7 @@ import {
   IconEye,
   IconEyeOff,
   IconArrows,
+  IconChevronDown,
 } from '@/components/icons/Icons';
 import { cn } from '@/lib/cn';
 
@@ -39,6 +39,68 @@ interface CardioHubProps {
   onToggleMaster: (id: string) => void;
   bookmarks: Set<string>;
   onToggleBookmark: (id: string) => void;
+  activeRecall?: boolean;
+  onToggleActiveRecall?: () => void;
+}
+
+interface GroupedNoteSection {
+  id: string;
+  num: string;
+  title: string;
+  items: CardioBlock[];
+}
+
+/**
+ * Formats a clinical bullet line so leading category labels (e.g. "Mechanism:", "Diagnosis:")
+ * stand out cleanly for rapid 5-second scanning.
+ */
+function renderClinicalLine(text: string): React.ReactNode {
+  const match = text.match(/^([A-Z][A-Za-z0-9 /()&+-]{1,28}:)\s+(.*)$/);
+  if (match) {
+    return (
+      <>
+        <strong className="font-extrabold text-slate-900 dark:text-white">{match[1]} </strong>
+        <span>{match[2]}</span>
+      </>
+    );
+  }
+  return text;
+}
+
+/**
+ * Groups flat topic blocks into categorized sub-sections based on `kind === 'sub'`.
+ * Every non-sub block is preserved in its exact original order.
+ */
+function groupBlocksIntoSubsections(blocks: CardioBlock[], fallbackTitle: string): GroupedNoteSection[] {
+  if (!blocks || blocks.length === 0) return [];
+  const groups: GroupedNoteSection[] = [];
+  let current: GroupedNoteSection | null = null;
+
+  for (const b of blocks) {
+    if (b.kind === 'sub') {
+      const idx = groups.length + 1;
+      current = {
+        id: `subsec-${idx}`,
+        num: String(idx).padStart(2, '0'),
+        title: b.text,
+        items: [],
+      };
+      groups.push(current);
+    } else {
+      if (!current) {
+        current = {
+          id: 'subsec-1',
+          num: '01',
+          title: `${fallbackTitle} — Core Principles`,
+          items: [],
+        };
+        groups.push(current);
+      }
+      current.items.push(b);
+    }
+  }
+
+  return groups.filter((g) => g.items.length > 0);
 }
 
 export function CardioTopicReader({
@@ -66,74 +128,125 @@ export function CardioTopicReader({
   const resolvedCh = chapter ?? loc?.chapter;
   const resolvedSysShort = systemShort ?? loc?.systemShort ?? 'ATLAS';
 
+  const hasVideos = Boolean(topic.videos && topic.videos.length > 0);
+  const hasBlocks = Boolean(topic.blocks && topic.blocks.length > 0);
+  const hasHy = Boolean(
+    (topic.hyImages && topic.hyImages.length > 0) ||
+      (topic.hyBullets && topic.hyBullets.length > 0) ||
+      (topic.hySections && topic.hySections.length > 0)
+  );
+
+  const noteSections = useMemo(
+    () => groupBlocksIntoSubsections(topic.blocks || [], topic.title),
+    [topic.blocks, topic.title]
+  );
+
+  const scrollToSub = (domId: string) => {
+    const el = document.getElementById(domId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
-    <div className={cn('space-y-6 rs-fade-in', compact ? 'text-sm' : 'text-sm md:text-[15px]')}>
-      {/* Topic Header Banner */}
-      <div className="p-5 md:p-6 rounded-2xl bg-gradient-to-br from-[#141C66] via-[#1E2A8A] to-[#2A3FB5] text-white shadow-lg">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/15 text-white/90 backdrop-blur-sm">
-              {resolvedSysShort} {resolvedCh ? `· Ch ${resolvedCh.num} · ${resolvedCh.short}` : ''}
+    <div className={cn('space-y-5 rs-fade-in', compact ? 'text-sm' : 'text-sm md:text-[15px]')}>
+      {/* Clean Editorial Header + Sub-Section Outline */}
+      <div className="p-4 md:p-5 rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 shadow-xs space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400">
+            <span className="text-navy-DEFAULT dark:text-orange-DEFAULT uppercase">
+              {resolvedSysShort}
+              {resolvedCh ? ` · Ch ${resolvedCh.num} · ${resolvedCh.short}` : ''}
             </span>
+            {noteSections.length > 0 && (
+              <span>
+                · {noteSections.length} sub-section{noteSections.length > 1 ? 's' : ''}
+              </span>
+            )}
+            {topic.imageCount > 0 && <span>· {topic.imageCount} fig{topic.imageCount > 1 ? 's' : ''}</span>}
+            {topic.tableCount > 0 && <span>· {topic.tableCount} table{topic.tableCount > 1 ? 's' : ''}</span>}
             {topic.videoCount > 0 && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-500/25 border border-rose-300/20 text-rose-100">
-                <IconVideo size={12} />
-                {topic.videoCount} Video{topic.videoCount > 1 ? 's' : ''}
-              </span>
-            )}
-            {topic.imageCount > 0 && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-slate-100">
-                <IconImage size={12} />
-                {topic.imageCount} Fig{topic.imageCount > 1 ? 's' : ''}
-              </span>
-            )}
-            {topic.tableCount > 0 && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-300/20 text-emerald-100">
-                <IconTable size={12} />
-                {topic.tableCount} Table{topic.tableCount > 1 ? 's' : ''}
+              <span className="text-rose-600 dark:text-rose-400">
+                · {topic.videoCount} video{topic.videoCount > 1 ? 's' : ''}
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => onToggleBookmark(topic.id)}
-              className={cn(
-                'p-1.5 rounded-lg text-xs font-bold transition-all',
-                isBookmarked
-                  ? 'bg-orange-DEFAULT text-navy-950'
-                  : 'bg-white/10 text-white/80 hover:bg-white/20'
-              )}
-              title="Bookmark topic"
-              aria-label="Bookmark topic"
-            >
-              <IconBookmark size={14} filled={isBookmarked} />
-            </button>
-            <button
-              type="button"
-              onClick={() => onToggleMaster(topic.id)}
-              className={cn(
-                'px-2.5 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5',
-                isMastered
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-white/10 text-white/80 hover:bg-white/20'
-              )}
-            >
-              {isMastered && <IconCheck size={12} />}
-              <span>{isMastered ? 'Mastered' : 'Master'}</span>
-            </button>
-          </div>
+          {!compact && (
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => onToggleBookmark(topic.id)}
+                className={cn(
+                  'p-1.5 rounded-lg text-xs font-bold border transition-colors',
+                  isBookmarked
+                    ? 'bg-orange-light dark:bg-orange-DEFAULT/20 border-orange-DEFAULT text-orange-rust dark:text-orange-DEFAULT'
+                    : 'bg-slate-50 dark:bg-navy-800 border-slate-200 dark:border-white/10 text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                )}
+                title="Bookmark topic (B)"
+                aria-label="Bookmark topic"
+              >
+                <IconBookmark size={14} filled={isBookmarked} />
+              </button>
+              <button
+                type="button"
+                onClick={() => onToggleMaster(topic.id)}
+                className={cn(
+                  'px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors inline-flex items-center gap-1.5',
+                  isMastered
+                    ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300'
+                    : 'bg-slate-50 dark:bg-navy-800 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+                )}
+              >
+                {isMastered ? (
+                  <IconCheck size={12} />
+                ) : (
+                  <span className="w-2.5 h-2.5 rounded-full border-2 border-current" />
+                )}
+                <span>{isMastered ? 'Mastered' : 'Master'}</span>
+              </button>
+            </div>
+          )}
         </div>
 
-        <h2 className="text-lg md:text-xl font-extrabold font-display text-white leading-tight">
+        <h2 className="text-lg md:text-2xl font-extrabold font-display text-slate-900 dark:text-white leading-snug">
           {topic.title}
         </h2>
+
+        {/* Categorized Sub-Sections Quick-Jump Pills */}
+        {(noteSections.length > 1 || (topic.hySections && topic.hySections.length > 1)) && (
+          <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 mr-1">
+              Sections:
+            </span>
+            {noteSections.map((sec) => (
+              <button
+                key={sec.id}
+                type="button"
+                onClick={() => scrollToSub(`${topic.id}-${sec.id}`)}
+                className="px-2 py-1 rounded-lg bg-slate-100/90 dark:bg-navy-800 hover:bg-navy-DEFAULT hover:text-white dark:hover:bg-orange-DEFAULT dark:hover:text-navy-950 text-slate-700 dark:text-slate-200 text-[11px] font-semibold transition-colors inline-flex items-center gap-1.5 text-left"
+              >
+                <span className="font-mono text-[10px] font-bold opacity-70">{sec.num}</span>
+                <span className="truncate max-w-[220px]">{sec.title}</span>
+              </button>
+            ))}
+            {hasHy && (
+              <button
+                type="button"
+                onClick={() => scrollToSub(`${topic.id}-hy-pearls`)}
+                className="px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 hover:bg-orange-DEFAULT hover:text-navy-950 text-orange-rust dark:text-orange-DEFAULT border border-amber-200/80 dark:border-amber-800/50 text-[11px] font-bold transition-colors inline-flex items-center gap-1"
+              >
+                <IconZap size={11} />
+                <span>HY Pearls ({topic.hyBullets.length})</span>
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 1. Clinical Videos */}
-      {topic.videos && topic.videos.length > 0 && (
-        <div className="space-y-3">
+      {hasVideos && (
+        <div className="space-y-2.5">
           <div className="rs-section-label text-rose-600 dark:text-rose-400">
             <IconVideo size={14} />
             <span>Clinical Videos</span>
@@ -142,17 +255,17 @@ export function CardioTopicReader({
             {topic.videos.map((v) => (
               <div
                 key={v.src}
-                className="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-950 shadow-sm rs-video-card"
+                className="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-950 shadow-xs"
               >
                 <video
                   controls
                   preload="metadata"
                   playsInline
-                  className="w-full max-h-[280px] bg-black object-contain"
+                  className="w-full max-h-[260px] bg-black object-contain"
                   src={v.src}
                 />
-                <div className="p-3.5 bg-white dark:bg-navy-900 border-t border-slate-200 dark:border-white/10">
-                  <div className="font-bold text-sm text-navy-DEFAULT dark:text-white mb-0.5">{v.title}</div>
+                <div className="p-3 bg-white dark:bg-navy-900 border-t border-slate-200 dark:border-white/10">
+                  <div className="font-bold text-xs text-slate-900 dark:text-white mb-0.5">{v.title}</div>
                   <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{v.desc}</p>
                 </div>
               </div>
@@ -161,157 +274,167 @@ export function CardioTopicReader({
         </div>
       )}
 
-      {/* 2. Core Notes, Figures & Tables — empty state when no blocks */}
-      {(!topic.blocks || topic.blocks.length === 0) && !(
-        (topic.hyBullets && topic.hyBullets.length > 0) ||
-        (topic.hySections && topic.hySections.length > 0) ||
-        (topic.hyImages && topic.hyImages.length > 0)
-      ) && (
-        <div className="p-6 rounded-2xl bg-slate-50 dark:bg-navy-950/50 border border-dashed border-slate-200 dark:border-white/10 text-center space-y-1">
-          <p className="text-sm font-bold text-slate-500 dark:text-slate-400">Full notes are being added for this topic.</p>
-          <p className="text-xs text-slate-400 dark:text-slate-500">Check back soon — explore the High-Yield Pearls below for the most board-tested points.</p>
+      {/* 2. Core Notes, Figures & Tables — empty state when no blocks and no HY */}
+      {!hasBlocks && !hasHy && (
+        <div className="p-6 rounded-xl bg-white dark:bg-navy-900 border border-dashed border-slate-200 dark:border-white/10 text-center space-y-1">
+          <p className="text-sm font-bold text-slate-500 dark:text-slate-400">
+            No extra narrative blocks for this subtopic.
+          </p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">
+            Use the Q&amp;A tab or neighboring chapter topics for related board vignettes.
+          </p>
         </div>
       )}
 
-      {/* 2b. Core Notes, Figures & Tables */}
-      {topic.blocks && topic.blocks.length > 0 && (
+      {/* 2b. Categorized Core Note Sub-Sections */}
+      {noteSections.length > 0 && (
         <div className="space-y-3">
           <div className="rs-section-label text-navy-DEFAULT dark:text-orange-DEFAULT">
             <IconBookOpen size={14} />
-            <span>Core Notes</span>
+            <span>Core Notes ({noteSections.length} Categorized Section{noteSections.length > 1 ? 's' : ''})</span>
           </div>
 
-          <div className="p-5 md:p-6 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 space-y-3.5 shadow-xs">
-            {topic.blocks.map((b: CardioBlock, idx: number) => {
-              if (b.kind === 'sub') {
-                return (
-                  <h3
-                    key={idx}
-                    className="pt-3 first:pt-0 text-base md:text-lg font-extrabold font-display text-navy-DEFAULT dark:text-orange-DEFAULT border-b border-slate-100 dark:border-white/10 pb-1.5"
-                  >
-                    {b.text}
+          <div className="space-y-3.5">
+            {noteSections.map((sec) => (
+              <section
+                key={sec.id}
+                id={`${topic.id}-${sec.id}`}
+                className="rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 overflow-hidden shadow-2xs scroll-mt-4"
+              >
+                {/* Sub-Section Category Header Bar */}
+                <div className="px-4 py-2.5 bg-slate-50/90 dark:bg-navy-950/70 border-b border-slate-200/80 dark:border-white/10 flex items-center gap-2.5">
+                  <span className="px-1.5 py-0.5 rounded bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 font-mono text-[10px] font-extrabold shrink-0">
+                    {sec.num}
+                  </span>
+                  <h3 className="text-xs sm:text-sm font-extrabold font-display text-slate-900 dark:text-white leading-snug">
+                    {sec.title}
                   </h3>
-                );
-              }
+                </div>
 
-              if (b.kind === 'p') {
-                return (
-                  <div
-                    key={idx}
-                    className={cn(
-                      'leading-relaxed text-slate-700 dark:text-slate-200 flex items-start gap-2.5',
-                      b.level === 1 && 'pl-5',
-                      b.level >= 2 && 'pl-9'
-                    )}
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT mt-2.5 select-none shrink-0" />
-                    <span>{b.text}</span>
-                  </div>
-                );
-              }
+                {/* Sub-Section Content Items */}
+                <div className="p-4 md:p-5 space-y-3">
+                  {sec.items.map((b: CardioBlock, idx: number) => {
+                    if (b.kind === 'p') {
+                      return (
+                        <div
+                          key={idx}
+                          className={cn(
+                            'leading-relaxed text-slate-700 dark:text-slate-200 flex items-start gap-2.5',
+                            b.level === 1 && 'pl-4',
+                            b.level >= 2 && 'pl-8'
+                          )}
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-navy-DEFAULT/60 dark:bg-orange-DEFAULT/80 mt-2.5 select-none shrink-0" />
+                          <span>{renderClinicalLine(b.text)}</span>
+                        </div>
+                      );
+                    }
 
-              if (b.kind === 'img') {
-                return (
-                  <figure
-                    key={idx}
-                    className="my-3 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950/80 p-2.5"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => onOpenLightbox(b.src, b.caption)}
-                      className="block w-full group relative cursor-zoom-in"
-                      title="Click to enlarge"
-                    >
-                      <img
-                        src={b.src}
-                        alt={b.caption}
-                        loading="lazy"
-                        className="max-h-[62vh] md:max-h-[380px] w-auto max-w-full mx-auto rounded-lg object-contain transition-transform duration-200 group-hover:scale-[1.02]"
-                      />
-                      <span className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-navy-950/75 text-white text-[10px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm inline-flex items-center gap-1">
-                        <IconZoomIn size={11} /> Zoom
-                      </span>
-                    </button>
-                    {b.caption && (
-                      <figcaption className="text-center text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium">
-                        {b.caption}
-                      </figcaption>
-                    )}
-                  </figure>
-                );
-              }
+                    if (b.kind === 'img') {
+                      return (
+                        <figure
+                          key={idx}
+                          className="my-2.5 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950/80 p-2"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => onOpenLightbox(b.src, b.caption || sec.title)}
+                            className="block w-full group relative cursor-zoom-in"
+                            title="Click to enlarge"
+                          >
+                            <img
+                              src={b.src}
+                              alt={b.caption || sec.title}
+                              loading="lazy"
+                              className="max-h-[360px] w-auto mx-auto rounded-lg object-contain"
+                            />
+                            <span className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-navy-950/75 text-white text-[10px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm inline-flex items-center gap-1">
+                              <IconZoomIn size={11} /> Zoom
+                            </span>
+                          </button>
+                          {b.caption && (
+                            <figcaption className="text-center text-xs text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
+                              {b.caption}
+                            </figcaption>
+                          )}
+                        </figure>
+                      );
+                    }
 
-              if (b.kind === 'table') {
-                const hasBanner = b.rows.length > 1 && b.rows[0].length === 1 && b.rows[1].length > 1;
-                const bannerTitle = hasBanner ? b.rows[0][0] : null;
-                const dataRows = hasBanner ? b.rows.slice(1) : b.rows;
-                const headerRow = dataRows[0] || [];
-                const bodyRows = dataRows.slice(1);
+                    if (b.kind === 'table') {
+                      const hasBanner = b.rows.length > 1 && b.rows[0].length === 1 && b.rows[1].length > 1;
+                      const bannerTitle = hasBanner ? b.rows[0][0] : null;
+                      const dataRows = hasBanner ? b.rows.slice(1) : b.rows;
+                      const headerRow = dataRows[0] || [];
+                      const bodyRows = dataRows.slice(1);
 
-                return (
-                  <div
-                    key={idx}
-                    className="my-4 overflow-x-auto rounded-xl border border-slate-200 dark:border-white/15 shadow-xs"
-                  >
-                    {bannerTitle && (
-                      <div className="px-4 py-2 bg-navy-DEFAULT text-white font-extrabold text-xs uppercase tracking-wider">
-                        {bannerTitle}
-                      </div>
-                    )}
-                    <table className="w-full text-left border-collapse text-xs sm:text-[13px]">
-                      {headerRow.length > 0 && (
-                        <thead>
-                          <tr className="bg-slate-100 dark:bg-navy-950 text-navy-DEFAULT dark:text-orange-DEFAULT border-b border-slate-200 dark:border-white/10">
-                            {headerRow.map((cell, ci) => (
-                              <th key={ci} className="py-2.5 px-3.5 font-extrabold">
-                                {cell}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                      )}
-                      <tbody className="divide-y divide-slate-200/70 dark:divide-white/10 bg-white dark:bg-navy-900/60">
-                        {bodyRows.map((row, ri) => (
-                          <tr key={ri} className="hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors">
-                            {row.map((cell, ci) => (
-                              <td
-                                key={ci}
-                                className={cn(
-                                  'py-2.5 px-3.5 align-top leading-relaxed text-slate-700 dark:text-slate-200',
-                                  ci === 0 && row.length > 1 && 'font-bold text-slate-900 dark:text-white'
-                                )}
-                              >
-                                {cell}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                );
-              }
+                      return (
+                        <div
+                          key={idx}
+                          className="my-2.5 overflow-x-auto rounded-xl border border-slate-200 dark:border-white/15"
+                        >
+                          {bannerTitle && (
+                            <div className="px-3.5 py-2 bg-slate-100 dark:bg-navy-950 text-slate-900 dark:text-white font-extrabold text-xs uppercase tracking-wider border-b border-slate-200 dark:border-white/10">
+                              {bannerTitle}
+                            </div>
+                          )}
+                          <table className="w-full text-left border-collapse text-xs sm:text-[13px]">
+                            {headerRow.length > 0 && (
+                              <thead>
+                                <tr className="bg-slate-50 dark:bg-navy-950 text-navy-DEFAULT dark:text-orange-DEFAULT border-b border-slate-200 dark:border-white/10">
+                                  {headerRow.map((cell, ci) => (
+                                    <th key={ci} className="py-2 px-3 font-extrabold">
+                                      {cell}
+                                    </th>
+                                  ))}
+                                </tr>
+                              </thead>
+                            )}
+                            <tbody className="divide-y divide-slate-200/70 dark:divide-white/10 bg-white dark:bg-navy-900/60">
+                              {bodyRows.map((row, ri) => (
+                                <tr key={ri} className="hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors">
+                                  {row.map((cell, ci) => (
+                                    <td
+                                      key={ci}
+                                      className={cn(
+                                        'py-2 px-3 align-top leading-relaxed text-slate-700 dark:text-slate-200',
+                                        ci === 0 && row.length > 1 && 'font-bold text-slate-900 dark:text-white'
+                                      )}
+                                    >
+                                      {cell}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      );
+                    }
 
-              return null;
-            })}
+                    return null;
+                  })}
+                </div>
+              </section>
+            ))}
           </div>
         </div>
       )}
 
-      {/* 3. High-Yield Exam Pearls */}
-      {((topic.hyImages && topic.hyImages.length > 0) || (topic.hyBullets && topic.hyBullets.length > 0)) && (
-        <div className="space-y-3">
+      {/* 3. Categorized High-Yield Exam Pearls */}
+      {hasHy && (
+        <div id={`${topic.id}-hy-pearls`} className="space-y-3 scroll-mt-4">
           <div className="rs-section-label text-orange-rust dark:text-orange-DEFAULT">
             <IconZap size={14} />
             <span>High-Yield Pearls</span>
           </div>
 
           {topic.hyImages && topic.hyImages.length > 0 && (
-            <div className={cn('grid gap-4', topic.hyImages.length > 1 && !compact ? 'md:grid-cols-2' : 'grid-cols-1')}>
+            <div className={cn('grid gap-3', topic.hyImages.length > 1 && !compact ? 'md:grid-cols-2' : 'grid-cols-1')}>
               {topic.hyImages.map((im) => (
                 <figure
                   key={im.src}
-                  className="rounded-xl overflow-hidden border border-orange-border dark:border-orange-DEFAULT/30 bg-[#FFFDF9] dark:bg-navy-900 p-2.5 flex flex-col justify-between"
+                  className="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 p-2.5 flex flex-col justify-between"
                 >
                   <button
                     type="button"
@@ -322,10 +445,10 @@ export function CardioTopicReader({
                       src={im.src}
                       alt={im.caption}
                       loading="lazy"
-                      className="max-h-[52vh] md:max-h-[260px] w-auto max-w-full mx-auto rounded-lg object-contain bg-white p-1"
+                      className="max-h-[240px] w-auto mx-auto rounded-lg object-contain bg-slate-50 dark:bg-navy-950 p-1"
                     />
                   </button>
-                  <figcaption className="text-xs text-slate-700 dark:text-slate-200 font-semibold mt-2 px-1 leading-snug">
+                  <figcaption className="text-xs text-slate-700 dark:text-slate-200 font-medium mt-2 px-1 leading-snug">
                     {im.caption}
                   </figcaption>
                 </figure>
@@ -333,26 +456,44 @@ export function CardioTopicReader({
             </div>
           )}
 
-          {topic.hySections && topic.hySections.length > 0 && (
-            <div className="p-5 md:p-6 rounded-2xl bg-[#FFFBEB] dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 space-y-4">
+          {topic.hySections && topic.hySections.length > 0 ? (
+            <div className="space-y-3">
               {topic.hySections.map((sec, si) => (
-                <div key={si} className="space-y-2">
-                  {sec.heading && (
-                    <h4 className="text-sm font-extrabold font-display text-navy-DEFAULT dark:text-orange-DEFAULT border-b border-amber-200/80 dark:border-amber-800/40 pb-1">
-                      {sec.heading}
+                <section
+                  key={si}
+                  className="rounded-xl bg-amber-50/45 dark:bg-amber-950/15 border border-amber-200/80 dark:border-amber-800/50 overflow-hidden"
+                >
+                  <div className="px-4 py-2 bg-amber-100/60 dark:bg-amber-950/40 border-b border-amber-200/70 dark:border-amber-800/40 flex items-center gap-2">
+                    <span className="px-1.5 py-0.5 rounded bg-orange-DEFAULT text-navy-950 font-mono text-[10px] font-extrabold shrink-0">
+                      HY {String(si + 1).padStart(2, '0')}
+                    </span>
+                    <h4 className="text-xs sm:text-sm font-extrabold font-display text-slate-900 dark:text-amber-100">
+                      {sec.heading || `${topic.title} — High-Yield Pearls`}
                     </h4>
-                  )}
-                  <div className="space-y-1.5">
+                  </div>
+                  <div className="p-4 space-y-1.5">
                     {sec.bullets.map((b, i) => (
                       <div key={i} className="flex items-start gap-2.5 text-slate-800 dark:text-slate-200 leading-relaxed">
-                        <span className="w-1.5 h-1.5 rounded-sm bg-orange-rust dark:bg-orange-DEFAULT mt-2 select-none shrink-0" />
-                        <span>{b}</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT mt-2 select-none shrink-0" />
+                        <span>{renderClinicalLine(b)}</span>
                       </div>
                     ))}
                   </div>
-                </div>
+                </section>
               ))}
             </div>
+          ) : (
+            topic.hyBullets &&
+            topic.hyBullets.length > 0 && (
+              <div className="p-4 md:p-5 rounded-xl bg-amber-50/45 dark:bg-amber-950/15 border border-amber-200/80 dark:border-amber-800/50 space-y-1.5">
+                {topic.hyBullets.map((b, i) => (
+                  <div key={i} className="flex items-start gap-2.5 text-slate-800 dark:text-slate-200 leading-relaxed">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT mt-2 select-none shrink-0" />
+                    <span>{renderClinicalLine(b)}</span>
+                  </div>
+                ))}
+              </div>
+            )
           )}
         </div>
       )}
@@ -372,61 +513,47 @@ export default function CardioHub({
   onToggleMaster,
   bookmarks,
   onToggleBookmark,
+  activeRecall = false,
+  onToggleActiveRecall,
 }: CardioHubProps) {
-  const derivedSysId = useMemo(() => {
-    if (activeSystemId) return activeSystemId;
-    const loc = findTopicLocation(selectedTopicId);
-    return loc?.systemId || 'cardio';
-  }, [activeSystemId, selectedTopicId]);
-
-  const [internalSysId, setInternalSysId] = useState<string>(derivedSysId);
-  useEffect(() => {
-    setInternalSysId(derivedSysId);
-  }, [derivedSysId]);
-
-  const currentSysId = onSelectSystem ? derivedSysId : internalSysId;
+  const currentSysId = activeSystemId || 'cardio';
   const { data: sysData, loading } = useSystemAtlas(currentSysId);
 
   const [mode, setMode] = useState<HubMode>('chapters');
-  // Mobile (<md): the chapters view is a single column, so the topic list and
-  // the reader stack — the reader ends up squeezed below the list. On phones,
-  // show one at a time: tapping a topic opens the reader full-screen.
-  const [mobileReaderOpen, setMobileReaderOpen] = useState(false);
   const [chapterFilter, setChapterFilter] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [lightbox, setLightbox] = useState<{ src: string; caption: string } | null>(null);
-  const activeTopicRef = useRef<HTMLButtonElement>(null);
-
-  // Q&A / MCQ / Arrow Vault state
-  const [qaSearch, setQaSearch] = useState('');
+  const [collapsedChapters, setCollapsedChapters] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [qaSearch, setQaSearch] = useState<string>('');
   const [qaTypeFilter, setQaTypeFilter] = useState<QaTypeFilter>('all');
-  const [qaRecallMode, setQaRecallMode] = useState(false);
+  const [qaRecallMode, setQaRecallMode] = useState<boolean>(activeRecall);
   const [revealedQaIds, setRevealedQaIds] = useState<Set<string>>(new Set());
   const [mcqPicked, setMcqPicked] = useState<Record<string, number>>({});
+  const [lightbox, setLightbox] = useState<{ src: string; caption: string } | null>(null);
 
-  // Reset filters when switching systems
+  // Sync with global header Active Recall toggle
+  useEffect(() => {
+    setQaRecallMode(activeRecall);
+    if (activeRecall) {
+      setRevealedQaIds(new Set());
+    }
+  }, [activeRecall]);
+
+  const activeTopicRef = useRef<HTMLButtonElement | null>(null);
+
+  // Reset filters when switching Organ Systems
   useEffect(() => {
     setChapterFilter('all');
+    setCollapsedChapters(new Set());
     setSearchQuery('');
     setQaSearch('');
     setQaTypeFilter('all');
-    setMobileReaderOpen(false);
-    if (mode === 'videos' && currentSysId !== 'cardio') {
-      setMode('chapters');
+    if (mode === 'videos') {
+      const mSys = ATLAS_MANIFEST.systems.find((s) => s.systemId === currentSysId);
+      if (mSys && mSys.stats.videos === 0) {
+        setMode('chapters');
+      }
     }
   }, [currentSysId]);
-
-  const activeTopic = useMemo(() => {
-    if (!sysData || sysData.topics.length === 0) return null;
-    const found = sysData.topics.find((t) => t.id === selectedTopicId);
-    return found || sysData.topics[0];
-  }, [sysData, selectedTopicId]);
-
-  useEffect(() => {
-    if (activeTopicRef.current && mode === 'chapters') {
-      activeTopicRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
-  }, [activeTopic?.id, mode]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -438,6 +565,21 @@ export default function CardioHub({
     return () => window.removeEventListener('keydown', onKey);
   }, [lightbox]);
 
+  useEffect(() => {
+    if (activeTopicRef.current) {
+      activeTopicRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [selectedTopicId]);
+
+  const activeTopic: CardioTopic | null = useMemo(() => {
+    if (!sysData || sysData.topics.length === 0) return null;
+    if (selectedTopicId) {
+      const found = sysData.topics.find((t) => t.id === selectedTopicId);
+      if (found) return found;
+    }
+    return sysData.topics[0];
+  }, [sysData, selectedTopicId]);
+
   const systemImages = useMemo(() => (sysData ? extractSystemImages(sysData) : []), [sysData]);
   const systemVideos = useMemo(() => (sysData ? extractSystemVideos(sysData) : []), [sysData]);
 
@@ -448,11 +590,31 @@ export default function CardioHub({
       if (chapterFilter !== 'all' && t.chapterId !== chapterFilter) return false;
       if (!q) return true;
       if (t.title.toLowerCase().includes(q) || t.summary.toLowerCase().includes(q)) return true;
+      if (t.hyBullets.some((b) => b.toLowerCase().includes(q))) return true;
       if (t.blocks.some((b) => 'text' in b && b.text.toLowerCase().includes(q))) return true;
-      if (t.hyBullets.some((hb) => hb.toLowerCase().includes(q))) return true;
       return false;
     });
   }, [sysData, chapterFilter, searchQuery]);
+
+  // Group filteredTopics by Chapter so the sidebar is cleanly categorized into sub-sections
+  const groupedSidebarChapters = useMemo(() => {
+    if (!sysData) return [];
+    return sysData.chapters
+      .map((ch) => ({
+        chapter: ch,
+        topics: filteredTopics.filter((t) => t.chapterId === ch.id),
+      }))
+      .filter((g) => g.topics.length > 0);
+  }, [sysData, filteredTopics]);
+
+  const toggleChapterCollapse = (chId: string) => {
+    setCollapsedChapters((prev) => {
+      const next = new Set(prev);
+      if (next.has(chId)) next.delete(chId);
+      else next.add(chId);
+      return next;
+    });
+  };
 
   const filteredImages = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -498,19 +660,16 @@ export default function CardioHub({
   };
 
   const handleSystemSwitch = (sysId: string) => {
-    if (onSelectSystem) onSelectSystem(sysId);
-    else setInternalSysId(sysId);
+    onSelectSystem?.(sysId);
     const sysStub = ATLAS_MANIFEST.systems.find((s) => s.systemId === sysId);
     if (sysStub && sysStub.topics[0]) {
       onSelectTopic(sysStub.topics[0].id);
     }
   };
 
-  const sysColorMeta = SYSTEMS.find((s) => s.id === currentSysId);
   const manifestSys = ATLAS_MANIFEST.systems.find((s) => s.systemId === currentSysId) || ATLAS_MANIFEST.systems[0];
   const stats = sysData?.stats || manifestSys.stats;
   const masteredCount = manifestSys.topics.filter((t) => masteredCases.has(t.id)).length;
-  const progressPct = stats.topics > 0 ? Math.round((masteredCount / stats.topics) * 100) : 0;
 
   const chMap = useMemo(
     () => new Map((sysData?.chapters || manifestSys.chapters).map((c) => [c.id, c])),
@@ -519,9 +678,9 @@ export default function CardioHub({
 
   return (
     <div className="h-full flex flex-col overflow-hidden bg-slate-50 dark:bg-navy-950">
-      {/* 16-System Switcher Bar */}
-      <div className="flex-shrink-0 px-3 md:px-5 py-2 bg-slate-100/80 dark:bg-navy-950 border-b border-slate-200/80 dark:border-white/[0.07]">
-        <div className="rs-pill-strip flex items-center gap-1.5">
+      {/* 1. Compact 16-System Switcher Bar */}
+      <div className="flex-shrink-0 px-3 md:px-4 py-1.5 bg-white dark:bg-navy-900 border-b border-slate-200/80 dark:border-white/[0.07]">
+        <div className="rs-pill-strip flex items-center gap-1">
           {ATLAS_MANIFEST.systems.map((sys) => {
             const active = sys.systemId === currentSysId;
             const catMeta = SYSTEMS.find((s) => s.id === sys.systemId);
@@ -531,273 +690,249 @@ export default function CardioHub({
                 type="button"
                 onClick={() => handleSystemSwitch(sys.systemId)}
                 className={cn(
-                  'min-h-[44px] px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all inline-flex items-center gap-1.5 border',
+                  'px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-colors inline-flex items-center gap-1.5',
                   active
-                    ? 'bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-navy-DEFAULT dark:border-orange-DEFAULT shadow-xs'
-                    : 'bg-white dark:bg-navy-900 text-slate-600 dark:text-slate-300 border-slate-200/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20'
+                    ? 'bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950'
+                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                 )}
               >
-                <SystemIcon systemId={sys.systemId} size={14} className={active ? '' : 'opacity-80'} />
+                <SystemIcon systemId={sys.systemId} size={13} className={active ? '' : 'opacity-75'} />
                 <span>{catMeta?.shortName || sys.short}</span>
-                <span
-                  className={cn(
-                    'text-[10px] font-mono px-1.5 py-0.2 rounded-md',
-                    active
-                      ? 'bg-white/20 dark:bg-navy-950/15 text-white dark:text-navy-950'
-                      : 'bg-slate-100 dark:bg-navy-800 text-slate-400'
-                  )}
-                >
-                  {sys.stats.topics}
-                </span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Top System Command Bar */}
-      <div className="flex-shrink-0 px-4 md:px-5 py-2.5 bg-white dark:bg-navy-900 border-b border-slate-200 dark:border-white/10">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center shadow-xs shrink-0"
-              style={{
-                backgroundColor: sysColorMeta?.bgTint || '#EEF2FF',
-                color: sysColorMeta?.badgeText || '#1E2A8A',
-                border: `1px solid ${sysColorMeta?.borderTint || '#C7D2FE'}`,
-              }}
-            >
-              <SystemIcon systemId={currentSysId} size={18} />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h1 className="text-sm font-extrabold font-display text-navy-DEFAULT dark:text-white truncate">
-                  {manifestSys.title}
-                </h1>
-                <span className="hidden sm:inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 whitespace-nowrap">
-                  {masteredCount}/{stats.topics} mastered
-                </span>
+      {/* 2. Unified Single Command & Filter Bar */}
+      <div className="flex-shrink-0 px-3 md:px-5 py-2 bg-slate-50/90 dark:bg-navy-950/90 border-b border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 min-w-0 flex-1">
+          <div className="flex items-center gap-2 pr-1">
+            <h1 className="text-xs sm:text-sm font-extrabold font-display text-slate-900 dark:text-white truncate">
+              {manifestSys.title}
+            </h1>
+            <span className="text-[10px] font-mono text-slate-400">
+              {masteredCount}/{stats.topics}
+            </span>
+          </div>
+
+          {(mode === 'chapters' || mode === 'images') && (
+            <>
+              <div className="relative w-44 sm:w-56">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={mode === 'chapters' ? 'Filter topics & notes…' : 'Filter figures…'}
+                  className="w-full pl-8 pr-2.5 py-1 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 text-xs text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-navy-DEFAULT"
+                />
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                {stats.chapters} Ch · {stats.topics} Topics · {stats.totalImages} Figs · {stats.tables} Tables
-                {stats.videos > 0 ? ` · ${stats.videos} Videos` : ''} · {stats.rapidFireQAs} Q&amp;As
-              </p>
-            </div>
-          </div>
 
-          {/* Sub-View Tabs */}
-          <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-slate-100 dark:bg-navy-950 border border-slate-200 dark:border-white/10">
-            <button
-              type="button"
-              onClick={() => setMode('chapters')}
-              className={cn(
-                'min-h-[44px] px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
-                mode === 'chapters'
-                  ? 'bg-navy-DEFAULT text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
+              {manifestSys.chapters.length > 1 && (
+                <select
+                  aria-label="Filter by chapter"
+                  value={chapterFilter}
+                  onChange={(e) => setChapterFilter(e.target.value)}
+                  className="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none max-w-[210px] truncate"
+                >
+                  <option value="all">All {manifestSys.chapters.length} Sub-Sections</option>
+                  {manifestSys.chapters.map((ch) => (
+                    <option key={ch.id} value={ch.id}>
+                      {ch.num} · {ch.title}
+                    </option>
+                  ))}
+                </select>
               )}
-            >
-              <IconBookOpen size={13} />
-              <span className="hidden sm:inline">Chapters ({stats.topics})</span>
-              <span className="sm:hidden">{stats.topics}</span>
-            </button>
-
-            {stats.videos > 0 && (
-              <button
-                type="button"
-                onClick={() => setMode('videos')}
-                className={cn(
-                  'min-h-[44px] px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
-                  mode === 'videos'
-                    ? 'bg-navy-DEFAULT text-white shadow-sm'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
-                )}
-              >
-                <IconVideo size={13} />
-                <span className="hidden sm:inline">Videos ({stats.videos})</span>
-                <span className="sm:hidden">{stats.videos}</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setMode('images')}
-              className={cn(
-                'min-h-[44px] px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
-                mode === 'images'
-                  ? 'bg-navy-DEFAULT text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
-              )}
-            >
-              <IconImage size={13} />
-              <span className="hidden sm:inline">Figures ({stats.totalImages})</span>
-              <span className="sm:hidden">{stats.totalImages}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setMode('qa')}
-              className={cn(
-                'min-h-[44px] px-2.5 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap inline-flex items-center gap-1.5',
-                mode === 'qa'
-                  ? 'bg-navy-DEFAULT text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
-              )}
-            >
-              <IconZap size={13} />
-              <span className="hidden sm:inline">Q&amp;A ({stats.rapidFireQAs})</span>
-              <span className="sm:hidden">{stats.rapidFireQAs}</span>
-            </button>
-          </div>
+            </>
+          )}
         </div>
 
-        {/* Progress Bar */}
-        <div className="mt-2 rs-progress-bar">
-          <div className={cn('rs-progress-fill', progressPct === 100 && 'complete')} style={{ width: `${progressPct}%` }} />
+        {/* Sub-View Mode Tabs */}
+        <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-slate-200/70 dark:bg-navy-900 border border-slate-200 dark:border-white/10">
+          <button
+            type="button"
+            onClick={() => setMode('chapters')}
+            className={cn(
+              'px-2.5 py-1 rounded-md text-xs font-bold transition-colors whitespace-nowrap inline-flex items-center gap-1.5',
+              mode === 'chapters'
+                ? 'bg-white dark:bg-navy-800 text-navy-DEFAULT dark:text-orange-DEFAULT shadow-2xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            )}
+          >
+            <IconBookOpen size={12} />
+            <span>Notes ({stats.topics})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMode('images')}
+            className={cn(
+              'px-2.5 py-1 rounded-md text-xs font-bold transition-colors whitespace-nowrap inline-flex items-center gap-1.5',
+              mode === 'images'
+                ? 'bg-white dark:bg-navy-800 text-navy-DEFAULT dark:text-orange-DEFAULT shadow-2xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            )}
+          >
+            <IconImage size={12} />
+            <span>Figures ({stats.totalImages})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMode('qa')}
+            className={cn(
+              'px-2.5 py-1 rounded-md text-xs font-bold transition-colors whitespace-nowrap inline-flex items-center gap-1.5',
+              mode === 'qa'
+                ? 'bg-white dark:bg-navy-800 text-navy-DEFAULT dark:text-orange-DEFAULT shadow-2xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            )}
+          >
+            <IconZap size={12} />
+            <span>Q&amp;A ({stats.rapidFireQAs})</span>
+          </button>
+
+          {stats.videos > 0 && (
+            <button
+              type="button"
+              onClick={() => setMode('videos')}
+              className={cn(
+                'px-2.5 py-1 rounded-md text-xs font-bold transition-colors whitespace-nowrap inline-flex items-center gap-1.5',
+                mode === 'videos'
+                  ? 'bg-white dark:bg-navy-800 text-navy-DEFAULT dark:text-orange-DEFAULT shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              )}
+            >
+              <IconVideo size={12} />
+              <span>Videos ({stats.videos})</span>
+            </button>
+          )}
         </div>
       </div>
-
-      {/* Chapter Filter Strip */}
-      {(mode === 'chapters' || mode === 'images') && (
-        <div className={cn('flex-shrink-0 px-4 md:px-5 py-2 bg-white/60 dark:bg-navy-900/40 border-b border-slate-200/60 dark:border-white/[0.06] flex flex-wrap items-center gap-2', mobileReaderOpen && mode === 'chapters' && 'hidden md:flex')}>
-          <div className="relative flex-shrink-0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={mode === 'chapters' ? 'Search topics & notes…' : 'Filter figures…'}
-              className="w-48 sm:w-56 pl-8 pr-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-950 text-xs text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-navy-DEFAULT"
-            />
-          </div>
-          <div className="rs-pill-strip flex items-center gap-1 flex-1 pb-0.5">
-            <button
-              type="button"
-              onClick={() => setChapterFilter('all')}
-              className={cn(
-                'px-2.5 py-1 rounded-md text-[11px] font-bold whitespace-nowrap transition-colors',
-                chapterFilter === 'all'
-                  ? 'bg-orange-DEFAULT text-navy-950'
-                  : 'bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-navy-700'
-              )}
-            >
-              All Chapters
-            </button>
-            {manifestSys.chapters.map((ch) => (
-              <button
-                key={ch.id}
-                type="button"
-                onClick={() => setChapterFilter(ch.id)}
-                className={cn(
-                  'px-2.5 py-1 rounded-md text-[11px] font-bold whitespace-nowrap transition-colors',
-                  chapterFilter === ch.id
-                    ? 'bg-orange-DEFAULT text-navy-950'
-                    : 'bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-navy-700'
-                )}
-              >
-                {ch.num} {ch.short}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Loading State */}
       {loading && !sysData && (
         <div className="flex-1 flex items-center justify-center p-8">
           <div className="text-center space-y-2">
-            <div className="w-10 h-10 rounded-xl bg-navy-DEFAULT/10 dark:bg-orange-DEFAULT/15 text-navy-DEFAULT dark:text-orange-DEFAULT flex items-center justify-center mx-auto animate-pulse">
-              <SystemIcon systemId={currentSysId} size={22} />
+            <div className="w-9 h-9 rounded-xl bg-navy-DEFAULT/10 dark:bg-orange-DEFAULT/15 text-navy-DEFAULT dark:text-orange-DEFAULT flex items-center justify-center mx-auto animate-pulse">
+              <SystemIcon systemId={currentSysId} size={20} />
             </div>
             <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
-              Loading {manifestSys.title} Atlas…
+              Loading {manifestSys.title}…
             </p>
           </div>
         </div>
       )}
 
-      {/* ==================== MODE 1: CHAPTERS ==================== */}
+      {/* ==================== MODE 1: CHAPTERS (CATEGORIZED BY SUB-SECTION) ==================== */}
       {sysData && mode === 'chapters' && (
-        <div className="flex-1 overflow-hidden grid md:grid-cols-[320px_1fr] lg:grid-cols-[360px_1fr]">
-          {/* Left Topic Index */}
-          <div className={cn('h-full overflow-y-auto border-r border-slate-200 dark:border-white/10 p-2.5 space-y-1 bg-white/50 dark:bg-navy-900/30', mobileReaderOpen && 'hidden md:block')}>
-            <div className="px-2 py-1 text-[10px] font-mono font-bold uppercase text-slate-400 flex items-center justify-between">
-              <span>{filteredTopics.length} topics</span>
-              <span className="text-emerald-600 dark:text-emerald-400">{masteredCount} mastered</span>
-            </div>
-            {filteredTopics.map((t) => {
-              const isSelected = activeTopic?.id === t.id;
-              const isMast = masteredCases.has(t.id);
-              const ch = chMap.get(t.chapterId);
+        <div className="flex-1 overflow-hidden grid md:grid-cols-[310px_1fr] lg:grid-cols-[350px_1fr]">
+          {/* Categorized Left Topic Index (Grouped by Chapter Sub-Sections) */}
+          <div className="h-full overflow-y-auto border-r border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900/50">
+            {groupedSidebarChapters.map(({ chapter: ch, topics }) => {
+              const isCollapsed = collapsedChapters.has(ch.id) && !searchQuery.trim();
+              const chMastered = topics.filter((t) => masteredCases.has(t.id)).length;
+
               return (
-                <button
-                  key={t.id}
-                  ref={isSelected ? activeTopicRef : undefined}
-                  type="button"
-                  onClick={() => { onSelectTopic(t.id); setMobileReaderOpen(true); }}
-                  className={cn(
-                    'rs-topic-card rs-scroll-into-view w-full text-left p-2.5 rounded-xl border',
-                    isSelected
-                      ? 'bg-orange-light/70 dark:bg-orange-DEFAULT/15 border-orange-DEFAULT shadow-sm'
-                      : 'bg-white dark:bg-navy-900/60 border-slate-200/60 dark:border-white/[0.06] hover:border-slate-300 dark:hover:border-white/15'
+                <div key={ch.id} className="border-b border-slate-200/80 dark:border-white/[0.07]">
+                  {/* Sticky Chapter Category Header */}
+                  <button
+                    type="button"
+                    onClick={() => toggleChapterCollapse(ch.id)}
+                    className="sticky top-0 z-10 w-full px-3 py-2 bg-slate-100/95 dark:bg-navy-950/95 backdrop-blur-xs flex items-center justify-between gap-2 text-left hover:bg-slate-200/70 dark:hover:bg-navy-900 transition-colors"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="px-1.5 py-0.5 rounded bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 font-mono text-[10px] font-extrabold shrink-0">
+                        {ch.num}
+                      </span>
+                      <span className="text-xs font-extrabold text-slate-900 dark:text-white truncate">
+                        {ch.title}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                        {chMastered}/{topics.length}
+                      </span>
+                      <IconChevronDown
+                        size={12}
+                        className={cn(
+                          'text-slate-400 transition-transform duration-150',
+                          !isCollapsed && 'rotate-180'
+                        )}
+                      />
+                    </div>
+                  </button>
+
+                  {/* Topics inside this Sub-Section */}
+                  {!isCollapsed && (
+                    <div className="divide-y divide-slate-100 dark:divide-white/[0.04]">
+                      {topics.map((t) => {
+                        const isSelected = activeTopic?.id === t.id;
+                        const isMast = masteredCases.has(t.id);
+                        const subCount = t.blocks.filter((b) => b.kind === 'sub').length;
+                        return (
+                          <button
+                            key={t.id}
+                            ref={isSelected ? activeTopicRef : undefined}
+                            type="button"
+                            onClick={() => onSelectTopic(t.id)}
+                            className={cn(
+                              'rs-scroll-into-view w-full text-left px-3.5 py-2.5 transition-colors border-l-3',
+                              isSelected
+                                ? 'border-l-navy-DEFAULT dark:border-l-orange-DEFAULT bg-slate-100/90 dark:bg-white/[0.06]'
+                                : 'border-l-transparent hover:bg-slate-50 dark:hover:bg-white/[0.03]'
+                            )}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <span
+                                className={cn(
+                                  'text-xs leading-snug flex items-center gap-1.5',
+                                  isSelected
+                                    ? 'font-extrabold text-navy-DEFAULT dark:text-orange-DEFAULT'
+                                    : 'font-bold text-slate-800 dark:text-slate-100'
+                                )}
+                              >
+                                {isMast && <IconCheck size={12} className="text-emerald-500 shrink-0" />}
+                                <span>{t.title}</span>
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between gap-2 mt-0.5">
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                                {t.summary}
+                              </p>
+                              <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-400 shrink-0">
+                                {subCount > 1 && <span>{subCount}§</span>}
+                                {t.imageCount > 0 && (
+                                  <span className="inline-flex items-center gap-0.5">
+                                    <IconImage size={10} />
+                                    {t.imageCount}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   )}
-                >
-                  <div className="flex items-start justify-between gap-1.5 mb-0.5">
-                    <span className="font-bold text-xs text-navy-DEFAULT dark:text-white leading-snug flex items-center gap-1.5">
-                      {isMast && <IconCheck size={12} className="text-emerald-500 shrink-0" />}
-                      <span>{t.title}</span>
-                    </span>
-                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-navy-800 text-slate-400 flex-shrink-0">
-                      {ch?.num}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mb-1.5">
-                    {t.summary}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-1 text-[9px] font-semibold">
-                    {t.videoCount > 0 && (
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300">
-                        <IconVideo size={10} /> {t.videoCount}
-                      </span>
-                    )}
-                    {t.imageCount > 0 && (
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-300">
-                        <IconImage size={10} /> {t.imageCount}
-                      </span>
-                    )}
-                    {t.tableCount > 0 && (
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-300">
-                        <IconTable size={10} /> {t.tableCount}
-                      </span>
-                    )}
-                    {t.hyBullets.length > 0 && (
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300">
-                        <IconZap size={10} /> {t.hyBullets.length}
-                      </span>
-                    )}
-                  </div>
-                </button>
+                </div>
               );
             })}
           </div>
 
           {/* Right Multimedia Reader */}
-          <div className={cn('h-full overflow-y-auto p-4 md:p-6 lg:p-8', !mobileReaderOpen && 'hidden md:block')}>
-            {mobileReaderOpen && (
-              <div className="md:hidden sticky top-0 -mx-4 -mt-4 px-4 py-2 mb-3 bg-slate-50/95 dark:bg-navy-950/95 backdrop-blur border-b border-slate-200 dark:border-white/10 z-10">
-                <button
-                  type="button"
-                  onClick={() => setMobileReaderOpen(false)}
-                  className="min-h-[44px] inline-flex items-center gap-1.5 text-sm font-bold text-navy-DEFAULT dark:text-orange-DEFAULT"
-                  aria-label="Back to topics"
-                >
-                  <span aria-hidden="true">←</span> Topics
-                </button>
-              </div>
-            )}
+          <div className="h-full overflow-y-auto p-4 md:p-6 lg:p-8">
             {activeTopic && (
               <div className="max-w-4xl mx-auto">
                 <CardioTopicReader
@@ -822,19 +957,16 @@ export default function CardioHub({
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-6xl mx-auto space-y-5">
             <div>
-              <h2 className="text-lg md:text-xl font-extrabold font-display text-navy-DEFAULT dark:text-white">
-                Heart Sounds, Murmurs &amp; Pathology Videos
+              <h2 className="text-lg font-extrabold font-display text-slate-900 dark:text-white">
+                Heart Sounds, Murmurs &amp; Pathology Videos ({systemVideos.length})
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                All {systemVideos.length} clinical videos. Press play on any clip or click &ldquo;Open Full Topic&rdquo; for complete notes.
-              </p>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {systemVideos.map((vid) => (
                 <div
                   key={vid.src}
-                  className="rs-video-card rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 shadow-xs flex flex-col justify-between"
+                  className="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 shadow-xs flex flex-col justify-between"
                 >
                   <div>
                     <video
@@ -848,7 +980,7 @@ export default function CardioHub({
                       <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-orange-rust dark:text-orange-DEFAULT">
                         {vid.topicTitle}
                       </span>
-                      <h3 className="text-sm font-extrabold text-navy-DEFAULT dark:text-white mt-0.5 mb-1">
+                      <h3 className="text-sm font-extrabold text-slate-900 dark:text-white mt-0.5 mb-1">
                         {vid.title}
                       </h3>
                       <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
@@ -863,9 +995,9 @@ export default function CardioHub({
                         onSelectTopic(vid.topicId);
                         setMode('chapters');
                       }}
-                      className="w-full py-2 rounded-lg bg-navy-DEFAULT text-white text-xs font-bold hover:bg-navy-500 transition-colors"
+                      className="w-full py-1.5 rounded-lg bg-slate-100 dark:bg-navy-800 hover:bg-navy-DEFAULT hover:text-white text-slate-800 dark:text-slate-200 text-xs font-bold transition-colors"
                     >
-                      Open Full Topic →
+                      Open Topic Notes →
                     </button>
                   </div>
                 </div>
@@ -880,17 +1012,17 @@ export default function CardioHub({
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-7xl mx-auto space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base md:text-lg font-extrabold font-display text-navy-DEFAULT dark:text-white">
-                {sysData.title} Visual Atlas ({filteredImages.length} of {systemImages.length} Figures)
+              <h2 className="text-sm md:text-base font-extrabold font-display text-slate-900 dark:text-white">
+                {sysData.title} Figures ({filteredImages.length} of {systemImages.length})
               </h2>
-              <span className="text-[11px] text-slate-400">Click any figure to zoom</span>
+              <span className="text-[11px] text-slate-400">Click any figure to enlarge</span>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
               {filteredImages.map((im, idx) => (
                 <div
                   key={`${im.src}-${idx}`}
-                  className="rs-img-card rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 flex flex-col justify-between p-2.5 shadow-xs"
+                  className="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 flex flex-col justify-between p-2.5 shadow-2xs"
                 >
                   <button
                     type="button"
@@ -909,9 +1041,6 @@ export default function CardioHub({
                       <span className="text-[10px] font-mono font-bold uppercase text-orange-rust dark:text-orange-DEFAULT truncate">
                         {im.topicTitle}
                       </span>
-                      <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-100 dark:bg-navy-800 text-slate-400">
-                        {im.source === 'docx' ? 'NOTES' : 'ATLAS'}
-                      </span>
                     </div>
                     <p className="text-[11px] text-slate-700 dark:text-slate-300 line-clamp-2 leading-snug">
                       {im.caption}
@@ -925,7 +1054,7 @@ export default function CardioHub({
                         }}
                         className="text-[11px] font-bold text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline"
                       >
-                        Go to topic →
+                        Open topic →
                       </button>
                     )}
                   </div>
@@ -940,42 +1069,15 @@ export default function CardioHub({
       {sysData && mode === 'qa' && (
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-4xl mx-auto space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-navy-900 p-4 rounded-2xl border border-slate-200 dark:border-white/10 shadow-xs">
-              <div>
-                <h2 className="text-lg font-extrabold font-display text-navy-DEFAULT dark:text-white">
-                  {stats.rapidFireQAs} Step 1 Vignettes, MCQs &amp; Drills
-                </h2>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Clinical vignettes, mechanism hooks, multiple-choice stems &amp; physiological arrow drills.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setQaRecallMode((v) => !v);
-                  setRevealedQaIds(new Set());
-                }}
-                className={cn(
-                  'px-3 py-1.5 rounded-lg text-xs font-bold border transition-all inline-flex items-center gap-1.5',
-                  qaRecallMode
-                    ? 'bg-orange-DEFAULT text-navy-950 border-orange-DEFAULT'
-                    : 'bg-slate-100 dark:bg-navy-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-navy-700'
-                )}
-              >
-                {qaRecallMode ? <IconEye size={14} /> : <IconEyeOff size={14} />}
-                <span>{qaRecallMode ? 'Recall ON' : 'Enable Recall'}</span>
-              </button>
-            </div>
-
-            {/* Type Filter Pills + Search */}
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="flex items-center gap-1 p-1 rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10">
+            {/* Compact Filter + Search + Recall Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-navy-900 p-3 rounded-xl border border-slate-200 dark:border-white/10">
+              <div className="flex items-center gap-1 flex-wrap">
                 <button
                   type="button"
                   onClick={() => setQaTypeFilter('all')}
                   className={cn(
-                    'min-h-[44px] px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
-                    qaTypeFilter === 'all' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300'
+                    'px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
+                    qaTypeFilter === 'all' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                   )}
                 >
                   All ({qaCounts.all})
@@ -985,8 +1087,8 @@ export default function CardioHub({
                     type="button"
                     onClick={() => setQaTypeFilter('qa')}
                     className={cn(
-                      'min-h-[44px] px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
-                      qaTypeFilter === 'qa' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300'
+                      'px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
+                      qaTypeFilter === 'qa' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                     )}
                   >
                     Vignettes ({qaCounts.qa})
@@ -997,8 +1099,8 @@ export default function CardioHub({
                     type="button"
                     onClick={() => setQaTypeFilter('mcq')}
                     className={cn(
-                      'min-h-[44px] px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
-                      qaTypeFilter === 'mcq' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300'
+                      'px-2.5 py-1 rounded-lg text-xs font-bold transition-colors',
+                      qaTypeFilter === 'mcq' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                     )}
                   >
                     MCQs ({qaCounts.mcq})
@@ -1009,8 +1111,8 @@ export default function CardioHub({
                     type="button"
                     onClick={() => setQaTypeFilter('arrow')}
                     className={cn(
-                      'min-h-[44px] px-2.5 py-1 rounded-lg text-xs font-bold transition-colors inline-flex items-center gap-1',
-                      qaTypeFilter === 'arrow' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300'
+                      'px-2.5 py-1 rounded-lg text-xs font-bold transition-colors inline-flex items-center gap-1',
+                      qaTypeFilter === 'arrow' ? 'bg-navy-DEFAULT text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                     )}
                   >
                     <IconArrows size={12} /> Arrows ({qaCounts.arrow})
@@ -1018,26 +1120,45 @@ export default function CardioHub({
                 )}
               </div>
 
-              <div className="relative flex-1 min-w-[200px]">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                  <circle cx="11" cy="11" r="8" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input
-                  type="search"
-                  value={qaSearch}
-                  onChange={(e) => setQaSearch(e.target.value)}
-                  placeholder={`Search ${stats.rapidFireQAs} items in ${manifestSys.short}…`}
-                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-navy-DEFAULT"
-                />
+              <div className="flex items-center gap-2 flex-1 min-w-[220px] justify-end">
+                <div className="relative flex-1 max-w-xs">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input
+                    type="search"
+                    value={qaSearch}
+                    onChange={(e) => setQaSearch(e.target.value)}
+                    placeholder={`Search ${stats.rapidFireQAs} items…`}
+                    className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-navy-DEFAULT"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onToggleActiveRecall) {
+                      onToggleActiveRecall();
+                    } else {
+                      setQaRecallMode((v) => !v);
+                      setRevealedQaIds(new Set());
+                    }
+                  }}
+                  className={cn(
+                    'px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-colors inline-flex items-center gap-1.5 shrink-0',
+                    qaRecallMode
+                      ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700'
+                      : 'bg-slate-50 dark:bg-navy-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10'
+                  )}
+                >
+                  {qaRecallMode ? <IconEye size={13} /> : <IconEyeOff size={13} />}
+                  <span>{qaRecallMode ? 'Recall ON' : 'Recall'}</span>
+                </button>
               </div>
             </div>
 
-            <div className="text-[11px] font-mono text-slate-400">
-              Showing {filteredQAs.length} of {sysData.rapidFireQAs.length} items
-            </div>
-
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {filteredQAs.map((item: AtlasQAItem) => {
                 const isMcq = item.kind === 'mcq' && item.options && item.options.length >= 2;
                 const pickedIdx = mcqPicked[item.id];
@@ -1052,30 +1173,19 @@ export default function CardioHub({
                     key={item.id}
                     onClick={() => !isMcq && qaRecallMode && toggleQaReveal(item.id)}
                     className={cn(
-                      'rs-qa-card p-3.5 md:p-4 rounded-xl border bg-white dark:bg-navy-900 border-slate-200 dark:border-white/10 transition-all',
-                      !isMcq && qaRecallMode && 'cursor-pointer',
-                      effectiveShowMcqAns && 'revealed'
+                      'p-3.5 md:p-4 rounded-xl border bg-white dark:bg-navy-900 border-slate-200 dark:border-white/10 transition-colors',
+                      !isMcq && qaRecallMode && 'cursor-pointer hover:border-slate-300 dark:hover:border-white/20'
                     )}
                   >
                     <div className="flex items-start gap-2.5">
-                      <span className="px-1.5 py-0.5 rounded bg-navy-DEFAULT text-white font-mono text-[10px] font-bold flex-shrink-0 mt-0.5">
+                      <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300 font-mono text-[10px] font-bold flex-shrink-0 mt-0.5">
                         {item.num}
                       </span>
-                      <div className="flex-1 space-y-2.5 min-w-0">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          {item.sourceTag && (
-                            <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-navy-800 text-slate-500 dark:text-slate-300">
-                              {item.sourceTag}
-                            </span>
-                          )}
-                          {(() => {
-                            const repeatLabel = getAlsoInLabel(item.alsoIn, currentSysId);
-                            return repeatLabel ? (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800">
-                                {repeatLabel}
-                              </span>
-                            ) : null;
-                          })()}
+                      <div className="flex-1 space-y-2 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="font-bold text-[13px] md:text-sm text-slate-900 dark:text-white leading-relaxed">
+                            {item.q}
+                          </div>
                           {item.topicId && (
                             <button
                               type="button"
@@ -1084,15 +1194,11 @@ export default function CardioHub({
                                 onSelectTopic(item.topicId!);
                                 setMode('chapters');
                               }}
-                              className="min-h-[44px] px-1 inline-flex items-center text-[10px] font-bold text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline"
+                              className="text-[11px] font-bold text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline shrink-0"
                             >
-                              Related Topic →
+                              Topic →
                             </button>
                           )}
-                        </div>
-
-                        <div className="font-bold text-[13px] md:text-sm text-slate-900 dark:text-white leading-relaxed">
-                          {item.q}
                         </div>
 
                         {/* Attached Clinical Images */}
@@ -1106,13 +1212,13 @@ export default function CardioHub({
                                   e.stopPropagation();
                                   setLightbox({ src, caption: item.q });
                                 }}
-                                className="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950 p-1.5 cursor-zoom-in hover:border-orange-DEFAULT transition-colors"
+                                className="rounded-lg overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950 p-1 cursor-zoom-in"
                               >
                                 <img
                                   src={src}
                                   alt="Clinical vignette figure"
                                   loading="lazy"
-                                  className="max-h-48 w-auto object-contain rounded-lg"
+                                  className="max-h-44 w-auto object-contain rounded"
                                 />
                               </button>
                             ))}
@@ -1134,7 +1240,7 @@ export default function CardioHub({
                                     setMcqPicked((prev) => ({ ...prev, [item.id]: oi }));
                                   }}
                                   className={cn(
-                                    'w-full text-left px-3 py-2 rounded-lg border text-xs transition-all',
+                                    'w-full text-left px-3 py-2 rounded-lg border text-xs transition-colors',
                                     !mcqAnswered && 'bg-slate-50 dark:bg-navy-950/60 border-slate-200 dark:border-white/10 hover:border-navy-DEFAULT dark:hover:border-orange-DEFAULT text-slate-800 dark:text-slate-200',
                                     mcqAnswered && isCorrectOpt && 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-950 dark:text-emerald-200 font-bold',
                                     mcqAnswered && isThisPicked && !isCorrectOpt && 'bg-red-50 dark:bg-red-950/40 border-red-400 text-red-900 dark:text-red-200',
@@ -1150,14 +1256,14 @@ export default function CardioHub({
 
                         {/* Answer / Explanation Reveal */}
                         {effectiveShowMcqAns ? (
-                          <div className="rs-qa-answer p-3 rounded-lg bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 text-xs text-emerald-950 dark:text-emerald-200 leading-relaxed">
+                          <div className="p-2.5 rounded-lg bg-emerald-50/70 dark:bg-emerald-950/25 border border-emerald-200/80 dark:border-emerald-800/40 text-xs text-emerald-950 dark:text-emerald-200 leading-relaxed">
                             <strong className="font-extrabold">→ </strong>
                             {isMcq ? (item.explanation || item.a) : item.a}
                           </div>
                         ) : (
                           !isMcq && (
-                            <div className="text-[11px] font-bold text-orange-rust dark:text-orange-DEFAULT">
-                              Tap to reveal answer →
+                            <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+                              Click to reveal answer →
                             </div>
                           )
                         )}
@@ -1184,13 +1290,13 @@ export default function CardioHub({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/10">
-              <span className="text-xs sm:text-sm font-bold text-navy-DEFAULT dark:text-white truncate pr-4">
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate pr-4">
                 {lightbox.caption}
               </span>
               <button
                 type="button"
                 onClick={() => setLightbox(null)}
-                className="min-h-[44px] px-3 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold text-slate-700 dark:text-white hover:bg-slate-200 flex items-center gap-1.5"
+                className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold text-slate-700 dark:text-white hover:bg-slate-200 flex items-center gap-1.5"
               >
                 Close <span className="rs-kbd">Esc</span>
               </button>
