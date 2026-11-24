@@ -498,26 +498,36 @@ h1, h2, h3, h4, h5, h6 {
 
 .rs-toast {
   position: fixed;
-  bottom: 80px;
+  top: 64px;
   left: 50%;
-  transform: translateX(-50%) translateY(100px);
+  transform: translateX(-50%) translateY(-16px);
   z-index: 999;
-  padding: 10px 20px;
-  border-radius: 14px;
-  font-size: 13px;
+  padding: 9px 18px;
+  border-radius: 12px;
+  font-size: 12.5px;
   font-weight: 700;
   background: var(--navy-deep);
   color: white;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.22);
   opacity: 0;
   pointer-events: none;
-  transition: transform 0.35s var(--ease-spring), opacity 0.35s ease;
+  transition: transform 0.3s var(--ease-spring), opacity 0.25s ease;
 }
 
 .rs-toast.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
-  pointer-events: auto;
+  pointer-events: none;
+}
+
+/* Large text study mode for reader notes & tables */
+.rs-reader-large .rs-reader-body {
+  font-size: 1.08rem;
+  line-height: 1.75;
+}
+
+.rs-reader-large .rs-reader-table {
+  font-size: 0.92rem;
 }
 
 .dark .rs-toast {

@@ -1,6 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { ATLAS_MANIFEST } from '@/lib/atlas-data';
-import { publicUrl } from '@/lib/paths';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import {
+  ATLAS_MANIFEST,
+  loadDecoderIndex,
+  IndexedTopic,
+  IndexedVignette,
+  DecoderIndexPayload,
+} from '@/lib/atlas-data';
+import ScrollStrip from '@/components/ScrollStrip';
 import {
   SystemIcon,
   IconShield,
@@ -15,45 +21,6 @@ import { cn } from '@/lib/cn';
 interface DecoderProps {
   onSelectCase: (caseId: string) => void;
 }
-
-interface DecoderSample {
-  id: string;
-  sys: string;
-  label: string;
-  text: string;
-}
-
-interface IndexedTopic {
-  id: string;
-  sys: string;
-  sysShort: string;
-  chId: string;
-  ch: string;
-  title: string;
-  summary: string;
-  pearls: string[];
-  img: string | null;
-  kw: Record<string, number>;
-}
-
-interface IndexedVignette {
-  id: string;
-  sys: string;
-  sysShort: string;
-  q: string;
-  a: string;
-  img: string | null;
-  topicId: string | null;
-  kw: string[];
-}
-
-interface DecoderIndexPayload {
-  samples: DecoderSample[];
-  topics: IndexedTopic[];
-  vignettes: IndexedVignette[];
-}
-
-let CACHED_DECODER_INDEX: DecoderIndexPayload | null = null;
 
 const QUERY_STOPWORDS = new Set([
   'the', 'and', 'for', 'with', 'from', 'that', 'this', 'are', 'was', 'were', 'has', 'have', 'had',
@@ -92,36 +59,24 @@ function extractQueryTokens(input: string): string[] {
 }
 
 export default function Decoder({ onSelectCase }: DecoderProps) {
-  const [indexData, setIndexData] = useState<DecoderIndexPayload | null>(CACHED_DECODER_INDEX);
-  const [loading, setLoading] = useState<boolean>(!CACHED_DECODER_INDEX);
+  const [indexData, setIndexData] = useState<DecoderIndexPayload | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [sysFilter, setSysFilter] = useState<string>('all');
   const [inputText, setInputText] = useState<string>('');
   const [activeSampleId, setActiveSampleId] = useState<string>('');
   const [lightbox, setLightbox] = useState<{ src: string; caption: string } | null>(null);
+  const userEditedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (CACHED_DECODER_INDEX) {
-      if (!inputText && CACHED_DECODER_INDEX.samples[0]) {
-        setInputText(CACHED_DECODER_INDEX.samples[0].text);
-        setActiveSampleId(CACHED_DECODER_INDEX.samples[0].id);
-      }
-      return;
-    }
     let cancelled = false;
-    fetch(publicUrl('/data/decoder-index.json'))
-      .then((r) => r.json())
-      .then((d: DecoderIndexPayload) => {
-        for (const v of d.vignettes) {
-          if (v.img) v.img = publicUrl(v.img);
-        }
-        CACHED_DECODER_INDEX = d;
-        if (!cancelled) {
-          setIndexData(d);
-          setLoading(false);
-          if (d.samples[0]) {
-            setInputText(d.samples[0].text);
-            setActiveSampleId(d.samples[0].id);
-          }
+    loadDecoderIndex()
+      .then((d) => {
+        if (cancelled) return;
+        setIndexData(d);
+        setLoading(false);
+        if (!userEditedRef.current && d.samples[0]) {
+          setInputText(d.samples[0].text);
+          setActiveSampleId(d.samples[0].id);
         }
       })
       .catch(() => {
@@ -231,7 +186,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-orange-rust dark:text-orange-DEFAULT">
               <IconScan size={14} />
-              <span>16-System Weighted Corpus Engine · {ATLAS_MANIFEST.totals.topics.toLocaleString()} Topics + 3,857 Vignettes</span>
+              <span>16-System Weighted Corpus Engine · {ATLAS_MANIFEST.totals.topics.toLocaleString()} Topics + {ATLAS_MANIFEST.totals.rapidFireQAs.toLocaleString()} Vignettes</span>
             </div>
             <h1 id="stem-decoder-title" className="text-xl md:text-2xl font-extrabold font-display text-navy-DEFAULT dark:text-white">
               Clinical Stem &amp; Buzzword Decoder
@@ -253,7 +208,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
               Filter Scope by Organ System
             </span>
           </div>
-          <div className="rs-pill-strip flex items-center gap-1.5 pb-1">
+          <ScrollStrip innerClassName="gap-1.5 pb-1" ariaLabel="Filter scope by organ system">
             <button
               type="button"
               onClick={() => setSysFilter('all')}
@@ -274,6 +229,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                   setSysFilter(sys.systemId);
                   const matchingSample = indexData?.samples.find((s) => s.sys === sys.systemId);
                   if (matchingSample) {
+                    userEditedRef.current = true;
                     setActiveSampleId(matchingSample.id);
                     setInputText(matchingSample.text);
                   }
@@ -289,7 +245,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                 <span>{sys.short}</span>
               </button>
             ))}
-          </div>
+          </ScrollStrip>
         </div>
 
         {/* Sample Stems Across All 16 Systems */}
@@ -304,6 +260,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                   key={s.id}
                   type="button"
                   onClick={() => {
+                    userEditedRef.current = true;
                     setActiveSampleId(s.id);
                     setInputText(s.text);
                   }}
@@ -334,6 +291,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
               rows={4}
               value={inputText}
               onChange={(e) => {
+                userEditedRef.current = true;
                 setInputText(e.target.value);
                 setActiveSampleId('');
               }}
@@ -345,6 +303,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                 type="button"
                 aria-label="Clear input"
                 onClick={() => {
+                  userEditedRef.current = true;
                   setInputText('');
                   setActiveSampleId('');
                 }}

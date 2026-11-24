@@ -14,6 +14,12 @@ interface FrameworksPayload {
 
 let CACHED_FRAMEWORKS_DATA: FrameworksPayload | null = null;
 
+function decodeLiteralUnicode(html: string): string {
+  return html.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) =>
+    String.fromCharCode(parseInt(hex, 16))
+  );
+}
+
 function attachFrameworkInteractions(
   root: ShadowRoot | HTMLElement,
   scrollContainer: HTMLElement | null,
@@ -204,7 +210,8 @@ export default function Frameworks({ onSelectCase, onBack }: FrameworksProps) {
 
     const isDark = document.documentElement.classList.contains('dark');
     const shadow = host.shadowRoot || host.attachShadow({ mode: 'open' });
-    shadow.innerHTML = `<style>${data.css}</style><div class="rsm-root ${isDark ? 'dark-theme' : ''}">${data.html}</div>`;
+    const decodedHtml = decodeLiteralUnicode(data.html);
+    shadow.innerHTML = `<style>${data.css}</style><div class="rsm-root ${isDark ? 'dark-theme' : ''}">${decodedHtml}</div>`;
 
     const cleanupInteractions = attachFrameworkInteractions(shadow, scrollRef.current, onSelectCase);
 

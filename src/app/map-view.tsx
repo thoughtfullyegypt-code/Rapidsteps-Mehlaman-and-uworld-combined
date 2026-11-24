@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ATLAS_MANIFEST } from '@/lib/atlas-data';
+import ScrollStrip from '@/components/ScrollStrip';
 import { SystemIcon } from '@/components/icons/Icons';
 import { cn } from '@/lib/cn';
 
@@ -55,7 +56,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
     <div className="relative w-full h-full bg-slate-100 dark:bg-navy-950 overflow-hidden flex flex-col">
       {/* Top 16-System Toolbar */}
       <div className="flex-shrink-0 px-4 py-2 bg-white dark:bg-navy-900 border-b border-slate-200 dark:border-white/10 flex items-center justify-between gap-3 z-20">
-        <div className="rs-pill-strip flex items-center gap-1 pb-0.5 flex-1">
+        <ScrollStrip className="flex-1 min-w-0" innerClassName="gap-1 pb-0.5" ariaLabel="Select organ system">
           {ATLAS_MANIFEST.systems.map((sys) => (
             <button
               key={sys.systemId}
@@ -72,7 +73,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
               <span>{sys.short}</span>
             </button>
           ))}
-        </div>
+        </ScrollStrip>
 
         <div className="flex items-center gap-1 flex-shrink-0 bg-slate-100 dark:bg-navy-800 p-0.5 rounded-lg">
           <button
@@ -110,7 +111,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
           <span className="text-[10px] font-mono font-bold uppercase text-slate-400 mr-1 whitespace-nowrap">
             Chapter ({mapNodes.length} topics):
           </span>
-          <div className="rs-pill-strip flex items-center gap-1 flex-1">
+          <ScrollStrip className="flex-1 min-w-0" innerClassName="gap-1" ariaLabel="Select chapter">
             {currentSys.chapters.map((ch) => (
               <button
                 key={ch.id}
@@ -126,7 +127,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
                 {ch.num} {ch.short}
               </button>
             ))}
-          </div>
+          </ScrollStrip>
         </div>
       )}
 

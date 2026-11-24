@@ -196,6 +196,7 @@ export function useSystemAtlas(systemId: string | null | undefined): {
       return;
     }
     let cancelled = false;
+    setData(null);
     setLoading(true);
     loadSystemAtlas(systemId)
       .then((res) => {
@@ -212,7 +213,84 @@ export function useSystemAtlas(systemId: string | null | undefined): {
     };
   }, [systemId]);
 
-  return { data, loading };
+  const matchedData = systemId && data?.systemId === systemId ? data : null;
+  return {
+    data: matchedData,
+    loading: loading || Boolean(systemId && !matchedData),
+  };
+}
+
+export async function loadSystemsAtlas(systemIds: string[]): Promise<SystemAtlasPayload[]> {
+  return Promise.all(systemIds.map(loadSystemAtlas));
+}
+
+// --- Shared Decoder Index Loader (fixes subpath img prefixing across Decoder & Search) ---
+export interface DecoderSample {
+  id: string;
+  sys: string;
+  label: string;
+  text: string;
+}
+
+export interface IndexedTopic {
+  id: string;
+  sys: string;
+  sysShort: string;
+  chId: string;
+  ch: string;
+  title: string;
+  summary: string;
+  pearls: string[];
+  img: string | null;
+  kw: Record<string, number>;
+}
+
+export interface IndexedVignette {
+  id: string;
+  sys: string;
+  sysShort: string;
+  q: string;
+  a: string;
+  img: string | null;
+  topicId: string | null;
+  kw: string[];
+}
+
+export interface DecoderIndexPayload {
+  samples: DecoderSample[];
+  topics: IndexedTopic[];
+  vignettes: IndexedVignette[];
+}
+
+let DECODER_CACHE: DecoderIndexPayload | null = null;
+let DECODER_INFLIGHT: Promise<DecoderIndexPayload> | null = null;
+
+export async function loadDecoderIndex(): Promise<DecoderIndexPayload> {
+  if (DECODER_CACHE) return DECODER_CACHE;
+  if (DECODER_INFLIGHT) return DECODER_INFLIGHT;
+
+  DECODER_INFLIGHT = fetch(publicUrl('/data/decoder-index.json'))
+    .then((res) => {
+      if (!res.ok) throw new Error(`Failed to load decoder index: ${res.status}`);
+      return res.json() as Promise<DecoderIndexPayload>;
+    })
+    .then((payload) => {
+      for (const t of payload.topics) {
+        if (t.img) t.img = publicUrl(t.img);
+      }
+      for (const v of payload.vignettes) {
+        if (v.img) v.img = publicUrl(v.img);
+      }
+      DECODER_CACHE = payload;
+      DECODER_INFLIGHT = null;
+      return payload;
+    })
+    .catch((err) => {
+      DECODER_INFLIGHT = null;
+      throw err;
+    });
+
+  return DECODER_INFLIGHT;
 }
 
 export function useTopicDetail(topicId: string | null | undefined): {

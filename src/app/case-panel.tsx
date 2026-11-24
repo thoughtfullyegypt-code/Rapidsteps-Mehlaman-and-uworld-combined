@@ -30,9 +30,14 @@ interface CasePanelProps {
   onOpenUnlock: () => void;
 }
 
-function ReadingProgressBar() {
+function ReadingProgressBar({
+  scrollRef,
+  caseId,
+}: {
+  scrollRef: React.RefObject<HTMLDivElement | null>;
+  caseId: string;
+}) {
   const [progress, setProgress] = useState(0);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -42,17 +47,15 @@ function ReadingProgressBar() {
         ? 100
         : Math.round((el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100);
     setProgress(pct);
-  }, []);
+  }, [scrollRef]);
 
   useEffect(() => {
-    const el = document.querySelector('[data-scroll-reader]') as HTMLDivElement;
-    if (el) {
-      scrollRef.current = el;
-      el.addEventListener('scroll', handleScroll, { passive: true });
-      handleScroll();
-      return () => el.removeEventListener('scroll', handleScroll);
-    }
-  }, [handleScroll]);
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, [scrollRef, handleScroll, caseId]);
 
   return (
     <div className="rs-reading-progress">
@@ -80,6 +83,7 @@ export default function CasePanel({
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [answerChecked, setAnswerChecked] = useState(false);
   const [lightbox, setLightbox] = useState<{ src: string; caption: string } | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { topic: atlasTopic, chapter: atlasChapter, location: atlasLoc, loading: atlasLoading } =
     useTopicDetail(caseId);
@@ -88,7 +92,38 @@ export default function CasePanel({
     setDiagnosisRevealed(!activeRecall);
     setSelectedOption(null);
     setAnswerChecked(false);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
   }, [caseId, activeRecall]);
+
+  // Capture-phase Escape so lightbox closes without dismissing sheet or Focus Mode
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKeyCapture = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        e.preventDefault();
+        setLightbox(null);
+      }
+    };
+    window.addEventListener('keydown', onKeyCapture, true);
+    return () => window.removeEventListener('keydown', onKeyCapture, true);
+  }, [lightbox]);
+
+  // L shortcut to reveal diagnosis in classic demo cases when Active Recall is ON
+  useEffect(() => {
+    if (!activeRecall || atlasLoc) return;
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || (e.target as HTMLElement)?.isContentEditable) return;
+      if (e.key === 'l' || e.key === 'L') {
+        setDiagnosisRevealed((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [activeRecall, atlasLoc]);
 
   if (!caseId) return null;
 
@@ -97,13 +132,13 @@ export default function CasePanel({
     return (
       <div
         className={cn(
-          'h-full flex flex-col bg-slate-50 dark:bg-navy-950 border-l border-slate-200 dark:border-white/10 overflow-hidden',
-          studySize === 'large' ? 'text-base' : 'text-sm'
+          'rs-reader-root h-full flex flex-col bg-slate-50 dark:bg-navy-950 border-l border-slate-200 dark:border-white/10 overflow-hidden',
+          studySize === 'large' ? 'text-base rs-reader-large' : 'text-sm'
         )}
         role="region"
         aria-label={`${atlasLoc.systemTitle} topic details`}
       >
-        <ReadingProgressBar />
+        <ReadingProgressBar scrollRef={scrollContainerRef} caseId={caseId} />
 
         {/* Breadcrumb Header */}
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900">
@@ -162,7 +197,7 @@ export default function CasePanel({
         </div>
 
         {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-5" data-scroll-reader>
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 md:p-5" data-scroll-reader>
           {atlasLoading || !atlasTopic ? (
             <div className="py-12 text-center text-xs font-semibold text-slate-400">
               Loading {atlasLoc.stub.title}…
@@ -177,6 +212,9 @@ export default function CasePanel({
               onToggleMaster={onToggleMaster}
               isBookmarked={isBookmarked}
               onToggleBookmark={onToggleBookmark}
+              isFlagged={isFlagged}
+              onToggleFlag={onToggleFlag}
+              activeRecall={activeRecall}
               onOpenLightbox={(src, caption) => setLightbox({ src, caption })}
               compact
             />
@@ -275,8 +313,8 @@ export default function CasePanel({
   return (
     <div
       className={cn(
-        'h-full flex flex-col bg-white dark:bg-navy-900 border-l border-slate-200 dark:border-white/10 overflow-hidden',
-        studySize === 'large' ? 'text-base' : 'text-sm'
+        'rs-reader-root h-full flex flex-col bg-white dark:bg-navy-900 border-l border-slate-200 dark:border-white/10 overflow-hidden',
+        studySize === 'large' ? 'text-base rs-reader-large' : 'text-sm'
       )}
       role="region"
       aria-label="Case details"
@@ -329,7 +367,7 @@ export default function CasePanel({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 space-y-5 rs-fade-in" data-scroll-reader>
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-5 space-y-5 rs-fade-in" data-scroll-reader>
         {isLocked ? (
           <div className="py-10 px-4 text-center space-y-4">
             <div className="w-14 h-14 rounded-xl bg-orange-light dark:bg-orange-DEFAULT/15 text-orange-rust dark:text-orange-DEFAULT flex items-center justify-center mx-auto">
