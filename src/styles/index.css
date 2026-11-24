@@ -520,16 +520,6 @@ h1, h2, h3, h4, h5, h6 {
   pointer-events: none;
 }
 
-/* Large text study mode for reader notes & tables */
-.rs-reader-large .rs-reader-body {
-  font-size: 1.08rem;
-  line-height: 1.75;
-}
-
-.rs-reader-large .rs-reader-table {
-  font-size: 0.92rem;
-}
-
 .dark .rs-toast {
   background: var(--orange);
   color: var(--navy-void);

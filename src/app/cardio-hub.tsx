@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   ATLAS_MANIFEST,
   useSystemAtlas,
@@ -10,9 +10,7 @@ import {
   CardioChapter,
   AtlasQAItem,
 } from '@/lib/atlas-data';
-import { SYSTEMS, getAlsoInLabel } from '@/lib/catalog';
-import { getTopicNote, setTopicNote } from '@/lib/storage';
-import ScrollStrip from '@/components/ScrollStrip';
+import { SYSTEMS } from '@/lib/catalog';
 import {
   SystemIcon,
   IconBookOpen,
@@ -20,7 +18,6 @@ import {
   IconImage,
   IconZap,
   IconBookmark,
-  IconFlag,
   IconCheck,
   IconZoomIn,
   IconEye,
@@ -33,12 +30,6 @@ import { cn } from '@/lib/cn';
 type HubMode = 'chapters' | 'videos' | 'images' | 'qa';
 type QaTypeFilter = 'all' | 'qa' | 'mcq' | 'arrow';
 
-interface LightboxItem {
-  src: string;
-  caption: string;
-  topicId?: string;
-}
-
 interface CardioHubProps {
   activeSystemId?: string;
   onSelectSystem?: (sysId: string) => void;
@@ -48,11 +39,8 @@ interface CardioHubProps {
   onToggleMaster: (id: string) => void;
   bookmarks: Set<string>;
   onToggleBookmark: (id: string) => void;
-  flags?: Set<string>;
-  onToggleFlag?: (id: string) => void;
   activeRecall?: boolean;
   onToggleActiveRecall?: () => void;
-  onDrillSystem?: (sysId: string) => void;
 }
 
 interface GroupedNoteSection {
@@ -77,81 +65,6 @@ function renderClinicalLine(text: string): React.ReactNode {
     );
   }
   return text;
-}
-
-/**
- * Smart Active Recall cloze renderer: keeps diagnostic cue/label sharp and
- * blurs the answer/mechanism until clicked individually or revealed via `L`.
- */
-function renderRecallClinicalLine(
-  text: string,
-  revealed: boolean,
-  onReveal: () => void
-): React.ReactNode {
-  const clozeClass = cn(
-    'rounded px-1 -mx-0.5 transition-all cursor-pointer inline',
-    revealed
-      ? 'bg-amber-50/70 dark:bg-amber-950/30'
-      : 'blur-[5px] hover:blur-[3px] bg-amber-100/70 dark:bg-amber-900/40 select-none'
-  );
-
-  const renderClozeSpan = (secret: string) => (
-    <span
-      role="button"
-      tabIndex={0}
-      aria-label={revealed ? 'Hide clinical fact' : 'Reveal clinical fact'}
-      onClick={onReveal}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onReveal();
-        }
-      }}
-      className={clozeClass}
-      title={revealed ? 'Click to hide again' : 'Click to peek'}
-    >
-      {secret}
-    </span>
-  );
-
-  // Case 1: "Label: value"
-  const colonMatch = text.match(/^([A-Z][A-Za-z0-9 /()&+-]{1,28}:)\s+(.*)$/);
-  if (colonMatch) {
-    return (
-      <>
-        <strong className="font-extrabold text-slate-900 dark:text-white">{colonMatch[1]} </strong>
-        {renderClozeSpan(colonMatch[2])}
-      </>
-    );
-  }
-
-  // Case 2: "clue → answer" or "clue = answer"
-  const arrowIdx = text.indexOf(' → ');
-  if (arrowIdx > 2 && arrowIdx < text.length - 5) {
-    const promptPart = text.slice(0, arrowIdx + 3);
-    const answerPart = text.slice(arrowIdx + 3);
-    return (
-      <>
-        <span>{promptPart}</span>
-        {renderClozeSpan(answerPart)}
-      </>
-    );
-  }
-
-  const eqIdx = text.indexOf(' = ');
-  if (eqIdx > 2 && eqIdx < text.length - 5) {
-    const promptPart = text.slice(0, eqIdx + 3);
-    const answerPart = text.slice(eqIdx + 3);
-    return (
-      <>
-        <span>{promptPart}</span>
-        {renderClozeSpan(answerPart)}
-      </>
-    );
-  }
-
-  // Fallback: blur entire statement
-  return renderClozeSpan(text);
 }
 
 /**
@@ -198,13 +111,6 @@ export function CardioTopicReader({
   onToggleMaster,
   isBookmarked,
   onToggleBookmark,
-  isFlagged = false,
-  onToggleFlag,
-  activeRecall = false,
-  onPrevTopic,
-  onNextTopic,
-  hasPrev = false,
-  hasNext = false,
   onOpenLightbox,
   compact = false,
 }: {
@@ -215,61 +121,12 @@ export function CardioTopicReader({
   onToggleMaster: (id: string) => void;
   isBookmarked: boolean;
   onToggleBookmark: (id: string) => void;
-  isFlagged?: boolean;
-  onToggleFlag?: (id: string) => void;
-  activeRecall?: boolean;
-  onPrevTopic?: () => void;
-  onNextTopic?: () => void;
-  hasPrev?: boolean;
-  hasNext?: boolean;
   onOpenLightbox: (src: string, caption: string) => void;
   compact?: boolean;
 }) {
   const loc = findTopicLocation(topic.id);
   const resolvedCh = chapter ?? loc?.chapter;
   const resolvedSysShort = systemShort ?? loc?.systemShort ?? 'ATLAS';
-
-  const readerRootRef = useRef<HTMLDivElement | null>(null);
-  const [revealedKeys, setRevealedKeys] = useState<Set<string>>(new Set());
-  const [allRevealed, setAllRevealed] = useState(false);
-
-  // Per-topic personal scratchpad notes
-  const [personalNote, setPersonalNote] = useState<string>(() => getTopicNote(topic.id));
-  const [noteOpen, setNoteOpen] = useState<boolean>(() => Boolean(getTopicNote(topic.id).trim()));
-
-  useEffect(() => {
-    setRevealedKeys(new Set());
-    setAllRevealed(false);
-    const saved = getTopicNote(topic.id);
-    setPersonalNote(saved);
-    setNoteOpen(Boolean(saved.trim()));
-  }, [topic.id, activeRecall]);
-
-  // Press L to toggle Reveal All / Hide All while Active Recall is ON
-  useEffect(() => {
-    if (!activeRecall) return;
-    const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      if (tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target as HTMLElement)?.isContentEditable) {
-        return;
-      }
-      if (e.key === 'l' || e.key === 'L') {
-        e.preventDefault();
-        setAllRevealed((prev) => !prev);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [activeRecall]);
-
-  const toggleLineReveal = useCallback((key: string) => {
-    setRevealedKeys((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  }, []);
 
   const hasVideos = Boolean(topic.videos && topic.videos.length > 0);
   const hasBlocks = Boolean(topic.blocks && topic.blocks.length > 0);
@@ -284,18 +141,15 @@ export function CardioTopicReader({
     [topic.blocks, topic.title]
   );
 
-  const scrollToSub = (subId: string) => {
-    const el = readerRootRef.current?.querySelector(`[data-sub-id="${subId}"]`);
+  const scrollToSub = (domId: string) => {
+    const el = document.getElementById(domId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
   return (
-    <div
-      ref={readerRootRef}
-      className={cn('rs-reader-root space-y-5 rs-fade-in', compact ? 'text-sm' : 'text-sm md:text-[15px]')}
-    >
+    <div className={cn('space-y-5 rs-fade-in', compact ? 'text-sm' : 'text-sm md:text-[15px]')}>
       {/* Clean Editorial Header + Sub-Section Outline */}
       <div className="p-4 md:p-5 rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 shadow-xs space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -334,22 +188,6 @@ export function CardioTopicReader({
               >
                 <IconBookmark size={14} filled={isBookmarked} />
               </button>
-              {onToggleFlag && (
-                <button
-                  type="button"
-                  onClick={() => onToggleFlag(topic.id)}
-                  className={cn(
-                    'p-1.5 rounded-lg text-xs font-bold border transition-colors',
-                    isFlagged
-                      ? 'bg-red-50 dark:bg-red-950/40 border-red-400 text-red-600 dark:text-red-400'
-                      : 'bg-slate-50 dark:bg-navy-800 border-slate-200 dark:border-white/10 text-slate-500 hover:text-slate-800 dark:hover:text-white'
-                  )}
-                  title="Flag topic for review (X)"
-                  aria-label="Flag topic"
-                >
-                  <IconFlag size={14} filled={isFlagged} />
-                </button>
-              )}
               <button
                 type="button"
                 onClick={() => onToggleMaster(topic.id)}
@@ -375,24 +213,6 @@ export function CardioTopicReader({
           {topic.title}
         </h2>
 
-        {/* Active Recall Control Strip */}
-        {activeRecall && (hasBlocks || hasHy) && (
-          <div className="px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-950/35 border border-amber-200 dark:border-amber-800/60 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span className="inline-flex items-center gap-1.5 font-semibold text-amber-900 dark:text-amber-200">
-              <IconEye size={13} />
-              <span>Active Recall ON — Click any blurred fact to peek</span>
-            </span>
-            <button
-              type="button"
-              onClick={() => setAllRevealed((v) => !v)}
-              className="px-2.5 py-1 rounded-md bg-white dark:bg-navy-900 border border-amber-300 dark:border-amber-700 font-bold text-[11px] text-amber-900 dark:text-amber-200 hover:bg-amber-100/60 transition-colors inline-flex items-center gap-1.5"
-            >
-              <span>{allRevealed ? 'Hide All' : 'Reveal All'}</span>
-              <kbd className="rs-kbd">L</kbd>
-            </button>
-          </div>
-        )}
-
         {/* Categorized Sub-Sections Quick-Jump Pills */}
         {(noteSections.length > 1 || (topic.hySections && topic.hySections.length > 1)) && (
           <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex flex-wrap items-center gap-1.5">
@@ -403,7 +223,7 @@ export function CardioTopicReader({
               <button
                 key={sec.id}
                 type="button"
-                onClick={() => scrollToSub(sec.id)}
+                onClick={() => scrollToSub(`${topic.id}-${sec.id}`)}
                 className="px-2 py-1 rounded-lg bg-slate-100/90 dark:bg-navy-800 hover:bg-navy-DEFAULT hover:text-white dark:hover:bg-orange-DEFAULT dark:hover:text-navy-950 text-slate-700 dark:text-slate-200 text-[11px] font-semibold transition-colors inline-flex items-center gap-1.5 text-left"
               >
                 <span className="font-mono text-[10px] font-bold opacity-70">{sec.num}</span>
@@ -413,7 +233,7 @@ export function CardioTopicReader({
             {hasHy && (
               <button
                 type="button"
-                onClick={() => scrollToSub('hy-pearls')}
+                onClick={() => scrollToSub(`${topic.id}-hy-pearls`)}
                 className="px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 hover:bg-orange-DEFAULT hover:text-navy-950 text-orange-rust dark:text-orange-DEFAULT border border-amber-200/80 dark:border-amber-800/50 text-[11px] font-bold transition-colors inline-flex items-center gap-1"
               >
                 <IconZap size={11} />
@@ -480,7 +300,7 @@ export function CardioTopicReader({
             {noteSections.map((sec) => (
               <section
                 key={sec.id}
-                data-sub-id={sec.id}
+                id={`${topic.id}-${sec.id}`}
                 className="rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 overflow-hidden shadow-2xs scroll-mt-4"
               >
                 {/* Sub-Section Category Header Bar */}
@@ -497,23 +317,17 @@ export function CardioTopicReader({
                 <div className="p-4 md:p-5 space-y-3">
                   {sec.items.map((b: CardioBlock, idx: number) => {
                     if (b.kind === 'p') {
-                      const lineKey = `${sec.id}-p-${idx}`;
-                      const isLineRevealed = allRevealed || revealedKeys.has(lineKey);
                       return (
                         <div
                           key={idx}
                           className={cn(
-                            'rs-reader-body leading-relaxed text-slate-700 dark:text-slate-200 flex items-start gap-2.5',
+                            'leading-relaxed text-slate-700 dark:text-slate-200 flex items-start gap-2.5',
                             b.level === 1 && 'pl-4',
                             b.level >= 2 && 'pl-8'
                           )}
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-navy-DEFAULT/60 dark:bg-orange-DEFAULT/80 mt-2.5 select-none shrink-0" />
-                          <span>
-                            {activeRecall
-                              ? renderRecallClinicalLine(b.text, isLineRevealed, () => toggleLineReveal(lineKey))
-                              : renderClinicalLine(b.text)}
-                          </span>
+                          <span>{renderClinicalLine(b.text)}</span>
                         </div>
                       );
                     }
@@ -534,7 +348,7 @@ export function CardioTopicReader({
                               src={b.src}
                               alt={b.caption || sec.title}
                               loading="lazy"
-                              className="max-h-[62vh] md:max-h-[380px] w-auto max-w-full mx-auto rounded-lg object-contain"
+                              className="max-h-[360px] w-auto mx-auto rounded-lg object-contain"
                             />
                             <span className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-navy-950/75 text-white text-[10px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm inline-flex items-center gap-1">
                               <IconZoomIn size={11} /> Zoom
@@ -566,7 +380,7 @@ export function CardioTopicReader({
                               {bannerTitle}
                             </div>
                           )}
-                          <table className="rs-reader-table w-full text-left border-collapse text-xs sm:text-[13px]">
+                          <table className="w-full text-left border-collapse text-xs sm:text-[13px]">
                             {headerRow.length > 0 && (
                               <thead>
                                 <tr className="bg-slate-50 dark:bg-navy-950 text-navy-DEFAULT dark:text-orange-DEFAULT border-b border-slate-200 dark:border-white/10">
@@ -611,7 +425,7 @@ export function CardioTopicReader({
 
       {/* 3. Categorized High-Yield Exam Pearls */}
       {hasHy && (
-        <div data-sub-id="hy-pearls" className="space-y-3 scroll-mt-4">
+        <div id={`${topic.id}-hy-pearls`} className="space-y-3 scroll-mt-4">
           <div className="rs-section-label text-orange-rust dark:text-orange-DEFAULT">
             <IconZap size={14} />
             <span>High-Yield Pearls</span>
@@ -633,7 +447,7 @@ export function CardioTopicReader({
                       src={im.src}
                       alt={im.caption}
                       loading="lazy"
-                      className="max-h-[52vh] md:max-h-[260px] w-auto max-w-full mx-auto rounded-lg object-contain bg-slate-50 dark:bg-navy-950 p-1"
+                      className="max-h-[240px] w-auto mx-auto rounded-lg object-contain bg-slate-50 dark:bg-navy-950 p-1"
                     />
                   </button>
                   <figcaption className="text-xs text-slate-700 dark:text-slate-200 font-medium mt-2 px-1 leading-snug">
@@ -660,20 +474,12 @@ export function CardioTopicReader({
                     </h4>
                   </div>
                   <div className="p-4 space-y-1.5">
-                    {sec.bullets.map((b, i) => {
-                      const lineKey = `hy-${si}-${i}`;
-                      const isLineRevealed = allRevealed || revealedKeys.has(lineKey);
-                      return (
-                        <div key={i} className="rs-reader-body flex items-start gap-2.5 text-slate-800 dark:text-slate-200 leading-relaxed">
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT mt-2 select-none shrink-0" />
-                          <span>
-                            {activeRecall
-                              ? renderRecallClinicalLine(b, isLineRevealed, () => toggleLineReveal(lineKey))
-                              : renderClinicalLine(b)}
-                          </span>
-                        </div>
-                      );
-                    })}
+                    {sec.bullets.map((b, i) => (
+                      <div key={i} className="flex items-start gap-2.5 text-slate-800 dark:text-slate-200 leading-relaxed">
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT mt-2 select-none shrink-0" />
+                        <span>{renderClinicalLine(b)}</span>
+                      </div>
+                    ))}
                   </div>
                 </section>
               ))}
@@ -682,84 +488,15 @@ export function CardioTopicReader({
             topic.hyBullets &&
             topic.hyBullets.length > 0 && (
               <div className="p-4 md:p-5 rounded-xl bg-amber-50/45 dark:bg-amber-950/15 border border-amber-200/80 dark:border-amber-800/50 space-y-1.5">
-                {topic.hyBullets.map((b, i) => {
-                  const lineKey = `hy-flat-${i}`;
-                  const isLineRevealed = allRevealed || revealedKeys.has(lineKey);
-                  return (
-                    <div key={i} className="rs-reader-body flex items-start gap-2.5 text-slate-800 dark:text-slate-200 leading-relaxed">
-                      <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT mt-2 select-none shrink-0" />
-                      <span>
-                        {activeRecall
-                          ? renderRecallClinicalLine(b, isLineRevealed, () => toggleLineReveal(lineKey))
-                          : renderClinicalLine(b)}
-                      </span>
-                    </div>
-                  );
-                })}
+                {topic.hyBullets.map((b, i) => (
+                  <div key={i} className="flex items-start gap-2.5 text-slate-800 dark:text-slate-200 leading-relaxed">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT mt-2 select-none shrink-0" />
+                    <span>{renderClinicalLine(b)}</span>
+                  </div>
+                ))}
               </div>
             )
           )}
-        </div>
-      )}
-
-      {/* 4. Personal Study Note Scratchpad */}
-      <div className="rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 overflow-hidden">
-        <button
-          type="button"
-          onClick={() => setNoteOpen((v) => !v)}
-          className="w-full px-4 py-2.5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-white/[0.03] transition-colors"
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-extrabold text-slate-800 dark:text-white">
-              My Personal Note
-            </span>
-            {personalNote.trim() && (
-              <span className="px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[10px] font-mono font-bold">
-                Saved locally
-              </span>
-            )}
-          </div>
-          <IconChevronDown
-            size={13}
-            className={cn('text-slate-400 transition-transform duration-150', noteOpen && 'rotate-180')}
-          />
-        </button>
-        {noteOpen && (
-          <div className="px-4 pb-4 pt-1 border-t border-slate-100 dark:border-white/5 space-y-1.5">
-            <textarea
-              rows={3}
-              value={personalNote}
-              onChange={(e) => {
-                const val = e.target.value;
-                setPersonalNote(val);
-                setTopicNote(topic.id, val);
-              }}
-              placeholder="Jot down your mnemonic, UWorld pearl, or distractor note for this topic (saved automatically in your browser)…"
-              className="w-full p-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-navy-DEFAULT dark:focus:ring-orange-DEFAULT resize-y"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Prev / Next Topic Footer (in Atlas Hub full view) */}
-      {(onPrevTopic || onNextTopic) && (
-        <div className="pt-2 flex items-center justify-between gap-3">
-          <button
-            type="button"
-            disabled={!hasPrev}
-            onClick={onPrevTopic}
-            className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-35 transition-colors"
-          >
-            ← Previous Topic
-          </button>
-          <button
-            type="button"
-            disabled={!hasNext}
-            onClick={onNextTopic}
-            className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-35 transition-colors"
-          >
-            Next Topic →
-          </button>
         </div>
       )}
     </div>
@@ -778,18 +515,13 @@ export default function CardioHub({
   onToggleMaster,
   bookmarks,
   onToggleBookmark,
-  flags,
-  onToggleFlag,
   activeRecall = false,
   onToggleActiveRecall,
-  onDrillSystem,
 }: CardioHubProps) {
   const currentSysId = activeSystemId || 'cardio';
   const { data: sysData, loading } = useSystemAtlas(currentSysId);
 
   const [mode, setMode] = useState<HubMode>('chapters');
-  // Mobile (<md): show EITHER topic list OR full-screen reader so figures/notes never squeeze
-  const [mobileReaderOpen, setMobileReaderOpen] = useState<boolean>(false);
   const [chapterFilter, setChapterFilter] = useState<string>('all');
   const [collapsedChapters, setCollapsedChapters] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -798,10 +530,7 @@ export default function CardioHub({
   const [qaRecallMode, setQaRecallMode] = useState<boolean>(activeRecall);
   const [revealedQaIds, setRevealedQaIds] = useState<Set<string>>(new Set());
   const [mcqPicked, setMcqPicked] = useState<Record<string, number>>({});
-  const [lightbox, setLightbox] = useState<{ items: LightboxItem[]; index: number } | null>(null);
-
-  const readerScrollRef = useRef<HTMLDivElement | null>(null);
-  const activeTopicRef = useRef<HTMLButtonElement | null>(null);
+  const [lightbox, setLightbox] = useState<{ src: string; caption: string } | null>(null);
 
   // Sync with global header Active Recall toggle
   useEffect(() => {
@@ -811,14 +540,15 @@ export default function CardioHub({
     }
   }, [activeRecall]);
 
-  // Reset filters & close mobile reader when switching Organ Systems
+  const activeTopicRef = useRef<HTMLButtonElement | null>(null);
+
+  // Reset filters when switching Organ Systems
   useEffect(() => {
     setChapterFilter('all');
     setCollapsedChapters(new Set());
     setSearchQuery('');
     setQaSearch('');
     setQaTypeFilter('all');
-    setMobileReaderOpen(false);
     if (mode === 'videos') {
       const mSys = ATLAS_MANIFEST.systems.find((s) => s.systemId === currentSysId);
       if (mSys && mSys.stats.videos === 0) {
@@ -827,31 +557,21 @@ export default function CardioHub({
     }
   }, [currentSysId]);
 
-  // Keyboard navigation inside lightbox (capture-phase Esc so Focus Mode isn't exited)
   useEffect(() => {
-    if (!lightbox) return;
-    const onKeyCapture = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        e.preventDefault();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && lightbox) {
         setLightbox(null);
-      } else if (e.key === 'ArrowRight' && lightbox.items.length > 1) {
-        e.preventDefault();
-        setLightbox((prev) =>
-          prev ? { ...prev, index: (prev.index + 1) % prev.items.length } : null
-        );
-      } else if (e.key === 'ArrowLeft' && lightbox.items.length > 1) {
-        e.preventDefault();
-        setLightbox((prev) =>
-          prev
-            ? { ...prev, index: (prev.index - 1 + prev.items.length) % prev.items.length }
-            : null
-        );
       }
     };
-    window.addEventListener('keydown', onKeyCapture, true);
-    return () => window.removeEventListener('keydown', onKeyCapture, true);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [lightbox]);
+
+  useEffect(() => {
+    if (activeTopicRef.current) {
+      activeTopicRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [selectedTopicId]);
 
   const activeTopic: CardioTopic | null = useMemo(() => {
     if (!sysData || sysData.topics.length === 0) return null;
@@ -861,19 +581,6 @@ export default function CardioHub({
     }
     return sysData.topics[0];
   }, [sysData, selectedTopicId]);
-
-  useEffect(() => {
-    if (activeTopicRef.current) {
-      activeTopicRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
-  }, [selectedTopicId]);
-
-  // Reset reader scroll to top on topic change
-  useEffect(() => {
-    if (readerScrollRef.current) {
-      readerScrollRef.current.scrollTop = 0;
-    }
-  }, [activeTopic?.id]);
 
   const systemImages = useMemo(() => (sysData ? extractSystemImages(sysData) : []), [sysData]);
   const systemVideos = useMemo(() => (sysData ? extractSystemVideos(sysData) : []), [sysData]);
@@ -890,27 +597,6 @@ export default function CardioHub({
       return false;
     });
   }, [sysData, chapterFilter, searchQuery]);
-
-  // Topic navigation list & Prev/Next handlers
-  const navTopicList = useMemo(() => {
-    if (!sysData) return [];
-    if (activeTopic && filteredTopics.some((t) => t.id === activeTopic.id)) {
-      return filteredTopics;
-    }
-    return sysData.topics;
-  }, [sysData, filteredTopics, activeTopic]);
-
-  const activeTopicIdx = activeTopic
-    ? navTopicList.findIndex((t) => t.id === activeTopic.id)
-    : -1;
-  const hasPrevTopic = activeTopicIdx > 0;
-  const hasNextTopic = activeTopicIdx >= 0 && activeTopicIdx < navTopicList.length - 1;
-
-  const stepTopic = (delta: -1 | 1) => {
-    if (activeTopicIdx < 0) return;
-    const target = navTopicList[activeTopicIdx + delta];
-    if (target) onSelectTopic(target.id);
-  };
 
   // Group filteredTopics by Chapter so the sidebar is cleanly categorized into sub-sections
   const groupedSidebarChapters = useMemo(() => {
@@ -951,19 +637,6 @@ export default function CardioHub({
     };
   }, [sysData]);
 
-  const mcqAccuracy = useMemo(() => {
-    const mcqs = (sysData?.rapidFireQAs || []).filter((q) => q.kind === 'mcq');
-    let answered = 0;
-    let correct = 0;
-    for (const m of mcqs) {
-      if (mcqPicked[m.id] !== undefined) {
-        answered += 1;
-        if (mcqPicked[m.id] === m.correctIndex) correct += 1;
-      }
-    }
-    return { answered, correct };
-  }, [sysData, mcqPicked]);
-
   const filteredQAs = useMemo(() => {
     if (!sysData) return [];
     const q = qaSearch.trim().toLowerCase();
@@ -996,47 +669,20 @@ export default function CardioHub({
     }
   };
 
-  const openTopicImageLightbox = (src: string, caption: string) => {
-    if (!activeTopic) {
-      setLightbox({ items: [{ src, caption }], index: 0 });
-      return;
-    }
-    const items: LightboxItem[] = [];
-    for (const b of activeTopic.blocks) {
-      if (b.kind === 'img') {
-        items.push({ src: b.src, caption: b.caption || activeTopic.title, topicId: activeTopic.id });
-      }
-    }
-    for (const im of activeTopic.hyImages || []) {
-      items.push({ src: im.src, caption: im.caption || activeTopic.title, topicId: activeTopic.id });
-    }
-    const idx = items.findIndex((i) => i.src === src);
-    if (idx >= 0) {
-      setLightbox({ items, index: idx });
-    } else {
-      setLightbox({ items: [{ src, caption, topicId: activeTopic.id }, ...items], index: 0 });
-    }
-  };
-
-  const manifestSys =
-    ATLAS_MANIFEST.systems.find((s) => s.systemId === currentSysId) || ATLAS_MANIFEST.systems[0];
+  const manifestSys = ATLAS_MANIFEST.systems.find((s) => s.systemId === currentSysId) || ATLAS_MANIFEST.systems[0];
   const stats = sysData?.stats || manifestSys.stats;
   const masteredCount = manifestSys.topics.filter((t) => masteredCases.has(t.id)).length;
-  const displayedFiguresCount =
-    sysData && sysData.systemId === currentSysId ? systemImages.length : stats.totalImages;
 
   const chMap = useMemo(
     () => new Map((sysData?.chapters || manifestSys.chapters).map((c) => [c.id, c])),
     [sysData, manifestSys]
   );
 
-  const currentLbItem = lightbox ? lightbox.items[lightbox.index] : null;
-
   return (
     <div className="h-full flex flex-col overflow-hidden bg-slate-50 dark:bg-navy-950">
       {/* 1. Compact 16-System Switcher Bar */}
       <div className="flex-shrink-0 px-3 md:px-4 py-1.5 bg-white dark:bg-navy-900 border-b border-slate-200/80 dark:border-white/[0.07]">
-        <ScrollStrip innerClassName="gap-1" ariaLabel="Switch organ system">
+        <div className="rs-pill-strip flex items-center gap-1">
           {ATLAS_MANIFEST.systems.map((sys) => {
             const active = sys.systemId === currentSysId;
             const catMeta = SYSTEMS.find((s) => s.id === sys.systemId);
@@ -1057,16 +703,11 @@ export default function CardioHub({
               </button>
             );
           })}
-        </ScrollStrip>
+        </div>
       </div>
 
       {/* 2. Unified Single Command & Filter Bar */}
-      <div
-        className={cn(
-          'flex-shrink-0 px-3 md:px-5 py-2 bg-slate-50/90 dark:bg-navy-950/90 border-b border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-2.5',
-          mobileReaderOpen && mode === 'chapters' && 'hidden md:flex'
-        )}
-      >
+      <div className="flex-shrink-0 px-3 md:px-5 py-2 bg-slate-50/90 dark:bg-navy-950/90 border-b border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-2.5">
         <div className="flex flex-wrap items-center gap-2 min-w-0 flex-1">
           <div className="flex items-center gap-2 pr-1">
             <h1 className="text-xs sm:text-sm font-extrabold font-display text-slate-900 dark:text-white truncate">
@@ -1120,8 +761,8 @@ export default function CardioHub({
           )}
         </div>
 
-        {/* Sub-View Mode Tabs (horizontally scrollable on narrow mobile screens) */}
-        <div className="max-w-full overflow-x-auto rs-pill-strip flex items-center gap-0.5 p-0.5 rounded-lg bg-slate-200/70 dark:bg-navy-900 border border-slate-200 dark:border-white/10">
+        {/* Sub-View Mode Tabs */}
+        <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-slate-200/70 dark:bg-navy-900 border border-slate-200 dark:border-white/10">
           <button
             type="button"
             onClick={() => setMode('chapters')}
@@ -1147,7 +788,7 @@ export default function CardioHub({
             )}
           >
             <IconImage size={12} />
-            <span>Figures ({displayedFiguresCount})</span>
+            <span>Figures ({stats.totalImages})</span>
           </button>
 
           <button
@@ -1200,12 +841,7 @@ export default function CardioHub({
       {sysData && mode === 'chapters' && (
         <div className="flex-1 overflow-hidden grid md:grid-cols-[310px_1fr] lg:grid-cols-[350px_1fr]">
           {/* Categorized Left Topic Index (Grouped by Chapter Sub-Sections) */}
-          <div
-            className={cn(
-              'h-full overflow-y-auto border-r border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900/50',
-              mobileReaderOpen && 'hidden md:block'
-            )}
-          >
+          <div className="h-full overflow-y-auto border-r border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900/50">
             {groupedSidebarChapters.map(({ chapter: ch, topics }) => {
               const isCollapsed = collapsedChapters.has(ch.id) && !searchQuery.trim();
               const chMastered = topics.filter((t) => masteredCases.has(t.id)).length;
@@ -1252,10 +888,7 @@ export default function CardioHub({
                             key={t.id}
                             ref={isSelected ? activeTopicRef : undefined}
                             type="button"
-                            onClick={() => {
-                              onSelectTopic(t.id);
-                              setMobileReaderOpen(true);
-                            }}
+                            onClick={() => onSelectTopic(t.id)}
                             className={cn(
                               'rs-scroll-into-view w-full text-left px-3.5 py-2.5 transition-colors border-l-3',
                               isSelected
@@ -1300,45 +933,8 @@ export default function CardioHub({
             })}
           </div>
 
-          {/* Right Multimedia Reader (Full-screen on mobile when topic selected) */}
-          <div
-            ref={readerScrollRef}
-            className={cn(
-              'h-full overflow-y-auto p-4 md:p-6 lg:p-8',
-              !mobileReaderOpen && 'hidden md:block'
-            )}
-          >
-            {mobileReaderOpen && (
-              <div className="md:hidden sticky top-0 -mx-4 -mt-4 px-4 py-2 mb-3 bg-slate-50/95 dark:bg-navy-950/95 backdrop-blur border-b border-slate-200 dark:border-white/10 z-10 flex items-center justify-between gap-2">
-                <button
-                  type="button"
-                  onClick={() => setMobileReaderOpen(false)}
-                  className="min-h-[40px] inline-flex items-center gap-1.5 text-sm font-bold text-navy-DEFAULT dark:text-orange-DEFAULT"
-                  aria-label="Back to topics"
-                >
-                  <span aria-hidden="true">←</span> Topics
-                </button>
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    disabled={!hasPrevTopic}
-                    onClick={() => stepTopic(-1)}
-                    className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 text-xs font-bold disabled:opacity-35"
-                  >
-                    ← Prev
-                  </button>
-                  <button
-                    type="button"
-                    disabled={!hasNextTopic}
-                    onClick={() => stepTopic(1)}
-                    className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 text-xs font-bold disabled:opacity-35"
-                  >
-                    Next →
-                  </button>
-                </div>
-              </div>
-            )}
-
+          {/* Right Multimedia Reader */}
+          <div className="h-full overflow-y-auto p-4 md:p-6 lg:p-8">
             {activeTopic && (
               <div className="max-w-4xl mx-auto">
                 <CardioTopicReader
@@ -1350,14 +946,7 @@ export default function CardioHub({
                   onToggleMaster={onToggleMaster}
                   isBookmarked={bookmarks.has(activeTopic.id)}
                   onToggleBookmark={onToggleBookmark}
-                  isFlagged={flags ? flags.has(activeTopic.id) : false}
-                  onToggleFlag={onToggleFlag}
-                  activeRecall={activeRecall}
-                  onPrevTopic={() => stepTopic(-1)}
-                  onNextTopic={() => stepTopic(1)}
-                  hasPrev={hasPrevTopic}
-                  hasNext={hasNextTopic}
-                  onOpenLightbox={openTopicImageLightbox}
+                  onOpenLightbox={(src, caption) => setLightbox({ src, caption })}
                 />
               </div>
             )}
@@ -1409,7 +998,6 @@ export default function CardioHub({
                       onClick={() => {
                         onSelectTopic(vid.topicId);
                         setMode('chapters');
-                        setMobileReaderOpen(true);
                       }}
                       className="w-full py-1.5 rounded-lg bg-slate-100 dark:bg-navy-800 hover:bg-navy-DEFAULT hover:text-white text-slate-800 dark:text-slate-200 text-xs font-bold transition-colors"
                     >
@@ -1431,7 +1019,7 @@ export default function CardioHub({
               <h2 className="text-sm md:text-base font-extrabold font-display text-slate-900 dark:text-white">
                 {sysData.title} Figures ({filteredImages.length} of {systemImages.length})
               </h2>
-              <span className="text-[11px] text-slate-400">Click any figure to enlarge &amp; browse</span>
+              <span className="text-[11px] text-slate-400">Click any figure to enlarge</span>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -1442,16 +1030,7 @@ export default function CardioHub({
                 >
                   <button
                     type="button"
-                    onClick={() =>
-                      setLightbox({
-                        items: filteredImages.map((item) => ({
-                          src: item.src,
-                          caption: `${item.topicTitle} — ${item.caption}`,
-                          topicId: item.topicId,
-                        })),
-                        index: idx,
-                      })
-                    }
+                    onClick={() => setLightbox({ src: im.src, caption: `${im.topicTitle} — ${im.caption}` })}
                     className="block w-full h-40 bg-slate-50 dark:bg-navy-950 rounded-lg overflow-hidden p-1.5 cursor-zoom-in"
                   >
                     <img
@@ -1476,7 +1055,6 @@ export default function CardioHub({
                         onClick={() => {
                           onSelectTopic(im.topicId);
                           setMode('chapters');
-                          setMobileReaderOpen(true);
                         }}
                         className="text-[11px] font-bold text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline"
                       >
@@ -1544,24 +1122,10 @@ export default function CardioHub({
                     <IconArrows size={12} /> Arrows ({qaCounts.arrow})
                   </button>
                 )}
-                {mcqAccuracy.answered > 0 && (
-                  <span className="ml-1 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-300">
-                    <span>
-                      {mcqAccuracy.correct}/{mcqAccuracy.answered} MCQs
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setMcqPicked({})}
-                      className="underline hover:opacity-75"
-                    >
-                      Reset
-                    </button>
-                  </span>
-                )}
               </div>
 
-              <div className="flex items-center gap-2 flex-1 min-w-[220px] justify-end flex-wrap">
-                <div className="relative flex-1 max-w-xs min-w-[140px]">
+              <div className="flex items-center gap-2 flex-1 min-w-[220px] justify-end">
+                <div className="relative flex-1 max-w-xs">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -1574,16 +1138,6 @@ export default function CardioHub({
                     className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-navy-DEFAULT"
                   />
                 </div>
-
-                {onDrillSystem && (
-                  <button
-                    type="button"
-                    onClick={() => onDrillSystem(currentSysId)}
-                    className="px-2.5 py-1.5 rounded-lg bg-orange-DEFAULT text-navy-950 text-xs font-extrabold hover:bg-orange-hover transition-colors whitespace-nowrap shrink-0"
-                  >
-                    Drill in Flashcards →
-                  </button>
-                )}
 
                 <button
                   type="button"
@@ -1617,7 +1171,6 @@ export default function CardioHub({
                   ? (!qaRecallMode && !mcqAnswered ? false : mcqAnswered || !qaRecallMode)
                   : (!qaRecallMode || revealedQaIds.has(item.id));
                 const effectiveShowMcqAns = isMcq ? mcqAnswered : showAns;
-                const repeatLabel = getAlsoInLabel(item.alsoIn, currentSysId);
 
                 return (
                   <div
@@ -1633,7 +1186,7 @@ export default function CardioHub({
                         {item.num}
                       </span>
                       <div className="flex-1 space-y-2 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center justify-between gap-2">
                           <div className="font-bold text-[13px] md:text-sm text-slate-900 dark:text-white leading-relaxed">
                             {item.q}
                           </div>
@@ -1644,7 +1197,6 @@ export default function CardioHub({
                                 e.stopPropagation();
                                 onSelectTopic(item.topicId!);
                                 setMode('chapters');
-                                setMobileReaderOpen(true);
                               }}
                               className="text-[11px] font-bold text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline shrink-0"
                             >
@@ -1653,31 +1205,16 @@ export default function CardioHub({
                           )}
                         </div>
 
-                        {repeatLabel && (
-                          <div>
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800">
-                              {repeatLabel}
-                            </span>
-                          </div>
-                        )}
-
                         {/* Attached Clinical Images */}
                         {item.images && item.images.length > 0 && (
                           <div className="flex flex-wrap gap-2.5 pt-1">
-                            {item.images.map((src, iIdx) => (
+                            {item.images.map((src) => (
                               <button
                                 key={src}
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setLightbox({
-                                    items: item.images!.map((s) => ({
-                                      src: s,
-                                      caption: item.q,
-                                      topicId: item.topicId,
-                                    })),
-                                    index: iIdx,
-                                  });
+                                  setLightbox({ src, caption: item.q });
                                 }}
                                 className="rounded-lg overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950 p-1 cursor-zoom-in"
                               >
@@ -1744,8 +1281,8 @@ export default function CardioHub({
         </div>
       )}
 
-      {/* Gallery Lightbox with Keyboard Arrow Navigation & Topic Deep-Link */}
-      {lightbox && currentLbItem && (
+      {/* Lightbox */}
+      {lightbox && (
         <div
           className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
           onClick={() => setLightbox(null)}
@@ -1756,82 +1293,24 @@ export default function CardioHub({
             className="max-w-5xl w-full bg-white dark:bg-navy-900 rounded-2xl overflow-hidden shadow-2xl border border-white/10 rs-slide-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-slate-200 dark:border-white/10">
-              <div className="flex items-center gap-2 min-w-0">
-                {lightbox.items.length > 1 && (
-                  <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-navy-800 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300 shrink-0">
-                    {lightbox.index + 1} / {lightbox.items.length}
-                  </span>
-                )}
-                <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
-                  {currentLbItem.caption}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                {currentLbItem.topicId && mode !== 'chapters' && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onSelectTopic(currentLbItem.topicId!);
-                      setMode('chapters');
-                      setMobileReaderOpen(true);
-                      setLightbox(null);
-                    }}
-                    className="px-2.5 py-1 rounded-md bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 text-xs font-bold hover:opacity-90"
-                  >
-                    Open Topic →
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setLightbox(null)}
-                  className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold text-slate-700 dark:text-white hover:bg-slate-200 flex items-center gap-1.5"
-                >
-                  Close <span className="rs-kbd">Esc</span>
-                </button>
-              </div>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/10">
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate pr-4">
+                {lightbox.caption}
+              </span>
+              <button
+                type="button"
+                onClick={() => setLightbox(null)}
+                className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold text-slate-700 dark:text-white hover:bg-slate-200 flex items-center gap-1.5"
+              >
+                Close <span className="rs-kbd">Esc</span>
+              </button>
             </div>
-            <div className="relative p-3 bg-slate-100 dark:bg-navy-950 flex items-center justify-center max-h-[80vh] overflow-auto">
-              {lightbox.items.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setLightbox((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            index: (prev.index - 1 + prev.items.length) % prev.items.length,
-                          }
-                        : null
-                    )
-                  }
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center font-bold shadow-md"
-                  aria-label="Previous image"
-                >
-                  ←
-                </button>
-              )}
+            <div className="p-3 bg-slate-100 dark:bg-navy-950 flex items-center justify-center max-h-[80vh] overflow-auto">
               <img
-                src={currentLbItem.src}
-                alt={currentLbItem.caption}
+                src={lightbox.src}
+                alt={lightbox.caption}
                 className="max-h-[74vh] w-auto object-contain rounded-lg"
               />
-              {lightbox.items.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setLightbox((prev) =>
-                      prev
-                        ? { ...prev, index: (prev.index + 1) % prev.items.length }
-                        : null
-                    )
-                  }
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center font-bold shadow-md"
-                  aria-label="Next image"
-                >
-                  →
-                </button>
-              )}
             </div>
           </div>
         </div>

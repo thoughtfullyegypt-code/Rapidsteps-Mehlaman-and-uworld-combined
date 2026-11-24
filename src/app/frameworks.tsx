@@ -14,12 +14,6 @@ interface FrameworksPayload {
 
 let CACHED_FRAMEWORKS_DATA: FrameworksPayload | null = null;
 
-function decodeLiteralUnicode(html: string): string {
-  return html.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) =>
-    String.fromCharCode(parseInt(hex, 16))
-  );
-}
-
 function attachFrameworkInteractions(
   root: ShadowRoot | HTMLElement,
   scrollContainer: HTMLElement | null,
@@ -178,6 +172,12 @@ function attachFrameworkInteractions(
   };
 }
 
+function decodeLiteralUnicode(html: string): string {
+  return html.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) =>
+    String.fromCharCode(parseInt(hex, 16))
+  );
+}
+
 export default function Frameworks({ onSelectCase, onBack }: FrameworksProps) {
   const [data, setData] = useState<FrameworksPayload | null>(CACHED_FRAMEWORKS_DATA);
   const [loading, setLoading] = useState<boolean>(!CACHED_FRAMEWORKS_DATA);
@@ -210,8 +210,7 @@ export default function Frameworks({ onSelectCase, onBack }: FrameworksProps) {
 
     const isDark = document.documentElement.classList.contains('dark');
     const shadow = host.shadowRoot || host.attachShadow({ mode: 'open' });
-    const decodedHtml = decodeLiteralUnicode(data.html);
-    shadow.innerHTML = `<style>${data.css}</style><div class="rsm-root ${isDark ? 'dark-theme' : ''}">${decodedHtml}</div>`;
+    shadow.innerHTML = `<style>${data.css}</style><div class="rsm-root ${isDark ? 'dark-theme' : ''}">${decodeLiteralUnicode(data.html)}</div>`;
 
     const cleanupInteractions = attachFrameworkInteractions(shadow, scrollRef.current, onSelectCase);
 
