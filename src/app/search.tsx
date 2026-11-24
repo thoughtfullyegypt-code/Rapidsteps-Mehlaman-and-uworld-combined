@@ -131,19 +131,19 @@ export default function SearchModal({ isOpen, onClose, onSelectCase }: SearchMod
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-navy-950/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-[#080D1A]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Search Step 1 Atlas"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden rs-slide-up"
+        className="w-full max-w-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden rs-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center px-4 border-b border-slate-100 dark:border-white/10">
+        <div className="flex items-center px-4 border-b border-[#E2E6EE] dark:border-white/10">
           <svg
-            className="w-4 h-4 text-slate-400 shrink-0"
+            className="w-4 h-4 text-[#526074] shrink-0"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -162,24 +162,22 @@ export default function SearchModal({ isOpen, onClose, onSelectCase }: SearchMod
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full py-3.5 px-3 bg-transparent text-slate-800 dark:text-white placeholder-slate-400 text-sm focus:outline-none"
+            className="w-full py-3.5 px-3 bg-transparent text-[#0D1321] dark:text-white placeholder-slate-400 text-[15px] focus:outline-none"
           />
-          <kbd className="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-100 dark:bg-navy-800 border border-slate-200 dark:border-white/10 text-slate-400">
-            Esc
-          </kbd>
+          <kbd className="rs-kbd">Esc</kbd>
         </div>
 
         {/* Compact Organ System Filter Strip */}
-        <div className="px-3 py-1.5 border-b border-slate-100 dark:border-white/10 bg-slate-50/70 dark:bg-navy-950/50">
+        <div className="px-3 py-1.5 border-b border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] dark:bg-[#080D1A]/50">
           <div className="rs-pill-strip flex items-center gap-1">
             <button
               type="button"
               onClick={() => setSysFilter('all')}
               className={cn(
-                'px-2 py-0.5 rounded-md text-[11px] font-bold whitespace-nowrap transition-colors',
+                'px-2.5 py-1 rounded-md text-[13px] font-semibold whitespace-nowrap transition-colors duration-150',
                 sysFilter === 'all'
-                  ? 'bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950'
-                  : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/5'
+                  ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950'
+                  : 'text-[#526074] dark:text-slate-400 hover:bg-[#E2E6EE]/60 dark:hover:bg-white/5'
               )}
             >
               All 16
@@ -190,10 +188,10 @@ export default function SearchModal({ isOpen, onClose, onSelectCase }: SearchMod
                 type="button"
                 onClick={() => setSysFilter(sys.systemId)}
                 className={cn(
-                  'px-2 py-0.5 rounded-md text-[11px] font-bold whitespace-nowrap transition-colors inline-flex items-center gap-1',
+                  'px-2.5 py-1 rounded-md text-[13px] font-semibold whitespace-nowrap transition-colors duration-150 inline-flex items-center gap-1',
                   sysFilter === sys.systemId
-                    ? 'bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950'
-                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/5'
+                    ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950'
+                    : 'text-[#526074] dark:text-slate-400 hover:bg-[#E2E6EE]/60 dark:hover:bg-white/5'
                 )}
               >
                 <span>{sys.short}</span>
@@ -204,7 +202,7 @@ export default function SearchModal({ isOpen, onClose, onSelectCase }: SearchMod
 
         <div className="max-h-[56vh] overflow-y-auto p-1.5">
           {results.length > 0 ? (
-            <div className="divide-y divide-slate-100 dark:divide-white/[0.04]">
+            <div className="divide-y divide-[#F1F3F7] dark:divide-white/[0.05]">
               {results.map((r, idx) => (
                 <div
                   key={`${r.id}-${idx}`}
@@ -213,34 +211,34 @@ export default function SearchModal({ isOpen, onClose, onSelectCase }: SearchMod
                     onClose();
                   }}
                   className={cn(
-                    'flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-colors',
+                    'flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-colors duration-150',
                     idx === selectedIndex
-                      ? 'bg-slate-100 dark:bg-white/10 text-navy-DEFAULT dark:text-orange-DEFAULT'
-                      : 'hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-200'
+                      ? 'bg-[#F1F3F7] dark:bg-[#131E36] text-[#16236E] dark:text-orange-DEFAULT'
+                      : 'hover:bg-[#F7F8FA] dark:hover:bg-white/5 text-[#0D1321] dark:text-slate-200'
                   )}
                 >
                   <div className="min-w-0 pr-3 flex items-start gap-2.5">
-                    <span className="mt-0.5 text-navy-DEFAULT dark:text-orange-DEFAULT shrink-0">
+                    <span className="mt-0.5 text-[#16236E] dark:text-orange-DEFAULT shrink-0">
                       <SystemIcon systemId={r.systemId} size={15} />
                     </span>
                     <div className="min-w-0">
-                      <div className="font-bold text-xs sm:text-sm flex items-center gap-2">
+                      <div className="font-semibold text-[15px] flex items-center gap-2">
                         <span className="truncate">{r.title}</span>
-                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-navy-800 text-slate-500 dark:text-slate-400 flex-shrink-0">
+                        <span className="text-[13px] font-medium px-2 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300 flex-shrink-0">
                           {r.systemBadge}
                         </span>
                       </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                      <div className="text-[13px] text-[#526074] dark:text-slate-400 mt-0.5 truncate">
                         {r.buzzword}
                       </div>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-slate-400 flex-shrink-0">→</span>
+                  <span className="text-[13px] font-semibold text-[#526074] flex-shrink-0">→</span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="py-8 px-4 text-center text-xs text-slate-500">
+            <div className="py-8 px-4 text-center text-[15px] text-[#526074]">
               {query.trim()
                 ? 'No matching topics found.'
                 : `Type any disease, nerve, microbe, drug, enzyme, or buzzword across ${ATLAS_MANIFEST.totals.topics.toLocaleString()} Step 1 topics…`}
@@ -248,7 +246,7 @@ export default function SearchModal({ isOpen, onClose, onSelectCase }: SearchMod
           )}
         </div>
 
-        <div className="px-4 py-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="px-4 py-2.5 border-t border-[#E2E6EE] dark:border-white/10 flex items-center justify-between text-[13px] text-[#526074] dark:text-slate-400">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
               <span className="rs-kbd">↑</span>
@@ -261,7 +259,7 @@ export default function SearchModal({ isOpen, onClose, onSelectCase }: SearchMod
               <span className="rs-kbd">esc</span> close
             </span>
           </div>
-          {results.length > 0 && <span className="font-mono">{results.length} matches</span>}
+          {results.length > 0 && <span className="tabular-nums font-medium">{results.length} matches</span>}
         </div>
       </div>
     </div>

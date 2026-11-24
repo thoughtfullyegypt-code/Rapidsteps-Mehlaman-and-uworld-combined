@@ -47,23 +47,23 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Sign in"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl p-6 md:p-8 animate-fade-up"
+        className="w-full max-w-md bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/10 mb-6">
-          <h2 className="text-xl font-bold font-display text-navy-DEFAULT dark:text-white">
-            {userEmail ? 'Your Account' : 'Sign in to Rapid Steps'}
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/10 mb-6">
+          <h2 className="text-xl font-bold font-display text-[#0D1321] dark:text-white">
+            {userEmail ? 'Your account' : 'Sign in to Rapid Steps'}
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#526074] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
             aria-label="Close dialog"
           >
             <IconX size={16} />
@@ -72,30 +72,30 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
 
         {userEmail ? (
           <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-navy-950/50 border border-slate-200 dark:border-white/10">
-              <span className="text-xs text-slate-400 block uppercase font-bold tracking-wider mb-1">Signed in as</span>
-              <span className="font-semibold text-navy-DEFAULT dark:text-white text-base">{userEmail}</span>
+            <div className="p-4 rounded-xl bg-[#F7F8FA] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10">
+              <span className="text-[13px] text-[#526074] dark:text-slate-400 block font-medium mb-1">Signed in as</span>
+              <span className="font-semibold text-[#0D1321] dark:text-white text-[15px]">{userEmail}</span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-[13px] text-[#526074] dark:text-slate-400 leading-relaxed">
               Your purchased plans, study progress, and mastered cases sync across devices automatically with this email.
             </p>
             <button
               onClick={() => { onSignOut(); onClose(); }}
-              className="w-full py-3 px-4 rounded-xl border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 font-semibold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+              className="w-full py-3 px-4 rounded-xl border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 font-semibold text-[15px] hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors duration-150"
             >
               Sign out
             </button>
           </div>
         ) : (
           <div>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">
+            <p className="text-[15px] text-[#526074] dark:text-slate-300 mb-6 leading-relaxed">
               Sign in with your email to restore your plan on any device. We send a 6-digit code to that email. There is no password.
             </p>
 
             {step === 'email' ? (
               <form onSubmit={handleSendCode} className="space-y-4">
                 <div>
-                  <label htmlFor="server-signin-email" className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                  <label htmlFor="server-signin-email" className="block text-[13px] font-semibold text-[#0D1321] dark:text-slate-300 mb-1.5">
                     Email
                   </label>
                   <input
@@ -105,30 +105,30 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/15 bg-slate-50 dark:bg-navy-950 text-slate-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-navy-DEFAULT dark:focus:ring-orange-DEFAULT transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px] focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT transition-colors duration-150"
                     data-autofocus="true"
                   />
                 </div>
 
-                <div id="turnstile-container" className="min-h-[10px] text-xs text-slate-400" />
+                <div id="turnstile-container" className="min-h-[10px] text-[13px] text-[#526074]" />
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-4 bg-orange-DEFAULT hover:bg-orange-hover text-navy-950 font-bold rounded-full transition-all shadow-glow-orange min-h-[46px] disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 bg-orange-DEFAULT hover:bg-orange-hover text-navy-950 font-semibold rounded-full transition-colors duration-150 min-h-[46px] disabled:opacity-50 flex items-center justify-center gap-2 text-[15px]"
                 >
                   {loading ? 'Sending code…' : 'Send code'}
                 </button>
               </form>
             ) : (
               <form onSubmit={handleVerifyCode} className="space-y-4">
-                <div className="p-3 rounded-xl bg-orange-light/50 dark:bg-navy-950/60 border border-orange-border/50 text-xs text-orange-rust dark:text-orange-DEFAULT">
+                <div className="p-3 rounded-xl bg-[#FFF4E5] dark:bg-[#131E36] text-[13px] text-[#C2550A] dark:text-orange-DEFAULT">
                   Code sent to <strong>{email}</strong>. Enter the 6-digit code below.
                 </div>
 
                 <div>
-                  <label htmlFor="server-signin-code" className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                    6-Digit Code
+                  <label htmlFor="server-signin-code" className="block text-[13px] font-semibold text-[#0D1321] dark:text-slate-300 mb-1.5">
+                    6-digit code
                   </label>
                   <input
                     id="server-signin-code"
@@ -139,14 +139,14 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
                     placeholder="123456"
                     value={code}
                     onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-                    className="w-full px-4 py-3 text-center tracking-widest font-mono text-xl rounded-xl border border-slate-300 dark:border-white/15 bg-slate-50 dark:bg-navy-950 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy-DEFAULT dark:focus:ring-orange-DEFAULT transition-all"
+                    className="w-full px-4 py-3 text-center tracking-widest tabular-nums font-semibold text-xl rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT transition-colors duration-150"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading || code.length < 6}
-                  className="w-full py-3.5 px-4 bg-orange-DEFAULT hover:bg-orange-hover text-navy-950 font-bold rounded-full transition-all shadow-glow-orange min-h-[46px] disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 bg-orange-DEFAULT hover:bg-orange-hover text-navy-950 font-semibold rounded-full transition-colors duration-150 min-h-[46px] disabled:opacity-50 flex items-center justify-center gap-2 text-[15px]"
                 >
                   {loading ? 'Checking…' : 'Verify code'}
                 </button>
@@ -155,7 +155,7 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
                   <button
                     type="button"
                     onClick={() => { setStep('email'); setCode(''); }}
-                    className="text-xs text-navy-DEFAULT dark:text-blue-400 font-semibold hover:underline"
+                    className="text-[13px] text-[#16236E] dark:text-blue-400 font-semibold hover:underline"
                   >
                     Use a different email / send a new code
                   </button>
@@ -208,23 +208,23 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Unlock full cases"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl p-6 md:p-8 animate-fade-up overflow-y-auto max-h-[90vh]"
+        className="w-full max-w-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-fade-up overflow-y-auto max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/10 mb-5">
-          <h2 id="unlock-modal-title" className="text-xl md:text-2xl font-bold font-display text-navy-DEFAULT dark:text-white">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/10 mb-5">
+          <h2 id="unlock-modal-title" className="text-xl md:text-2xl font-bold font-display text-[#0D1321] dark:text-white">
             Unlock full cases
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#526074] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
             aria-label="Close unlock dialog"
           >
             <IconX size={16} />
@@ -232,8 +232,8 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
         </div>
 
         {!userEmail && (
-          <div className="mb-5 p-4 rounded-2xl bg-orange-light dark:bg-orange-DEFAULT/10 border border-orange-border dark:border-orange-DEFAULT/30 text-xs text-orange-rust dark:text-orange-DEFAULT flex items-start gap-2.5">
-            <span className="font-bold inline-flex items-center gap-1 shrink-0"><IconAlert size={14} /> Note:</span>
+          <div className="mb-5 p-4 rounded-r-xl border-l-[3px] border-[#FF8C1A] bg-[#FFF4E5]/70 dark:bg-orange-DEFAULT/10 text-[13px] text-[#0D1321] dark:text-orange-DEFAULT flex items-start gap-2.5 leading-relaxed">
+            <span className="font-semibold text-[#C2550A] dark:text-orange-DEFAULT inline-flex items-center gap-1 shrink-0"><IconAlert size={14} /> Note:</span>
             <span>
               Sign in with the email you will pay with, then tap Unlock again. Your purchase attaches to your signed-in account automatically.
             </span>
@@ -246,46 +246,48 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
               key={p.id}
               onClick={() => setSelectedPlan(p.id)}
               className={cn(
-                'relative p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between text-left',
+                'relative p-4 rounded-xl border cursor-pointer transition-colors duration-150 flex flex-col justify-between text-left',
                 selectedPlan === p.id
-                  ? 'border-orange-DEFAULT bg-orange-light/30 dark:bg-orange-DEFAULT/10 shadow-sm ring-1 ring-orange-DEFAULT'
-                  : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 bg-slate-50/50 dark:bg-navy-950/40'
+                  ? 'border-orange-DEFAULT bg-[#FFF4E5]/50 dark:bg-orange-DEFAULT/10 ring-1 ring-orange-DEFAULT'
+                  : 'border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF] dark:hover:border-white/20 bg-[#F7F8FA] dark:bg-[#131E36]/60'
               )}
             >
-              {p.featured && (
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-orange-DEFAULT text-navy-950 font-black text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full whitespace-nowrap">
-                  Most popular
-                </span>
-              )}
               <div>
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-200 block mb-1">{p.label}</span>
-                <span className="text-2xl font-extrabold text-navy-DEFAULT dark:text-white font-display block mb-1">${p.price}</span>
-                <span className="text-[11px] text-slate-500 block mb-2">{p.duration}</span>
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <span className="text-[13px] font-semibold text-[#0D1321] dark:text-slate-200">{p.label}</span>
+                  {p.featured && (
+                    <span className="text-[12px] font-semibold text-[#C2550A] dark:text-orange-DEFAULT whitespace-nowrap">
+                      Popular
+                    </span>
+                  )}
+                </div>
+                <span className="text-2xl font-extrabold text-[#16236E] dark:text-white font-display block mb-1 tabular-nums">${p.price}</span>
+                <span className="text-[13px] text-[#526074] dark:text-slate-400 block mb-2 tabular-nums">{p.duration}</span>
               </div>
-              <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-tight">{p.tagline}</p>
+              <p className="text-[13px] text-[#526074] dark:text-slate-300 leading-snug">{p.tagline}</p>
             </div>
           ))}
         </div>
 
-        <div className="space-y-2 mb-6 text-xs text-slate-600 dark:text-slate-300">
-          <div className="flex items-center gap-2">
-            <IconCheck size={14} className="text-orange-DEFAULT shrink-0" />
+        <div className="space-y-2 mb-6 text-[15px] text-[#0D1321] dark:text-slate-300">
+          <div className="flex items-center gap-2.5">
+            <IconCheck size={15} className="text-[#C2550A] dark:text-orange-DEFAULT shrink-0" />
             <span>All high-yield fact texts, all systems</span>
           </div>
-          <div className="flex items-center gap-2">
-            <IconCheck size={14} className="text-orange-DEFAULT shrink-0" />
+          <div className="flex items-center gap-2.5">
+            <IconCheck size={15} className="text-[#C2550A] dark:text-orange-DEFAULT shrink-0" />
             <span>One-time payment, never a subscription</span>
           </div>
-          <div className="flex items-center gap-2">
-            <IconCheck size={14} className="text-orange-DEFAULT shrink-0" />
+          <div className="flex items-center gap-2.5">
+            <IconCheck size={15} className="text-[#C2550A] dark:text-orange-DEFAULT shrink-0" />
             <span>Restore on any device by signing in with your email</span>
           </div>
         </div>
 
         {/* Discount Code Box */}
-        <div className="mb-6 pt-4 border-t border-slate-100 dark:border-white/10">
-          <label htmlFor="discount-code-input" className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-            Student Discount Code (Optional)
+        <div className="mb-6 pt-4 border-t border-[#E2E6EE] dark:border-white/10">
+          <label htmlFor="discount-code-input" className="block text-[13px] font-semibold text-[#0D1321] dark:text-slate-300 mb-1.5">
+            Student discount code (optional)
           </label>
           <div className="flex gap-2">
             <input
@@ -294,10 +296,10 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
               placeholder="e.g. STUDY10 or GROUP15"
               value={discountCode}
               onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-              className="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-white/15 bg-slate-50 dark:bg-navy-950 text-slate-800 dark:text-white text-xs font-mono uppercase focus:outline-none focus:ring-2 focus:ring-navy-DEFAULT dark:focus:ring-orange-DEFAULT"
+              className="flex-1 px-3 py-2 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT"
             />
           </div>
-          <span className="text-[11px] text-slate-400 mt-1 block">
+          <span className="text-[13px] text-[#526074] dark:text-slate-400 mt-1.5 block">
             Student discounts: <code>STUDY10</code> for 10% off · <code>GROUP15</code> for 15% off for 3+ buyers.
           </span>
         </div>
@@ -305,12 +307,12 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
         <button
           onClick={handleCheckout}
           disabled={checkoutLoading}
-          className="w-full py-4 px-6 bg-orange-DEFAULT hover:bg-orange-hover text-navy-950 font-bold rounded-full transition-all shadow-glow-orange min-h-[50px] flex items-center justify-center gap-2 text-base"
+          className="w-full py-3.5 px-6 bg-orange-DEFAULT hover:bg-orange-hover text-navy-950 font-semibold rounded-full transition-colors duration-150 min-h-[50px] flex items-center justify-center gap-2 text-[15px] tabular-nums"
         >
-          {checkoutLoading ? 'Opening checkout…' : `Unlock now — $${selectedPlan === 'plan1mo' ? 19 : selectedPlan === 'plan6mo' ? 50 : 79} one-time`}
+          {checkoutLoading ? 'Opening checkout…' : `Unlock now · $${selectedPlan === 'plan1mo' ? 19 : selectedPlan === 'plan6mo' ? 50 : 79} one-time`}
         </button>
 
-        <p className="text-center text-xs text-slate-400 mt-4">
+        <p className="text-center text-[13px] text-[#526074] dark:text-slate-400 mt-4">
           Full refund within 14 days, no questions asked. Secure payments processed by Paddle.
         </p>
       </div>
@@ -346,31 +348,31 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Mistake Log"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl p-6 animate-fade-up"
+        className="w-full max-w-lg bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 rounded-2xl shadow-2xl p-6 animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/10 mb-4">
-          <h2 className="text-xl font-bold font-display text-navy-DEFAULT dark:text-white">
-            Log a Question Mistake
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/10 mb-4">
+          <h2 className="text-xl font-bold font-display text-[#0D1321] dark:text-white">
+            Log a question mistake
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#526074] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
           >
             <IconX size={16} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="space-y-4 text-[13px]">
           <div>
-            <label htmlFor="mistake-case" className="block font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label htmlFor="mistake-case" className="block font-semibold text-[#0D1321] dark:text-slate-300 mb-1.5">
               Case / Pathology
             </label>
             <input
@@ -380,14 +382,14 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
               placeholder="e.g. PSGN vs IgA Nephropathy"
               value={caseName}
               onChange={(e) => setCaseName(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-white/15 bg-slate-50 dark:bg-navy-950 text-slate-800 dark:text-white"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px]"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="mistake-picked" className="block font-bold uppercase tracking-wider text-slate-500 mb-1">
-                What you picked (Trap)
+              <label htmlFor="mistake-picked" className="block font-semibold text-[#0D1321] dark:text-slate-300 mb-1.5">
+                What you picked (trap)
               </label>
               <input
                 id="mistake-picked"
@@ -396,12 +398,12 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
                 placeholder="e.g. IgA Nephropathy"
                 value={picked}
                 onChange={(e) => setPicked(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-white/15 bg-slate-50 dark:bg-navy-950 text-slate-800 dark:text-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px]"
               />
             </div>
             <div>
-              <label htmlFor="mistake-correct" className="block font-bold uppercase tracking-wider text-slate-500 mb-1">
-                Correct Diagnosis
+              <label htmlFor="mistake-correct" className="block font-semibold text-[#0D1321] dark:text-slate-300 mb-1.5">
+                Correct diagnosis
               </label>
               <input
                 id="mistake-correct"
@@ -410,14 +412,14 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
                 placeholder="e.g. PSGN"
                 value={correct}
                 onChange={(e) => setCorrect(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-white/15 bg-slate-50 dark:bg-navy-950 text-slate-800 dark:text-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px]"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="mistake-note" className="block font-bold uppercase tracking-wider text-slate-500 mb-1">
-              Why you missed it (Distractor analysis)
+            <label htmlFor="mistake-note" className="block font-semibold text-[#0D1321] dark:text-slate-300 mb-1.5">
+              Why you missed it (distractor analysis)
             </label>
             <textarea
               id="mistake-note"
@@ -425,15 +427,15 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
               placeholder="e.g. Confused latency: PSGN is 2-3 weeks post-infection, IgA is 1-2 days synpharyngitic."
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-white/15 bg-slate-50 dark:bg-navy-950 text-slate-800 dark:text-white resize-none"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px] resize-none"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 bg-navy-DEFAULT text-white font-bold rounded-xl hover:bg-navy-dark transition-colors"
+            className="w-full py-3 bg-[#16236E] text-white font-semibold text-[15px] rounded-full hover:bg-[#0F1854] transition-colors duration-150"
           >
-            {saved ? '✓ Saved to Mistake Log!' : 'Save Mistake'}
+            {saved ? 'Saved to mistake log' : 'Save mistake'}
           </button>
         </form>
       </div>
@@ -479,107 +481,109 @@ export function MoreMenu({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-navy-950/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#080D1A]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Account and menu"
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-md bg-white dark:bg-navy-900 border-t sm:border border-slate-200 dark:border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 animate-slide-in sm:animate-fade-up max-h-[85vh] overflow-y-auto"
+        className="w-full sm:max-w-md bg-white dark:bg-[#0E1629] border-t sm:border border-[#E2E6EE] dark:border-white/10 rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 animate-slide-in sm:animate-fade-up max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/10 mb-4">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-bold font-display text-navy-DEFAULT dark:text-white">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/10 mb-4">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-lg font-bold font-display text-[#0D1321] dark:text-white">
               {userEmail ? 'Account and menu' : 'Menu'}
             </h2>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
+            <span className="text-[13px] font-medium px-2.5 py-0.5 rounded-full bg-[#F1F3F7] dark:bg-white/10 text-[#526074] dark:text-slate-300 tabular-nums">
               {masteredCount}/{totalCount} mastered
             </span>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#526074] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
           >
             <IconX size={16} />
           </button>
         </div>
 
-        <div className="space-y-4 text-sm">
+        <div className="space-y-4 text-[15px]">
           {/* Active Recall toggle */}
-          <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-navy-950/50 border border-slate-100 dark:border-white/5">
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F7F8FA] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10">
             <div>
-              <span className="font-semibold text-slate-800 dark:text-white block">Active Recall Mode</span>
-              <span className="text-xs text-slate-500">Hide diagnoses until clicked</span>
+              <span className="font-semibold text-[#0D1321] dark:text-white block">Active recall mode</span>
+              <span className="text-[13px] text-[#526074] dark:text-slate-400">Hide diagnoses until clicked</span>
             </div>
             <button
               onClick={onToggleActiveRecall}
               className={cn(
-                'w-12 h-6 rounded-full transition-colors relative p-0.5',
-                activeRecall ? 'bg-orange-DEFAULT' : 'bg-slate-300 dark:bg-slate-700'
+                'w-12 h-6 rounded-full transition-colors duration-150 relative p-0.5',
+                activeRecall ? 'bg-orange-DEFAULT' : 'bg-[#CBD2DF] dark:bg-slate-700'
               )}
             >
-              <span className={cn('block w-5 h-5 rounded-full bg-white transition-transform', activeRecall ? 'translate-x-6' : 'translate-x-0')} />
+              <span className={cn('block w-5 h-5 rounded-full bg-white transition-transform duration-150', activeRecall ? 'translate-x-6' : 'translate-x-0')} />
             </button>
           </div>
 
           {/* Study size toggle */}
-          <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-navy-950/50 border border-slate-100 dark:border-white/5">
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F7F8FA] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10">
             <div>
-              <span className="font-semibold text-slate-800 dark:text-white block">Study Font Size</span>
-              <span className="text-xs text-slate-500">{studySize === 'large' ? 'Large (19px reader)' : 'Normal (16px standard)'}</span>
+              <span className="font-semibold text-[#0D1321] dark:text-white block">Study font size</span>
+              <span className="text-[13px] text-[#526074] dark:text-slate-400 tabular-nums">
+                {studySize === 'large' ? 'Large (19px reader)' : 'Normal (16px standard)'}
+              </span>
             </div>
             <button
               onClick={onToggleStudySize}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-xs font-bold text-navy-DEFAULT dark:text-orange-DEFAULT"
+              className="px-3 py-1.5 rounded-lg border border-[#CBD2DF] dark:border-white/10 text-[13px] font-semibold text-[#16236E] dark:text-orange-DEFAULT bg-white dark:bg-[#0E1629]"
             >
               {studySize === 'large' ? 'Large A+' : 'Normal A'}
             </button>
           </div>
 
           {/* Tools & Links */}
-          <div className="space-y-1.5">
+          <div className="divide-y divide-[#E2E6EE] dark:divide-white/10 border-y border-[#E2E6EE] dark:border-white/10">
             <button
               onClick={() => { onClose(); onOpenShortcuts(); }}
-              className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-200 font-medium transition-colors text-left"
+              className="w-full flex items-center justify-between py-3 px-1 hover:text-[#16236E] dark:hover:text-orange-DEFAULT text-[#0D1321] dark:text-slate-200 font-medium transition-colors duration-150 text-left"
             >
-              <span>Keyboard Shortcuts</span>
-              <kbd className="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-navy-800 border">?</kbd>
+              <span>Keyboard shortcuts</span>
+              <kbd className="rs-kbd">?</kbd>
             </button>
 
             <button
               onClick={() => { onClose(); onOpenMistakeLog(); }}
-              className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-200 font-medium transition-colors text-left"
+              className="w-full flex items-center justify-between py-3 px-1 hover:text-[#16236E] dark:hover:text-orange-DEFAULT text-[#0D1321] dark:text-slate-200 font-medium transition-colors duration-150 text-left"
             >
-              <span>Mistake Log</span>
-              <span className="text-xs text-slate-400">Review what you missed</span>
+              <span>Mistake log</span>
+              <span className="text-[13px] text-[#526074] dark:text-slate-400">Review what you missed</span>
             </button>
 
             <button
               onClick={() => { onClose(); onOpenUnlock(); }}
-              className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-orange-light/50 dark:hover:bg-orange-DEFAULT/10 text-orange-rust dark:text-orange-DEFAULT font-semibold transition-colors text-left"
+              className="w-full flex items-center justify-between py-3 px-1 text-[#C2550A] dark:text-orange-DEFAULT font-semibold transition-colors duration-150 text-left"
             >
-              <span>Plans & Pricing</span>
-              <span className="text-xs">$19 · $50 · $79 one-time</span>
+              <span>Plans &amp; pricing</span>
+              <span className="text-[13px] tabular-nums">$19 · $50 · $79 one-time</span>
             </button>
 
             <button
               onClick={() => { onClose(); onOpenSignIn(); }}
-              className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-200 font-medium transition-colors text-left"
+              className="w-full flex items-center justify-between py-3 px-1 hover:text-[#16236E] dark:hover:text-orange-DEFAULT text-[#0D1321] dark:text-slate-200 font-medium transition-colors duration-150 text-left"
             >
-              <span>{userEmail ? 'Account Profile' : 'Sign in'}</span>
-              <span className="text-xs text-slate-400">{userEmail || 'Passwordless email code'}</span>
+              <span>{userEmail ? 'Account profile' : 'Sign in'}</span>
+              <span className="text-[13px] text-[#526074] dark:text-slate-400">{userEmail || 'Passwordless email code'}</span>
             </button>
           </div>
 
           {/* Legal and disclaimer */}
-          <div className="pt-4 border-t border-slate-100 dark:border-white/10 text-xs text-slate-400 space-y-2">
+          <div className="pt-2 text-[13px] text-[#526074] dark:text-slate-400 space-y-2">
             <div className="flex gap-4">
               <a href={`${import.meta.env.BASE_URL}terms`} className="hover:underline">Terms</a>
               <a href={`${import.meta.env.BASE_URL}privacy`} className="hover:underline">Privacy</a>
               <a href={`${import.meta.env.BASE_URL}refunds`} className="hover:underline">Refunds</a>
-              <a href="mailto:support@rapidsteps.tech" className="hover:underline">Help & Support</a>
+              <a href="mailto:support@rapidsteps.tech" className="hover:underline">Help &amp; Support</a>
             </div>
             <p className="leading-normal">
               Rapid Steps is an independent study aid for USMLE Step 1. Not affiliated with NBME, FSMB, or USMLE.

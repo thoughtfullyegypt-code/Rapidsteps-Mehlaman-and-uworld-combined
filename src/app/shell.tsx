@@ -320,7 +320,7 @@ export default function AppShell() {
   return (
     <div
       className={cn(
-        'w-screen h-screen overflow-hidden flex flex-col bg-[#F8FAFC] dark:bg-navy-950 text-slate-800 dark:text-slate-100 antialiased selection:bg-[#FEF08A] selection:text-[#854D0E]',
+        'w-screen h-screen overflow-hidden flex flex-col bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-[#F2F5FA] antialiased selection:bg-[#FEF08A] selection:text-[#854D0E]',
         studySize === 'large' && 'text-lg'
       )}
     >
@@ -329,7 +329,7 @@ export default function AppShell() {
           ============================================================ */}
       {!focusMode && (
         <header
-          className="rs-dh rs-dh-main flex-shrink-0 h-14 border-b border-slate-200/80 dark:border-white/[0.07] bg-white/95 dark:bg-navy-900/95 backdrop-blur-xl px-5 flex items-center justify-between z-30"
+          className="rs-dh rs-dh-main flex-shrink-0 h-14 border-b border-[#E2E6EE] dark:border-white/10 bg-white/95 dark:bg-[#0E1629]/95 backdrop-blur-xl px-5 flex items-center justify-between z-30"
           role="navigation"
           aria-label="Primary"
         >
@@ -339,22 +339,18 @@ export default function AppShell() {
               <Logo width={70} height={28} variant="default" />
             </a>
 
-            <div className="hidden lg:block w-px h-6 bg-slate-200 dark:bg-white/10" />
+            <div className="hidden lg:block w-px h-5 bg-[#E2E6EE] dark:bg-white/10" />
 
-            <nav className="rs-dh-nav hidden lg:flex items-center gap-0.5">
+            <nav className="rs-dh-nav hidden lg:flex items-center gap-1">
               {navTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
-                    'px-3 py-1.5 rounded-lg text-[13px] font-semibold transition-all relative',
-                    tab.id === 'cardio' && activeTab === 'cardio'
-                      ? 'bg-gradient-to-r from-orange-DEFAULT to-[#FFA23F] text-navy-950 shadow-sm font-bold'
-                      : tab.id === 'cardio'
-                      ? 'text-orange-rust dark:text-orange-DEFAULT hover:bg-orange-light/60 dark:hover:bg-orange-DEFAULT/10 font-bold'
-                      : activeTab === tab.id
-                      ? 'bg-navy-DEFAULT text-white shadow-sm'
-                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
+                    'px-3 py-1.5 rounded-lg text-[13px] font-semibold transition-colors duration-150 relative',
+                    activeTab === tab.id
+                      ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950'
+                      : 'text-[#526074] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5 hover:text-[#0D1321] dark:hover:text-white'
                   )}
                 >
                   <span className="flex items-center gap-1.5">
@@ -371,10 +367,10 @@ export default function AppShell() {
             {/* Quick Search */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="rs-dh-search hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-navy-950/80 border border-slate-200 dark:border-white/10 text-xs text-slate-500 hover:border-slate-300 dark:hover:border-white/20 transition-colors"
+              className="rs-dh-search hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F7F8FA] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10 text-[13px] text-[#526074] dark:text-slate-300 hover:border-[#CBD2DF] dark:hover:border-white/20 transition-colors duration-150"
               aria-label="Search atlas"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-slate-400">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" className="text-[#526074] dark:text-slate-400">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
@@ -386,20 +382,20 @@ export default function AppShell() {
             <button
               onClick={handleToggleActiveRecall}
               className={cn(
-                'rs-recall hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
+                'rs-recall hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-semibold transition-colors duration-150',
                 activeRecall
-                  ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200 border border-amber-200 dark:border-amber-800'
-                  : 'text-slate-500 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 dark:bg-white/[0.03] border border-transparent dark:border-white/10'
+                  ? 'bg-[#FFF4E5] text-[#C2550A] dark:bg-orange-DEFAULT/15 dark:text-orange-DEFAULT border border-[#FFD29D] dark:border-orange-DEFAULT/30'
+                  : 'text-[#526074] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5 border border-transparent'
               )}
               title="Hide diagnoses until revealed"
             >
               {activeRecall ? <IconEye size={14} /> : <IconEyeOff size={14} />}
-              <span>{activeRecall ? 'Recall ON' : 'Recall'}</span>
+              <span>{activeRecall ? 'Recall on' : 'Recall'}</span>
             </button>
 
             {/* Compact Global Progress Indicator */}
             <div
-              className="hidden xl:flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-navy-950/80 border border-slate-200 dark:border-white/10"
+              className="hidden xl:flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#F7F8FA] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10"
               title={`${masteredAtlasCount} of ${totalAtlasTopics} Step 1 topics mastered`}
             >
               <div className="w-16 rs-progress-bar">
@@ -408,7 +404,7 @@ export default function AppShell() {
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
-              <span className="text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400">
+              <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-300 tabular-nums">
                 {masteredAtlasCount}/{totalAtlasTopics}
               </span>
             </div>
@@ -416,7 +412,7 @@ export default function AppShell() {
             {/* Focus Mode */}
             <button
               onClick={handleToggleFocusMode}
-              className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+              className="hidden lg:flex p-1.5 rounded-lg text-[#526074] dark:text-slate-400 hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
               title="Focus mode (F)"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -429,15 +425,15 @@ export default function AppShell() {
             {/* Account */}
             <button
               onClick={() => setIsMoreOpen(true)}
-              className="flex items-center gap-1.5 p-1 pl-2.5 rounded-full border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+              className="flex items-center gap-1.5 p-1 pl-2.5 rounded-full border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#0D1321] dark:text-slate-200 hover:bg-[#F1F3F7] dark:hover:bg-white/5 transition-colors duration-150"
               aria-label="Account and menu"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#526074] dark:text-slate-400">
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <line x1="3" y1="12" x2="21" y2="12" />
                 <line x1="3" y1="18" x2="21" y2="18" />
               </svg>
-              <span className="w-6 h-6 rounded-full bg-gradient-to-br from-navy-DEFAULT to-navy-dark text-white flex items-center justify-center text-[10px] font-bold">
+              <span className="w-6 h-6 rounded-full bg-[#16236E] text-white flex items-center justify-center text-[12px] font-semibold">
                 {userEmail ? userEmail.slice(0, 1).toUpperCase() : 'U'}
               </span>
             </button>
@@ -447,17 +443,14 @@ export default function AppShell() {
 
       {/* Focus Mode banner */}
       {focusMode && (
-        <div className="h-9 bg-navy-950 border-b border-white/10 px-5 flex items-center justify-between text-xs text-slate-400 z-30">
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT animate-pulse-led" />
-            Focus Mode
-          </span>
+        <div className="h-9 bg-[#080D1A] border-b border-white/10 px-5 flex items-center justify-between text-[13px] text-slate-300 z-30">
+          <span className="font-medium">Focus mode</span>
           <button
             onClick={() => {
               setFocusMode(false);
               setFocusModeState(false);
             }}
-            className="text-orange-DEFAULT hover:underline font-bold flex items-center gap-1.5"
+            className="text-orange-DEFAULT hover:underline font-semibold flex items-center gap-1.5"
           >
             Exit <span className="rs-kbd">Esc</span>
           </button>

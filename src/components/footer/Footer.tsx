@@ -21,7 +21,7 @@ const FOOTER_COLS = [
   {
     heading: 'Help',
     links: [
-      { label: 'support@rapidsteps.tech', href: 'mailto:support@rapidsteps.tech' },
+      { label: 'support@rapidsteps.tech', href: 'mailto:support@rapidsteps.tech', external: true },
       { label: 'Sign in', href: '/app/?signin=1' },
     ],
   },
@@ -29,7 +29,7 @@ const FOOTER_COLS = [
 
 export default function Footer() {
   return (
-    <footer className="bg-navy-950 text-slate-400 pt-16 pb-10 border-t border-white/5">
+    <footer className="bg-navy-950 text-slate-400 pt-16 pb-10 border-t border-white/10">
       <div className="container-tight">
         <div className="grid grid-cols-1 md:grid-cols-[1.8fr_1fr_1fr_1fr] gap-10 mb-12">
           {/* Brand col */}
@@ -37,34 +37,44 @@ export default function Footer() {
             <Link to="/" aria-label="Rapid Steps home" className="inline-block mb-4">
               <Logo width={67} height={30} variant="reversed" />
             </Link>
-            <p className="text-sm leading-relaxed text-slate-500 max-w-[300px]">
+            <p className="text-[15px] leading-relaxed text-slate-400 max-w-[320px]">
               USMLE Step 1 buzzword atlas. Not affiliated with the NBME, FSMB or any question-bank publisher.
             </p>
           </div>
 
           {/* Nav cols */}
-          {FOOTER_COLS.map(col => (
+          {FOOTER_COLS.map((col) => (
             <div key={col.heading}>
-              <h2 className="text-xs font-bold text-slate-200 uppercase tracking-widest mb-4">
+              <h2 className="text-[13px] font-semibold text-slate-200 mb-3.5">
                 {col.heading}
               </h2>
               <nav aria-label={col.heading}>
-                {col.links.map(link => (
-                  <Link
-                    key={link.href}
-                    to={link.href}
-                    className="block text-sm text-slate-500 py-1.5 hover:text-slate-200 hover:translate-x-1 transition-all"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {col.links.map((link) =>
+                  'external' in link && link.external ? (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      className="block text-[14px] text-slate-400 py-1.5 hover:text-white transition-colors duration-150"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={link.href}
+                      to={link.href}
+                      className="block text-[14px] text-slate-400 py-1.5 hover:text-white transition-colors duration-150"
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                )}
               </nav>
             </div>
           ))}
         </div>
 
         {/* Bottom rule */}
-        <div className="border-t border-white/5 pt-6 text-xs text-slate-600 text-center">
+        <div className="border-t border-white/10 pt-6 text-[13px] text-slate-400 text-center">
           © 2026 Rapid Steps. Study material only, not medical advice.
         </div>
       </div>

@@ -14,9 +14,9 @@ export default function ThemeToggle({ variant = 'on-dark' }: { variant?: 'on-dar
       type="button"
       onClick={() => setDark((v) => !v)}
       className={cn(
-        'flex items-center justify-center w-10 h-10 rounded-xl transition-all',
+        'flex items-center justify-center w-10 h-10 rounded-xl transition-colors duration-150',
         variant === 'adaptive'
-          ? 'text-slate-600 hover:text-navy-DEFAULT hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10'
+          ? 'text-[#526074] hover:text-[#16236E] hover:bg-[#F1F3F7] dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 border border-[#E2E6EE] dark:border-white/10'
           : 'text-white/80 hover:text-white hover:bg-white/10 border border-white/15'
       )}
       aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}

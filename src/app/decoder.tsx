@@ -228,33 +228,33 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
   }, [indexData, inputText, sysFilter]);
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-slate-50/50 dark:bg-navy-950">
+    <div className="w-full h-full overflow-y-auto bg-[#F7F8FA] dark:bg-[#080D1A]">
       <div className="w-full max-w-6xl mx-auto p-4 md:p-7 space-y-6">
         {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4 bg-white dark:bg-navy-900 p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-xs">
-          <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-orange-rust dark:text-orange-DEFAULT">
+        <div className="flex flex-wrap items-start justify-between gap-4 bg-white dark:bg-[#0E1629] p-5 md:p-6 rounded-2xl border border-[#E2E6EE] dark:border-white/10">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#C2550A] dark:text-orange-DEFAULT tabular-nums">
               <IconScan size={14} />
-              <span>16-System Weighted Corpus Engine · {ATLAS_MANIFEST.totals.topics.toLocaleString()} Topics + 3,857 Vignettes</span>
+              <span>16-system weighted corpus engine · {ATLAS_MANIFEST.totals.topics.toLocaleString()} topics + 3,857 vignettes</span>
             </div>
-            <h1 id="stem-decoder-title" className="text-xl md:text-2xl font-extrabold font-display text-navy-DEFAULT dark:text-white">
+            <h1 id="stem-decoder-title" className="text-xl md:text-2xl font-extrabold font-display text-[#0D1321] dark:text-white">
               Clinical Stem &amp; Buzzword Decoder
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl">
+            <p className="text-[15px] text-[#526074] dark:text-slate-400 max-w-2xl leading-relaxed">
               Paste any USMLE Step 1 vignette, lab signature, histology/EM description, translocation, or physical exam clue. Ranks the top diagnosis, surfaces board look-alike traps, and pulls matching clinical vignettes locally in your browser.
             </p>
           </div>
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+          <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
             <IconShield size={13} />
-            <span>100% Browser-Local</span>
+            <span>100% browser-local</span>
           </span>
         </div>
 
         {/* Organ System Scope Filter */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
-              Filter Scope by Organ System
+            <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-400">
+              Filter scope by organ system
             </span>
           </div>
           <div className="rs-pill-strip flex items-center gap-1.5 pb-1">
@@ -262,13 +262,13 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
               type="button"
               onClick={() => setSysFilter('all')}
               className={cn(
-                'px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap border transition-all',
+                'px-3 py-1.5 rounded-lg text-[13px] font-semibold whitespace-nowrap border transition-colors duration-150',
                 sysFilter === 'all'
-                  ? 'bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-navy-DEFAULT dark:border-orange-DEFAULT'
-                  : 'bg-white dark:bg-navy-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:border-slate-300'
+                  ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-[#16236E] dark:border-orange-DEFAULT'
+                  : 'bg-white dark:bg-[#0E1629] text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF]'
               )}
             >
-              All 16 Systems
+              All 16 systems
             </button>
             {ATLAS_MANIFEST.systems.map((sys) => (
               <button
@@ -284,10 +284,10 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                   }
                 }}
                 className={cn(
-                  'px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap border transition-all inline-flex items-center gap-1.5',
+                  'px-2.5 py-1.5 rounded-lg text-[13px] font-semibold whitespace-nowrap border transition-colors duration-150 inline-flex items-center gap-1.5',
                   sysFilter === sys.systemId
-                    ? 'bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-navy-DEFAULT dark:border-orange-DEFAULT'
-                    : 'bg-white dark:bg-navy-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:border-slate-300'
+                    ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-[#16236E] dark:border-orange-DEFAULT'
+                    : 'bg-white dark:bg-[#0E1629] text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF]'
                 )}
               >
                 <SystemIcon systemId={sys.systemId} size={13} />
@@ -300,8 +300,8 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
         {/* Sample Stems Across All 16 Systems */}
         {visibleSamples.length > 0 && (
           <div className="space-y-2">
-            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 block">
-              Test a High-Yield Step 1 Vignette ({visibleSamples.length} Presets):
+            <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-400 block tabular-nums">
+              Test a high-yield Step 1 vignette ({visibleSamples.length} presets):
             </span>
             <div className="flex flex-wrap gap-1.5">
               {visibleSamples.map((s) => (
@@ -314,10 +314,10 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                     setInputText(s.text);
                   }}
                   className={cn(
-                    'px-3 py-1.5 rounded-full text-xs font-semibold transition-all border inline-flex items-center gap-1.5',
+                    'px-3 py-1.5 rounded-lg text-[13px] font-medium transition-colors duration-150 border inline-flex items-center gap-1.5',
                     activeSampleId === s.id && inputText === s.text
-                      ? 'bg-orange-DEFAULT text-navy-950 border-orange-DEFAULT font-bold shadow-xs'
-                      : 'bg-white dark:bg-navy-900 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-slate-300'
+                      ? 'bg-orange-DEFAULT text-navy-950 border-orange-DEFAULT font-semibold'
+                      : 'bg-white dark:bg-[#0E1629] border-[#E2E6EE] dark:border-white/10 text-[#0D1321] dark:text-slate-300 hover:border-[#CBD2DF]'
                   )}
                 >
                   <SystemIcon systemId={s.sys} size={12} />
@@ -345,7 +345,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                 setActiveSampleId('');
               }}
               placeholder="Paste any clinical vignette or buzzwords (e.g., 'painless hematuria, flank mass, polycythemia EPO VHL' or 'c-ANCA saddle nose cavitary lung nodules hematuria')…"
-              className="w-full p-4 pr-10 rounded-2xl border border-slate-300 dark:border-white/15 bg-white dark:bg-navy-900 text-slate-900 dark:text-white placeholder-slate-400 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-navy-DEFAULT dark:focus:ring-orange-DEFAULT resize-y shadow-sm leading-relaxed"
+              className="w-full p-4 pr-10 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-white dark:bg-[#0E1629] text-[#0D1321] dark:text-white placeholder-slate-400 text-[15px] focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT resize-y leading-relaxed"
             />
             {inputText && (
               <button
@@ -356,28 +356,28 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                   setInputText('');
                   setActiveSampleId('');
                 }}
-                className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full bg-slate-200 dark:bg-navy-700 text-slate-500 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-navy-600 hover:text-slate-800 dark:hover:text-white transition-colors"
+                className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300 hover:bg-[#E2E6EE] dark:hover:bg-white/10 hover:text-[#0D1321] dark:hover:text-white transition-colors duration-150"
                 title="Clear"
               >
                 <IconX size={12} />
               </button>
             )}
           </div>
-          <div className="flex justify-between items-center text-xs text-slate-400 px-1">
+          <div className="flex justify-between items-center text-[13px] text-[#526074] dark:text-slate-400 px-1 tabular-nums">
             <span>{inputText.length} characters · {analysis.clues.length} diagnostic clues weighted</span>
           </div>
         </div>
 
         {/* Detected Clues Strip */}
         {analysis.clues.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 p-3.5 rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10">
-            <span className="text-[11px] font-mono font-bold uppercase text-slate-400 mr-1">
-              Detected Hooks:
+          <div className="flex flex-wrap items-center gap-1.5 p-3.5 rounded-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10">
+            <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-400 mr-1">
+              Detected hooks:
             </span>
             {analysis.clues.map((clue) => (
               <span
                 key={clue}
-                className="text-xs font-bold px-2.5 py-0.5 rounded-md bg-orange-light dark:bg-orange-DEFAULT/15 text-orange-rust dark:text-orange-DEFAULT border border-orange-border dark:border-orange-DEFAULT/30"
+                className="text-[13px] font-semibold px-2.5 py-0.5 rounded-md bg-[#FFF4E5] dark:bg-orange-DEFAULT/15 text-[#C2550A] dark:text-orange-DEFAULT"
               >
                 {clue}
               </span>
@@ -387,7 +387,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
 
         {/* Loading State */}
         {loading && (
-          <div className="py-14 text-center text-sm font-bold text-slate-400">
+          <div className="py-14 text-center text-[15px] font-medium text-[#526074]">
             Initializing 16-System Diagnostic Index…
           </div>
         )}
@@ -395,23 +395,23 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
         {/* Ranked Diagnostic Topic Matches */}
         {!loading && (
           <div className="space-y-4">
-            <div className="rs-section-label text-navy-DEFAULT dark:text-orange-DEFAULT">
+            <div className="rs-section-label text-[#16236E] dark:text-orange-DEFAULT">
               <IconZap size={14} />
-              <span>Ranked Differential Diagnosis &amp; Look-Alike Splitters</span>
+              <span>Ranked differential diagnosis &amp; look-alike splitters</span>
             </div>
 
             {!inputText.trim() ? (
-              <div className="p-8 rounded-2xl bg-white dark:bg-navy-900 border border-dashed border-slate-200 dark:border-white/10 text-center text-sm text-slate-500">
+              <div className="p-8 rounded-2xl bg-white dark:bg-[#0E1629] border border-dashed border-[#CBD2DF] dark:border-white/10 text-center text-[15px] text-[#526074]">
                 Select any sample vignette above or type clinical buzzwords to rank differentials across all {ATLAS_MANIFEST.totals.topics.toLocaleString()} topics.
               </div>
             ) : analysis.topTopics.length === 0 ? (
-              <div className="p-8 rounded-2xl bg-white dark:bg-navy-900 border border-dashed border-slate-200 dark:border-white/10 text-center space-y-1.5">
-                <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+              <div className="p-8 rounded-2xl bg-white dark:bg-[#0E1629] border border-dashed border-[#CBD2DF] dark:border-white/10 text-center space-y-1.5">
+                <p className="text-[15px] font-semibold text-[#0D1321] dark:text-slate-200">
                   Add one more specific lab, histology, or exam clue.
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-[13px] text-[#526074] dark:text-slate-400">
                   {sysFilter !== 'all'
-                    ? 'Tip: Switch scope back to "All 16 Systems" to search across every organ system.'
+                    ? 'Tip: Switch scope back to "All 16 systems" to search across every organ system.'
                     : 'Try entering specific antibodies, enzymes, murmurs, nerve roots, or pathology buzzwords.'}
                 </p>
               </div>
@@ -423,54 +423,54 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                     <div
                       key={match.id}
                       className={cn(
-                        'p-4 md:p-5 rounded-2xl border transition-all',
+                        'p-5 rounded-2xl border transition-colors duration-150',
                         isTop
-                          ? 'bg-gradient-to-r from-orange-light/70 via-white to-white dark:from-orange-DEFAULT/15 dark:via-navy-900 dark:to-navy-900 border-orange-DEFAULT shadow-sm'
-                          : 'bg-white dark:bg-navy-900 border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20'
+                          ? 'bg-[#FFF4E5]/45 dark:bg-orange-DEFAULT/10 border-orange-DEFAULT'
+                          : 'bg-white dark:bg-[#0E1629] border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF] dark:hover:border-white/20'
                       )}
                     >
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                        <div className="flex-1 space-y-2 min-w-0">
+                        <div className="flex-1 space-y-2.5 min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
                             <span
                               className={cn(
-                                'text-[10px] font-mono font-black uppercase px-2.5 py-0.5 rounded-full',
+                                'text-[13px] font-semibold px-2.5 py-0.5 rounded-full tabular-nums',
                                 isTop
                                   ? 'bg-orange-DEFAULT text-navy-950'
-                                  : 'bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300'
+                                  : 'bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300'
                               )}
                             >
-                              {isTop ? '#1 Primary Match' : `#${idx + 1} Differential`} · {match.pct}%
+                              {isTop ? '#1 Primary match' : `#${idx + 1} Differential`} · {match.pct}%
                             </span>
-                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-navy-50 dark:bg-navy-800 text-navy-DEFAULT dark:text-slate-200">
-                              <SystemIcon systemId={match.sys} size={12} />
+                            <span className="inline-flex items-center gap-1 text-[13px] font-medium px-2.5 py-0.5 rounded-md bg-[#F1F3F7] dark:bg-[#131E36] text-[#16236E] dark:text-slate-200">
+                              <SystemIcon systemId={match.sys} size={13} />
                               <span>{match.sysShort} · {match.ch}</span>
                             </span>
                           </div>
 
-                          <h3 className="text-base md:text-lg font-extrabold font-display text-navy-DEFAULT dark:text-white">
+                          <h3 className="text-base md:text-lg font-bold font-display text-[#0D1321] dark:text-white">
                             {match.title}
                           </h3>
 
                           {match.pearls.length > 0 ? (
-                            <ul className="space-y-1 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                            <ul className="space-y-1.5 text-[15px] text-[#0D1321] dark:text-slate-300 leading-relaxed max-w-[68ch]">
                               {match.pearls.map((p, pi) => (
                                 <li key={pi} className="flex items-start gap-2">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT mt-1.5 shrink-0" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT mt-2 shrink-0" />
                                   <span>{p}</span>
                                 </li>
                               ))}
                             </ul>
                           ) : (
-                            <p className="text-xs text-slate-600 dark:text-slate-300">{match.summary}</p>
+                            <p className="text-[15px] text-[#526074] dark:text-slate-300 max-w-[68ch] leading-relaxed">{match.summary}</p>
                           )}
 
                           <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                            <span className="text-[10px] font-mono text-slate-400">Matched clues:</span>
+                            <span className="text-[13px] text-[#526074] dark:text-slate-400">Matched clues:</span>
                             {match.matched.slice(0, 8).map((mc) => (
                               <span
                                 key={mc}
-                                className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300"
+                                className="text-[13px] font-medium px-2 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#131E36] text-[#0D1321] dark:text-slate-300"
                               >
                                 {mc}
                               </span>
@@ -484,12 +484,12 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                             <button
                               type="button"
                               onClick={() => setLightbox({ src: match.img!, caption: match.title })}
-                              className="w-28 h-20 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-navy-950 p-1 group relative cursor-zoom-in"
+                              className="w-28 h-20 rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] dark:bg-[#080D1A] p-1 group relative cursor-zoom-in"
                               title="Zoom clinical figure"
                             >
                               <img src={match.img} alt={match.title} loading="lazy" className="w-full h-full object-contain" />
-                              <span className="absolute bottom-1 right-1 p-0.5 rounded bg-navy-950/75 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                <IconZoomIn size={10} />
+                              <span className="absolute bottom-1 right-1 p-0.5 rounded bg-[#080D1A]/75 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                <IconZoomIn size={11} />
                               </span>
                             </button>
                           )}
@@ -497,9 +497,9 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                           <button
                             type="button"
                             onClick={() => onSelectCase(match.id)}
-                            className="px-3.5 py-2 rounded-xl bg-navy-DEFAULT text-white text-xs font-bold hover:bg-navy-500 transition-colors whitespace-nowrap"
+                            className="px-4 py-2 rounded-full bg-[#16236E] text-white text-[13px] font-semibold hover:bg-[#0F1854] transition-colors duration-150 whitespace-nowrap"
                           >
-                            Open Full Topic →
+                            Open full topic →
                           </button>
                         </div>
                       </div>
@@ -512,47 +512,47 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
             {/* Matching Rapid-Fire USMLE Vignettes */}
             {analysis.topVignettes.length > 0 && (
               <div className="pt-3 space-y-3">
-                <div className="rs-section-label text-orange-rust dark:text-orange-DEFAULT">
+                <div className="rs-section-label text-[#C2550A] dark:text-orange-DEFAULT">
                   <IconImage size={14} />
-                  <span>Matching High-Yield Clinical Vignettes</span>
+                  <span>Matching high-yield clinical vignettes</span>
                 </div>
-                <div className="grid md:grid-cols-2 gap-3">
+                <div className="grid md:grid-cols-2 gap-3.5">
                   {analysis.topVignettes.map((v) => (
                     <div
                       key={v.id}
-                      className="p-4 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 space-y-2 flex flex-col justify-between"
+                      className="p-4 rounded-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 space-y-2.5 flex flex-col justify-between"
                     >
                       <div className="space-y-2">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300">
-                            <SystemIcon systemId={v.sys} size={11} />
-                            <span>{v.sysShort} Vignette</span>
+                          <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold px-2.5 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300">
+                            <SystemIcon systemId={v.sys} size={12} />
+                            <span>{v.sysShort} vignette</span>
                           </span>
                           {v.topicId && (
                             <button
                               type="button"
                               onClick={() => onSelectCase(v.topicId!)}
-                              className="text-[11px] font-bold text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline"
+                              className="text-[13px] font-semibold text-[#16236E] dark:text-orange-DEFAULT hover:underline"
                             >
-                              Related Topic →
+                              Related topic →
                             </button>
                           )}
                         </div>
-                        <p className="text-xs font-bold text-slate-800 dark:text-slate-100 leading-relaxed">
+                        <p className="text-[15px] font-semibold text-[#0D1321] dark:text-slate-100 leading-relaxed">
                           {v.q}
                         </p>
                         {v.img && (
                           <button
                             type="button"
                             onClick={() => setLightbox({ src: v.img!, caption: v.q })}
-                            className="block rounded-lg overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 p-1 cursor-zoom-in"
+                            className="block rounded-lg overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] p-1 cursor-zoom-in"
                           >
                             <img src={v.img} alt="Vignette figure" loading="lazy" className="max-h-32 w-auto object-contain mx-auto" />
                           </button>
                         )}
                       </div>
-                      <div className="p-2.5 rounded-lg bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 text-xs text-emerald-950 dark:text-emerald-200 leading-relaxed">
-                        <strong className="font-extrabold">→ </strong>
+                      <div className="p-3 rounded-r-lg border-l-[3px] border-emerald-600 bg-emerald-50/80 dark:bg-emerald-950/30 text-[15px] text-emerald-950 dark:text-emerald-200 leading-relaxed">
+                        <strong className="font-semibold">→ </strong>
                         {v.a}
                       </div>
                     </div>
@@ -571,22 +571,22 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
           onClick={() => setLightbox(null)}
         >
           <div
-            className="max-w-4xl w-full bg-white dark:bg-navy-900 rounded-2xl overflow-hidden shadow-2xl rs-slide-up"
+            className="max-w-4xl w-full bg-white dark:bg-[#0E1629] rounded-2xl overflow-hidden shadow-2xl rs-slide-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-white/10">
-              <span className="text-xs font-bold text-navy-DEFAULT dark:text-white truncate pr-4">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E2E6EE] dark:border-white/10">
+              <span className="text-[13px] font-semibold text-[#0D1321] dark:text-white truncate pr-4">
                 {lightbox.caption}
               </span>
               <button
                 type="button"
                 onClick={() => setLightbox(null)}
-                className="min-h-[44px] px-3 py-1 rounded-md bg-slate-100 dark:bg-navy-800 text-xs font-bold flex items-center"
+                className="min-h-[44px] px-3 py-1 rounded-md bg-[#F1F3F7] dark:bg-[#131E36] text-[13px] font-semibold flex items-center"
               >
                 Close
               </button>
             </div>
-            <div className="p-3 bg-slate-100 dark:bg-navy-950 flex items-center justify-center max-h-[80vh] overflow-auto">
+            <div className="p-3 bg-[#F7F8FA] dark:bg-[#080D1A] flex items-center justify-center max-h-[80vh] overflow-auto">
               <img src={lightbox.src} alt={lightbox.caption} className="max-h-[72vh] w-auto object-contain rounded-lg" />
             </div>
           </div>

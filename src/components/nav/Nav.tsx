@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ATLAS_MANIFEST } from '@/lib/atlas-data';
 import Logo from '../logo/Logo';
 import ThemeToggle from '../theme-toggle/ThemeToggle';
 import { cn } from '@/lib/cn';
 
 const NAV_LINKS = [
   { label: 'How it works', href: '/#how' },
-  { label: '4 Engines', href: '/#features' },
-  { label: 'Study Stack', href: '/#stack' },
+  { label: 'Engines', href: '/#features' },
+  { label: 'Study stack', href: '/#stack' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'FAQ', href: '/#faq' },
 ];
@@ -21,6 +20,7 @@ export default function Nav() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -33,8 +33,10 @@ export default function Nav() {
     <>
       <header
         className={cn(
-          'site-nav nav fixed top-0 left-0 right-0 z-50 glass-nav transition-all',
-          scrolled && 'scrolled'
+          'site-nav nav fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow] duration-200 ease-standard',
+          isHome && !scrolled
+            ? 'bg-transparent border-b border-transparent'
+            : 'glass-nav scrolled'
         )}
       >
         <div className="container-tight">
@@ -44,16 +46,10 @@ export default function Nav() {
               <Link
                 to="/"
                 aria-label="Rapid Steps home"
-                className="brand-logo flex items-center hover:opacity-95 transition-opacity"
+                className="brand-logo flex items-center hover:opacity-90 transition-opacity duration-150"
               >
                 <Logo width={78} height={35} variant="reversed" />
               </Link>
-
-              {/* Live catalog badge */}
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold text-slate-200 bg-white/8 border border-white/12">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT animate-pulse-led" />
-                {ATLAS_MANIFEST.totals.topics.toLocaleString()} topics · 16 systems
-              </div>
             </div>
 
             {/* Desktop nav links */}
@@ -66,19 +62,19 @@ export default function Nav() {
             </nav>
 
             {/* Actions */}
-            <div className="nav-cta flex items-center gap-2.5">
+            <div className="nav-cta flex items-center gap-3">
               <ThemeToggle />
 
               <Link
                 to="/app/?signin=1"
-                className="rs-auth-btn btn-ghost hidden sm:inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white/85 rounded-full border border-white/20 hover:bg-white/10 hover:text-white hover:border-white/40 transition-all min-h-[42px]"
+                className="rs-auth-btn hidden sm:inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors duration-150 min-h-[42px]"
               >
                 Sign in
               </Link>
 
               <Link
                 to="/app/"
-                className="btn-or inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 text-sm font-bold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-all min-h-[42px] shadow-sm hover:shadow-glow-orange whitespace-nowrap"
+                className="btn-or inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 text-sm font-semibold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-colors duration-150 min-h-[42px] whitespace-nowrap"
               >
                 <span>Explore free cases</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -86,9 +82,9 @@ export default function Nav() {
                 </svg>
               </Link>
 
-              {/* Mobile & Tablet hamburger (ensures How it works, Stack, FAQ are never lost below desktop) */}
+              {/* Mobile & Tablet hamburger */}
               <button
-                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl border border-white/20 text-white hover:bg-white/10 transition-colors"
+                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl border border-white/15 text-white hover:bg-white/10 transition-colors duration-150"
                 onClick={() => setMobileOpen((v) => !v)}
                 aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
                 aria-expanded={mobileOpen}
@@ -111,39 +107,32 @@ export default function Nav() {
       {/* Mobile & Tablet Drawer */}
       <div
         className={cn(
-          'lg:hidden fixed inset-x-0 top-[68px] z-40 bg-navy-950/98 backdrop-blur-2xl border-b border-orange-DEFAULT/25 px-6 py-5 flex flex-col gap-1.5 shadow-2xl transition-all duration-200',
+          'lg:hidden fixed inset-x-0 top-[68px] z-40 bg-navy-950/98 backdrop-blur-2xl border-b border-white/10 px-6 py-5 flex flex-col gap-1 shadow-2xl transition-[opacity,transform] duration-200 ease-standard',
           mobileOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
         )}
         aria-hidden={!mobileOpen}
       >
-        <div className="flex items-center justify-between pb-3 mb-2 border-b border-white/10 sm:hidden">
-          <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-DEFAULT" />
-            {ATLAS_MANIFEST.totals.topics.toLocaleString()} topics across 16 organ systems
-          </span>
-        </div>
-
         {NAV_LINKS.map((link) => {
           const isAnchor = link.href.startsWith('/#');
           return isAnchor && isHome ? (
             <a
               key={link.href}
               href={link.href.replace('/', '')}
-              className="text-white/90 text-base font-semibold py-2.5 px-3 rounded-xl hover:bg-white/8 hover:text-white transition-colors flex items-center justify-between"
+              className="text-white/90 text-[15px] font-medium py-2.5 px-3 rounded-lg hover:bg-white/8 hover:text-white transition-colors duration-150 flex items-center justify-between"
               onClick={() => setMobileOpen(false)}
             >
               <span>{link.label}</span>
-              <span className="text-white/40 text-xs">→</span>
+              <span className="text-white/40 text-sm">→</span>
             </a>
           ) : (
             <Link
               key={link.href}
               to={link.href}
-              className="text-white/90 text-base font-semibold py-2.5 px-3 rounded-xl hover:bg-white/8 hover:text-white transition-colors flex items-center justify-between"
+              className="text-white/90 text-[15px] font-medium py-2.5 px-3 rounded-lg hover:bg-white/8 hover:text-white transition-colors duration-150 flex items-center justify-between"
               onClick={() => setMobileOpen(false)}
             >
               <span>{link.label}</span>
-              <span className="text-white/40 text-xs">→</span>
+              <span className="text-white/40 text-sm">→</span>
             </Link>
           );
         })}
@@ -152,14 +141,14 @@ export default function Nav() {
           <Link
             to="/app/?signin=1"
             onClick={() => setMobileOpen(false)}
-            className="text-center text-sm font-semibold text-white/90 py-3 rounded-full border border-white/25 hover:bg-white/10 transition-colors"
+            className="text-center text-sm font-medium text-white/90 py-3 rounded-full border border-white/20 hover:bg-white/10 transition-colors duration-150"
           >
             Sign in
           </Link>
           <Link
             to="/app/"
             onClick={() => setMobileOpen(false)}
-            className="text-center text-sm font-bold bg-orange-DEFAULT text-navy-950 py-3 rounded-full hover:bg-orange-hover transition-colors"
+            className="text-center text-sm font-semibold bg-orange-DEFAULT text-navy-950 py-3 rounded-full hover:bg-orange-hover transition-colors duration-150"
           >
             Explore 48 free
           </Link>
@@ -171,21 +160,18 @@ export default function Nav() {
 
 function NavLink({ href, isHome, children }: { href: string; isHome: boolean; children: React.ReactNode }) {
   const isAnchor = href.startsWith('/#');
+  const cls =
+    'text-sm font-medium text-white/80 px-3.5 py-2 rounded-lg hover:text-white hover:bg-white/8 transition-colors duration-150 whitespace-nowrap';
+
   if (isAnchor && isHome) {
     return (
-      <a
-        href={href.replace('/', '')}
-        className="text-sm font-semibold text-white/80 px-3.5 py-2 rounded-xl hover:text-white hover:bg-white/8 transition-all"
-      >
+      <a href={href.replace('/', '')} className={cls}>
         {children}
       </a>
     );
   }
   return (
-    <Link
-      to={href}
-      className="text-sm font-semibold text-white/80 px-3.5 py-2 rounded-xl hover:text-white hover:bg-white/8 transition-all"
-    >
+    <Link to={href} className={cls}>
       {children}
     </Link>
   );

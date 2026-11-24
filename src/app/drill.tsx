@@ -222,12 +222,12 @@ export default function Drill({ onSelectCase }: DrillProps) {
   ]);
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-slate-50 dark:bg-navy-950">
+    <div className="w-full h-full overflow-y-auto bg-[#F7F8FA] dark:bg-[#080D1A]">
       <div className="w-full max-w-4xl mx-auto p-4 md:p-7 space-y-5">
         {/* Top Mode & Score Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-navy-900 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-white/10 shadow-2xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#0E1629] p-3.5 md:p-4 rounded-xl border border-[#E2E6EE] dark:border-white/10">
           {/* Segmented Mode Switch */}
-          <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-100 dark:bg-navy-950 border border-slate-200/80 dark:border-white/10">
+          <div className="flex items-center gap-1 p-1 rounded-lg bg-[#F1F3F7] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10">
             <button
               type="button"
               onClick={() => {
@@ -236,10 +236,10 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 resetCardState();
               }}
               className={cn(
-                'px-3 py-1.5 rounded-md text-xs font-bold transition-colors inline-flex items-center gap-1.5',
+                'px-3 py-1.5 rounded-md text-[13px] font-semibold transition-colors duration-150 inline-flex items-center gap-1.5',
                 drillMode === 'flashcards'
-                  ? 'bg-navy-DEFAULT text-white shadow-2xs'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-[#16236E] text-white'
+                  : 'text-[#526074] dark:text-slate-300 hover:text-[#0D1321] dark:hover:text-white'
               )}
             >
               <IconZap size={13} />
@@ -253,10 +253,10 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 resetCardState();
               }}
               className={cn(
-                'px-3 py-1.5 rounded-md text-xs font-bold transition-colors',
+                'px-3 py-1.5 rounded-md text-[13px] font-semibold transition-colors duration-150',
                 drillMode === 'mcq'
-                  ? 'bg-navy-DEFAULT text-white shadow-2xs'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-[#16236E] text-white'
+                  : 'text-[#526074] dark:text-slate-300 hover:text-[#0D1321] dark:hover:text-white'
               )}
             >
               Multiple-Choice (MCQs)
@@ -265,15 +265,15 @@ export default function Drill({ onSelectCase }: DrillProps) {
 
           {/* Session Score */}
           <div className="flex items-center gap-2.5">
-            <div className="text-xs font-mono font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-navy-800 px-3 py-1.5 rounded-lg">
-              Score: <span className="text-emerald-600 dark:text-emerald-400">{score.correct}</span>/{score.total} (
+            <div className="text-[13px] font-semibold text-[#0D1321] dark:text-slate-200 bg-[#F1F3F7] dark:bg-[#131E36] px-3 py-1.5 rounded-lg tabular-nums">
+              Score: <span className="text-emerald-700 dark:text-emerald-400">{score.correct}</span>/{score.total} (
               {score.total > 0 ? Math.round((score.correct / score.total) * 100) : 0}%)
             </div>
             {score.total > 0 && (
               <button
                 type="button"
                 onClick={handleResetScore}
-                className="text-xs font-semibold text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                className="text-[13px] font-medium text-[#526074] hover:text-[#0D1321] dark:hover:text-slate-200 transition-colors duration-150"
               >
                 Reset
               </button>
@@ -283,7 +283,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
 
         {/* System / Bank Selector */}
         {drillMode === 'flashcards' ? (
-          <div className="rs-pill-strip flex items-center gap-1 pb-0.5">
+          <div className="rs-pill-strip flex items-center gap-1.5 pb-0.5">
             {ATLAS_MANIFEST.systems.map((sys) => {
               const active = sys.systemId === flashSysId;
               return (
@@ -296,15 +296,15 @@ export default function Drill({ onSelectCase }: DrillProps) {
                     resetCardState();
                   }}
                   className={cn(
-                    'px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap border transition-colors inline-flex items-center gap-1.5',
+                    'px-3 py-1.5 rounded-lg text-[13px] font-semibold whitespace-nowrap border transition-colors duration-150 inline-flex items-center gap-1.5',
                     active
-                      ? 'bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-navy-DEFAULT dark:border-orange-DEFAULT'
-                      : 'bg-white dark:bg-navy-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:border-slate-300'
+                      ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-[#16236E] dark:border-orange-DEFAULT'
+                      : 'bg-white dark:bg-[#0E1629] text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF]'
                   )}
                 >
                   <SystemIcon systemId={sys.systemId} size={13} />
                   <span>{sys.short}</span>
-                  <span className="text-[10px] font-mono opacity-70">{sys.stats.rapidFireQAs}</span>
+                  <span className="text-[13px] opacity-75 tabular-nums">{sys.stats.rapidFireQAs}</span>
                 </button>
               );
             })}
@@ -321,10 +321,10 @@ export default function Drill({ onSelectCase }: DrillProps) {
                   resetCardState();
                 }}
                 className={cn(
-                  'px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors',
+                  'px-3 py-1.5 rounded-lg text-[13px] font-semibold border transition-colors duration-150',
                   bankId === b.id
-                    ? 'bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-navy-DEFAULT dark:border-orange-DEFAULT'
-                    : 'bg-white dark:bg-navy-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:border-slate-300'
+                    ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-[#16236E] dark:border-orange-DEFAULT'
+                    : 'bg-white dark:bg-[#0E1629] text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF]'
                 )}
               >
                 {b.label}
@@ -334,7 +334,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
         )}
 
         {loading && (
-          <div className="py-16 text-center text-xs font-bold text-slate-400">
+          <div className="py-16 text-center text-[13px] font-medium text-[#526074]">
             Loading study items…
           </div>
         )}
@@ -342,15 +342,15 @@ export default function Drill({ onSelectCase }: DrillProps) {
         {/* ==================== MODE A: 16-SYSTEM FLASHCARDS ==================== */}
         {!loading && drillMode === 'flashcards' && currentCard && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs text-slate-500">
-              <span className="font-mono font-bold uppercase text-navy-DEFAULT dark:text-orange-DEFAULT">
+            <div className="flex items-center justify-between text-[13px] text-[#526074] dark:text-slate-400">
+              <span className="font-semibold text-[#16236E] dark:text-orange-DEFAULT tabular-nums">
                 Card {currentIndex + 1} of {flashcards.length} · {sysAtlas?.title}
               </span>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={handleShuffle}
-                  className="font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-white"
+                  className="font-medium text-[#526074] hover:text-[#0D1321] dark:hover:text-white transition-colors duration-150"
                 >
                   Shuffle
                 </button>
@@ -358,9 +358,9 @@ export default function Drill({ onSelectCase }: DrillProps) {
                   <button
                     type="button"
                     onClick={() => onSelectCase(currentCard.topicId!)}
-                    className="font-bold text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline"
+                    className="font-semibold text-[#16236E] dark:text-orange-DEFAULT hover:underline"
                   >
-                    Open Topic →
+                    Open topic →
                   </button>
                 )}
               </div>
@@ -370,15 +370,15 @@ export default function Drill({ onSelectCase }: DrillProps) {
             <div
               onClick={() => !cardRevealed && setCardRevealed(true)}
               className={cn(
-                'p-6 md:p-8 rounded-2xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 shadow-xs space-y-5 transition-colors',
-                !cardRevealed && 'cursor-pointer hover:border-slate-300 dark:hover:border-white/20'
+                'p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 space-y-5 transition-colors duration-150',
+                !cardRevealed && 'cursor-pointer hover:border-[#CBD2DF] dark:hover:border-white/20'
               )}
             >
               <div className="space-y-3">
-                <span className="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-navy-800 text-slate-500 dark:text-slate-400">
+                <span className="inline-block text-[13px] font-semibold px-2.5 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300 tabular-nums">
                   Prompt #{currentCard.num}
                 </span>
-                <p className="text-base md:text-lg font-bold text-slate-900 dark:text-white leading-relaxed">
+                <p className="text-[16px] md:text-[18px] font-bold text-[#0D1321] dark:text-white leading-relaxed max-w-[68ch]">
                   {currentCard.q}
                 </p>
 
@@ -389,7 +389,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                         key={src}
                         src={src}
                         alt="Clinical prompt figure"
-                        className="max-h-56 w-auto rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 p-1.5 object-contain"
+                        className="max-h-56 w-auto rounded-xl border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] p-1.5 object-contain"
                       />
                     ))}
                   </div>
@@ -397,9 +397,9 @@ export default function Drill({ onSelectCase }: DrillProps) {
               </div>
 
               {cardRevealed ? (
-                <div className="pt-5 border-t border-slate-200 dark:border-white/10 space-y-4 rs-fade-in">
-                  <div className="p-4 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 text-sm md:text-base text-emerald-950 dark:text-emerald-100 leading-relaxed font-semibold">
-                    <strong className="font-extrabold">→ </strong>
+                <div className="pt-5 border-t border-[#E2E6EE] dark:border-white/10 space-y-4 rs-fade-in">
+                  <div className="p-4 rounded-r-xl border-l-[3px] border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/30 text-[15px] text-emerald-950 dark:text-emerald-100 leading-relaxed font-medium max-w-[68ch]">
+                    <strong className="font-semibold">→ </strong>
                     {currentCard.a}
                   </div>
 
@@ -411,10 +411,10 @@ export default function Drill({ onSelectCase }: DrillProps) {
                           e.stopPropagation();
                           handleGradeFlashcard(true);
                         }}
-                        className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold inline-flex items-center gap-1.5 transition-colors"
+                        className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[13px] font-semibold inline-flex items-center gap-1.5 transition-colors duration-150"
                       >
                         <IconCheck size={14} />
-                        <span>Got It</span>
+                        <span>Got it</span>
                         <span className="rs-kbd bg-emerald-700 text-white border-emerald-500">1</span>
                       </button>
                       <button
@@ -423,10 +423,10 @@ export default function Drill({ onSelectCase }: DrillProps) {
                           e.stopPropagation();
                           handleGradeFlashcard(false);
                         }}
-                        className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-navy-800 hover:bg-slate-200 dark:hover:bg-navy-700 text-slate-700 dark:text-slate-200 text-xs font-bold inline-flex items-center gap-1.5 transition-colors"
+                        className="px-4 py-2 rounded-xl bg-[#F1F3F7] dark:bg-[#131E36] hover:bg-[#E2E6EE] dark:hover:bg-white/10 text-[#0D1321] dark:text-slate-200 text-[13px] font-semibold inline-flex items-center gap-1.5 transition-colors duration-150"
                       >
                         <IconX size={13} />
-                        <span>Review Again</span>
+                        <span>Review again</span>
                         <span className="rs-kbd">2</span>
                       </button>
                     </div>
@@ -438,7 +438,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                           e.stopPropagation();
                           handleStep(-1);
                         }}
-                        className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50"
+                        className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] dark:text-slate-300 hover:bg-[#F7F8FA] dark:hover:bg-white/5"
                       >
                         ← Prev
                       </button>
@@ -448,7 +448,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                           e.stopPropagation();
                           handleStep(1);
                         }}
-                        className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50"
+                        className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] dark:text-slate-300 hover:bg-[#F7F8FA] dark:hover:bg-white/5"
                       >
                         Skip →
                       </button>
@@ -456,13 +456,13 @@ export default function Drill({ onSelectCase }: DrillProps) {
                   </div>
                 </div>
               ) : (
-                <div className="pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-[#E2E6EE] dark:border-white/10 flex items-center justify-between">
                   <button
                     type="button"
                     onClick={() => setCardRevealed(true)}
-                    className="px-5 py-2.5 rounded-xl bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 font-extrabold text-xs hover:opacity-95 transition-opacity inline-flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-xl bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 font-semibold text-[13px] hover:opacity-95 transition-opacity duration-150 inline-flex items-center gap-2"
                   >
-                    <span>Reveal Answer</span>
+                    <span>Reveal answer</span>
                     <span className="rs-kbd bg-white/20 text-current border-white/20">Space</span>
                   </button>
 
@@ -473,7 +473,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                         e.stopPropagation();
                         handleStep(-1);
                       }}
-                      className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5"
+                      className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] hover:bg-[#F7F8FA] dark:hover:bg-white/5"
                     >
                       ← Prev
                     </button>
@@ -483,7 +483,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                         e.stopPropagation();
                         handleStep(1);
                       }}
-                      className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5"
+                      className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] hover:bg-[#F7F8FA] dark:hover:bg-white/5"
                     >
                       Next →
                     </button>
@@ -497,15 +497,15 @@ export default function Drill({ onSelectCase }: DrillProps) {
         {/* ==================== MODE B: MULTIPLE CHOICE (MCQS) ==================== */}
         {!loading && drillMode === 'mcq' && currentQ && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-mono uppercase tracking-wider font-bold text-navy-DEFAULT dark:text-orange-DEFAULT">
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="font-semibold text-[#16236E] dark:text-orange-DEFAULT tabular-nums">
                 Question {currentIndex + 1} of {mcqQuestions.length} · {currentQ.systemName}
               </span>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={handleShuffle}
-                  className="font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-white"
+                  className="font-medium text-[#526074] hover:text-[#0D1321] dark:hover:text-white"
                 >
                   Shuffle
                 </button>
@@ -513,16 +513,16 @@ export default function Drill({ onSelectCase }: DrillProps) {
                   <button
                     type="button"
                     onClick={() => onSelectCase(currentQ.caseRefId!)}
-                    className="text-navy-DEFAULT dark:text-orange-DEFAULT hover:underline font-bold"
+                    className="text-[#16236E] dark:text-orange-DEFAULT hover:underline font-semibold"
                   >
-                    Open Topic →
+                    Open topic →
                   </button>
                 )}
               </div>
             </div>
 
-            <div className="p-5 md:p-6 rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 shadow-2xs space-y-4">
-              <p className="text-slate-900 dark:text-slate-100 text-sm md:text-base font-medium leading-relaxed">
+            <div className="p-5 md:p-6 rounded-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 space-y-4">
+              <p className="text-[#0D1321] dark:text-slate-100 text-[15px] md:text-base font-medium leading-relaxed max-w-[68ch]">
                 {currentQ.stem}
               </p>
               {currentQ.images && currentQ.images.length > 0 && (
@@ -532,7 +532,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                       key={src}
                       src={src}
                       alt="Question clinical figure"
-                      className="max-h-60 w-auto rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 p-1.5 object-contain"
+                      className="max-h-60 w-auto rounded-xl border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] p-1.5 object-contain"
                     />
                   ))}
                 </div>
@@ -551,29 +551,29 @@ export default function Drill({ onSelectCase }: DrillProps) {
                     disabled={submitted}
                     onClick={() => handleSelectOption(idx)}
                     className={cn(
-                      'w-full flex items-center gap-3.5 p-3.5 rounded-xl border text-left transition-colors',
-                      !submitted && isPicked && 'border-navy-DEFAULT dark:border-orange-DEFAULT bg-navy-50/70 dark:bg-orange-DEFAULT/15 font-semibold',
-                      !submitted && !isPicked && 'border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900 hover:border-slate-300',
-                      submitted && isCorrect && 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-200 font-semibold',
-                      submitted && !isCorrect && isPicked && 'border-red-400 bg-red-50 dark:bg-red-950/40 text-red-950 dark:text-red-200',
-                      submitted && !isCorrect && !isPicked && 'opacity-50 border-slate-200 dark:border-white/5 bg-white dark:bg-navy-900'
+                      'w-full flex items-center gap-3.5 p-3.5 rounded-xl border text-left transition-colors duration-150',
+                      !submitted && isPicked && 'border-[#16236E] dark:border-orange-DEFAULT bg-[#EEF2FF]/60 dark:bg-orange-DEFAULT/15 font-semibold',
+                      !submitted && !isPicked && 'border-[#E2E6EE] dark:border-white/10 bg-white dark:bg-[#0E1629] hover:border-[#CBD2DF]',
+                      submitted && isCorrect && 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-200 font-semibold',
+                      submitted && !isCorrect && isPicked && 'border-red-500 bg-red-50 dark:bg-red-950/40 text-red-950 dark:text-red-200',
+                      submitted && !isCorrect && !isPicked && 'opacity-50 border-[#E2E6EE] dark:border-white/5 bg-white dark:bg-[#0E1629]'
                     )}
                   >
                     <span
                       className={cn(
-                        'w-6 h-6 rounded-md flex items-center justify-center text-xs font-extrabold flex-shrink-0',
+                        'w-6 h-6 rounded-md flex items-center justify-center text-[13px] font-bold flex-shrink-0 tabular-nums',
                         submitted && isCorrect
                           ? 'bg-emerald-600 text-white'
                           : submitted && isPicked
                           ? 'bg-red-600 text-white'
                           : isPicked
-                          ? 'bg-navy-DEFAULT text-white'
-                          : 'bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300'
+                          ? 'bg-[#16236E] text-white'
+                          : 'bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300'
                       )}
                     >
                       {String.fromCharCode(65 + idx)}
                     </span>
-                    <span className="text-xs sm:text-sm text-slate-800 dark:text-slate-100">{option}</span>
+                    <span className="text-[15px] text-[#0D1321] dark:text-slate-100">{option}</span>
                   </button>
                 );
               })}
@@ -585,17 +585,17 @@ export default function Drill({ onSelectCase }: DrillProps) {
                   type="button"
                   disabled={selectedOption === null}
                   onClick={handleSubmitMcq}
-                  className="px-5 py-2.5 rounded-xl bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 font-extrabold text-xs hover:opacity-95 disabled:opacity-40 transition-opacity"
+                  className="px-5 py-2.5 rounded-xl bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 font-semibold text-[13px] hover:opacity-95 disabled:opacity-40 transition-opacity duration-150"
                 >
-                  Check Answer
+                  Check answer
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => handleStep(1)}
-                  className="px-5 py-2.5 rounded-xl bg-navy-DEFAULT dark:bg-orange-DEFAULT text-white dark:text-navy-950 font-extrabold text-xs hover:opacity-95 transition-opacity"
+                  className="px-5 py-2.5 rounded-xl bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 font-semibold text-[13px] hover:opacity-95 transition-opacity duration-150"
                 >
-                  Next Question →
+                  Next question →
                 </button>
               )}
 
@@ -603,14 +603,14 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 <button
                   type="button"
                   onClick={() => handleStep(-1)}
-                  className="px-3 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-500 hover:bg-white dark:hover:bg-navy-900"
+                  className="px-3 py-2 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] hover:bg-white dark:hover:bg-[#0E1629]"
                 >
                   ← Prev
                 </button>
                 <button
                   type="button"
                   onClick={() => handleStep(1)}
-                  className="px-3 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-500 hover:bg-white dark:hover:bg-navy-900"
+                  className="px-3 py-2 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] hover:bg-white dark:hover:bg-[#0E1629]"
                 >
                   Next →
                 </button>
@@ -618,24 +618,24 @@ export default function Drill({ onSelectCase }: DrillProps) {
             </div>
 
             {submitted && (
-              <div className="p-5 rounded-xl bg-white dark:bg-navy-900 border border-slate-200 dark:border-white/10 space-y-2.5 rs-fade-in">
+              <div className="p-5 rounded-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 space-y-2.5 rs-fade-in">
                 <div
                   className={cn(
-                    'text-xs font-extrabold inline-flex items-center gap-1.5',
+                    'text-[13px] font-semibold inline-flex items-center gap-1.5',
                     selectedOption === currentQ.correct
                       ? 'text-emerald-700 dark:text-emerald-400'
                       : 'text-red-600 dark:text-red-400'
                   )}
                 >
                   {selectedOption === currentQ.correct ? <IconCheck size={14} /> : <IconX size={14} />}
-                  <span>{selectedOption === currentQ.correct ? 'Correct' : 'Review Key Distinction'}</span>
+                  <span>{selectedOption === currentQ.correct ? 'Correct' : 'Review key distinction'}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                <p className="text-[15px] text-[#0D1321] dark:text-slate-200 leading-relaxed max-w-[68ch]">
                   {currentQ.explanation}
                 </p>
                 {currentQ.trap && (
-                  <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs text-slate-800 dark:text-amber-200 leading-relaxed">
-                    <strong className="font-bold">Exam Trap: </strong>
+                  <div className="p-3.5 rounded-r-lg border-l-[3px] border-[#FF8C1A] bg-[#FFF4E5]/70 dark:bg-orange-DEFAULT/10 text-[15px] text-[#0D1321] dark:text-amber-200 leading-relaxed max-w-[68ch]">
+                    <strong className="font-semibold">Exam trap: </strong>
                     {currentQ.trap}
                   </div>
                 )}
