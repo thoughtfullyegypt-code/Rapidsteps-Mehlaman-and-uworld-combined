@@ -62,7 +62,7 @@ export default function Nav() {
             </nav>
 
             {/* Actions */}
-            <div className="nav-cta flex items-center gap-3">
+            <div className="nav-cta flex items-center gap-2 sm:gap-3">
               <ThemeToggle />
 
               <Link
@@ -74,9 +74,10 @@ export default function Nav() {
 
               <Link
                 to="/app/"
-                className="group btn-or inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 text-sm font-semibold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-colors duration-150 min-h-[42px] whitespace-nowrap"
+                className="group btn-or inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 text-[13px] sm:text-sm font-semibold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-colors duration-150 min-h-[40px] sm:min-h-[42px] whitespace-nowrap"
               >
-                <span>Explore 48 free cases</span>
+                <span className="sm:hidden">48 free cases</span>
+                <span className="hidden sm:inline">Explore 48 free cases</span>
                 <svg
                   width="14"
                   height="14"
@@ -95,7 +96,7 @@ export default function Nav() {
 
               {/* Mobile & Tablet hamburger */}
               <button
-                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl border border-white/15 text-white hover:bg-white/10 transition-colors duration-150"
+                className="lg:hidden flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-white/15 text-white hover:bg-white/10 transition-colors duration-150"
                 onClick={() => setMobileOpen((v) => !v)}
                 aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
                 aria-expanded={mobileOpen}
@@ -159,9 +160,9 @@ export default function Nav() {
           <Link
             to="/app/"
             onClick={() => setMobileOpen(false)}
-            className="text-center text-sm font-semibold bg-orange-DEFAULT text-navy-950 py-3 rounded-full hover:bg-orange-hover transition-colors duration-150"
+            className="text-center text-sm font-semibold bg-orange-DEFAULT text-navy-950 py-3 px-2 rounded-full hover:bg-orange-hover transition-colors duration-150 whitespace-nowrap"
           >
-            Explore 48 free
+            48 free cases →
           </Link>
         </div>
       </div>
