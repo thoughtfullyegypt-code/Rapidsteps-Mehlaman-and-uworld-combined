@@ -268,7 +268,7 @@ export default function Frameworks({ onSelectCase, onBack }: FrameworksProps) {
       {/* Main Scrollable Canvas Host */}
       <div ref={scrollRef} className="rs-mscroll" data-rs-master="true">
         {loading && (
-          <div className="flex flex-col items-center justify-center py-24 gap-3 text-[#526074] dark:text-slate-400">
+          <div className="flex flex-col items-center justify-center py-24 gap-3 text-[#475569] dark:text-slate-400">
             <div className="w-8 h-8 rounded-full border-2 border-current border-t-transparent animate-spin opacity-70" />
             <span className="text-[13px] font-medium">
               Loading 5-Step Master Frameworks…

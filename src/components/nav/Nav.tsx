@@ -6,8 +6,8 @@ import { cn } from '@/lib/cn';
 
 const NAV_LINKS = [
   { label: 'How it works', href: '/#how' },
-  { label: 'Engines', href: '/#features' },
-  { label: 'Study stack', href: '/#stack' },
+  { label: '4 Engines', href: '/#features' },
+  { label: 'Compare', href: '/#stack' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'FAQ', href: '/#faq' },
 ];
@@ -36,7 +36,7 @@ export default function Nav() {
           'site-nav nav fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow] duration-200 ease-standard',
           isHome && !scrolled
             ? 'bg-transparent border-b border-transparent'
-            : 'glass-nav scrolled'
+            : 'bg-[#050814]/88 backdrop-blur-xl border-b border-white/[0.08] shadow-[0_10px_30px_rgba(0,0,0,0.35)]'
         )}
       >
         <div className="container-tight">
@@ -52,7 +52,7 @@ export default function Nav() {
               </Link>
             </div>
 
-            {/* Desktop nav links */}
+            {/* Stable Desktop Nav Links */}
             <nav className="nav-links hidden lg:flex items-center gap-1" aria-label="Main navigation">
               {NAV_LINKS.map((link) => (
                 <NavLink key={link.href} href={link.href} isHome={isHome}>
@@ -74,10 +74,21 @@ export default function Nav() {
 
               <Link
                 to="/app/"
-                className="btn-or inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 text-sm font-semibold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-colors duration-150 min-h-[42px] whitespace-nowrap"
+                className="group btn-or inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 text-sm font-semibold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-colors duration-150 min-h-[42px] whitespace-nowrap"
               >
-                <span>Explore free cases</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <span>Explore 48 free cases</span>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  className="group-hover:translate-x-0.5 transition-transform duration-150"
+                >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </Link>
@@ -107,7 +118,7 @@ export default function Nav() {
       {/* Mobile & Tablet Drawer */}
       <div
         className={cn(
-          'lg:hidden fixed inset-x-0 top-[68px] z-40 bg-navy-950/98 backdrop-blur-2xl border-b border-white/10 px-6 py-5 flex flex-col gap-1 shadow-2xl transition-[opacity,transform] duration-200 ease-standard',
+          'lg:hidden fixed inset-x-0 top-[68px] z-40 bg-[#050814]/98 backdrop-blur-2xl border-b border-white/[0.08] px-6 py-5 flex flex-col gap-1 shadow-2xl transition-[opacity,transform] duration-200 ease-standard',
           mobileOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
         )}
         aria-hidden={!mobileOpen}
@@ -118,7 +129,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href.replace('/', '')}
-              className="text-white/90 text-[15px] font-medium py-2.5 px-3 rounded-lg hover:bg-white/8 hover:text-white transition-colors duration-150 flex items-center justify-between"
+              className="text-white/90 text-[15px] font-medium py-2.5 px-3 rounded-lg hover:bg-white/[0.06] hover:text-white transition-colors duration-150 flex items-center justify-between"
               onClick={() => setMobileOpen(false)}
             >
               <span>{link.label}</span>
@@ -128,7 +139,7 @@ export default function Nav() {
             <Link
               key={link.href}
               to={link.href}
-              className="text-white/90 text-[15px] font-medium py-2.5 px-3 rounded-lg hover:bg-white/8 hover:text-white transition-colors duration-150 flex items-center justify-between"
+              className="text-white/90 text-[15px] font-medium py-2.5 px-3 rounded-lg hover:bg-white/[0.06] hover:text-white transition-colors duration-150 flex items-center justify-between"
               onClick={() => setMobileOpen(false)}
             >
               <span>{link.label}</span>
@@ -137,7 +148,7 @@ export default function Nav() {
           );
         })}
 
-        <div className="grid grid-cols-2 gap-3 mt-3 pt-4 border-t border-white/10">
+        <div className="grid grid-cols-2 gap-3 mt-3 pt-4 border-t border-white/[0.08]">
           <Link
             to="/app/?signin=1"
             onClick={() => setMobileOpen(false)}
@@ -161,7 +172,7 @@ export default function Nav() {
 function NavLink({ href, isHome, children }: { href: string; isHome: boolean; children: React.ReactNode }) {
   const isAnchor = href.startsWith('/#');
   const cls =
-    'text-sm font-medium text-white/80 px-3.5 py-2 rounded-lg hover:text-white hover:bg-white/8 transition-colors duration-150 whitespace-nowrap';
+    'text-sm font-medium text-white/80 px-3.5 py-2 rounded-lg hover:text-white hover:bg-white/[0.06] transition-colors duration-150 whitespace-nowrap';
 
   if (isAnchor && isHome) {
     return (

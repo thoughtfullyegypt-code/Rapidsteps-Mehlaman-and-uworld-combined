@@ -47,23 +47,23 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/75 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050814]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Sign in"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-fade-up"
+        className="w-full max-w-md bg-white dark:bg-[#0B1120] border border-[#E2E6EE] dark:border-white/[0.08] rounded-2xl shadow-2xl p-6 md:p-8 animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/10 mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/[0.08] mb-6">
           <h2 className="text-xl font-bold font-display text-[#0D1321] dark:text-white">
             {userEmail ? 'Your account' : 'Sign in to Rapid Steps'}
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[#526074] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#475569] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
             aria-label="Close dialog"
           >
             <IconX size={16} />
@@ -72,11 +72,11 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
 
         {userEmail ? (
           <div className="space-y-4">
-            <div className="p-4 rounded-xl bg-[#F7F8FA] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10">
-              <span className="text-[13px] text-[#526074] dark:text-slate-400 block font-medium mb-1">Signed in as</span>
+            <div className="p-4 rounded-xl bg-[#F7F8FA] dark:bg-[#111B33] border border-[#E2E6EE] dark:border-white/[0.08]">
+              <span className="text-[13px] text-[#475569] dark:text-slate-400 block font-medium mb-1">Signed in as</span>
               <span className="font-semibold text-[#0D1321] dark:text-white text-[15px]">{userEmail}</span>
             </div>
-            <p className="text-[13px] text-[#526074] dark:text-slate-400 leading-relaxed">
+            <p className="text-[13px] text-[#475569] dark:text-slate-400 leading-relaxed">
               Your purchased plans, study progress, and mastered cases sync across devices automatically with this email.
             </p>
             <button
@@ -88,7 +88,7 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
           </div>
         ) : (
           <div>
-            <p className="text-[15px] text-[#526074] dark:text-slate-300 mb-6 leading-relaxed">
+            <p className="text-[15px] text-[#475569] dark:text-slate-300 mb-6 leading-relaxed">
               Sign in with your email to restore your plan on any device. We send a 6-digit code to that email. There is no password.
             </p>
 
@@ -105,12 +105,12 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px] focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT transition-colors duration-150"
+                    className="w-full px-4 py-3 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#050814] text-[#0D1321] dark:text-white text-[15px] focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT transition-colors duration-150"
                     data-autofocus="true"
                   />
                 </div>
 
-                <div id="turnstile-container" className="min-h-[10px] text-[13px] text-[#526074]" />
+                <div id="turnstile-container" className="min-h-[10px] text-[13px] text-[#475569]" />
 
                 <button
                   type="submit"
@@ -122,7 +122,7 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
               </form>
             ) : (
               <form onSubmit={handleVerifyCode} className="space-y-4">
-                <div className="p-3 rounded-xl bg-[#FFF4E5] dark:bg-[#131E36] text-[13px] text-[#C2550A] dark:text-orange-DEFAULT">
+                <div className="p-3 rounded-xl bg-[#FFF4E5] dark:bg-[#111B33] text-[13px] text-[#C2550A] dark:text-orange-DEFAULT">
                   Code sent to <strong>{email}</strong>. Enter the 6-digit code below.
                 </div>
 
@@ -139,7 +139,7 @@ export function SignInModal({ isOpen, onClose, userEmail, onSignOut, onSignedIn 
                     placeholder="123456"
                     value={code}
                     onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-                    className="w-full px-4 py-3 text-center tracking-widest tabular-nums font-semibold text-xl rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT transition-colors duration-150"
+                    className="w-full px-4 py-3 text-center tracking-widest tabular-nums font-semibold text-xl rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#050814] text-[#0D1321] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT transition-colors duration-150"
                   />
                 </div>
 
@@ -208,23 +208,23 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/75 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050814]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Unlock full cases"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 animate-fade-up overflow-y-auto max-h-[90vh]"
+        className="w-full max-w-xl bg-white dark:bg-[#0B1120] border border-[#E2E6EE] dark:border-white/[0.08] rounded-2xl shadow-2xl p-6 md:p-8 animate-fade-up overflow-y-auto max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/10 mb-5">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/[0.08] mb-5">
           <h2 id="unlock-modal-title" className="text-xl md:text-2xl font-bold font-display text-[#0D1321] dark:text-white">
             Unlock full cases
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[#526074] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#475569] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
             aria-label="Close unlock dialog"
           >
             <IconX size={16} />
@@ -249,7 +249,7 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
                 'relative p-4 rounded-xl border cursor-pointer transition-colors duration-150 flex flex-col justify-between text-left',
                 selectedPlan === p.id
                   ? 'border-orange-DEFAULT bg-[#FFF4E5]/50 dark:bg-orange-DEFAULT/10 ring-1 ring-orange-DEFAULT'
-                  : 'border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF] dark:hover:border-white/20 bg-[#F7F8FA] dark:bg-[#131E36]/60'
+                  : 'border-[#E2E6EE] dark:border-white/[0.08] hover:border-[#CBD2DF] dark:hover:border-white/20 bg-[#F7F8FA] dark:bg-[#111B33]/60'
               )}
             >
               <div>
@@ -262,9 +262,9 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
                   )}
                 </div>
                 <span className="text-2xl font-extrabold text-[#16236E] dark:text-white font-display block mb-1 tabular-nums">${p.price}</span>
-                <span className="text-[13px] text-[#526074] dark:text-slate-400 block mb-2 tabular-nums">{p.duration}</span>
+                <span className="text-[13px] text-[#475569] dark:text-slate-400 block mb-2 tabular-nums">{p.duration}</span>
               </div>
-              <p className="text-[13px] text-[#526074] dark:text-slate-300 leading-snug">{p.tagline}</p>
+              <p className="text-[13px] text-[#475569] dark:text-slate-300 leading-snug">{p.tagline}</p>
             </div>
           ))}
         </div>
@@ -285,7 +285,7 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
         </div>
 
         {/* Discount Code Box */}
-        <div className="mb-6 pt-4 border-t border-[#E2E6EE] dark:border-white/10">
+        <div className="mb-6 pt-4 border-t border-[#E2E6EE] dark:border-white/[0.08]">
           <label htmlFor="discount-code-input" className="block text-[13px] font-semibold text-[#0D1321] dark:text-slate-300 mb-1.5">
             Student discount code (optional)
           </label>
@@ -296,10 +296,10 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
               placeholder="e.g. STUDY10 or GROUP15"
               value={discountCode}
               onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-              className="flex-1 px-3 py-2 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT"
+              className="flex-1 px-3 py-2 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#050814] text-[#0D1321] dark:text-white text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT"
             />
           </div>
-          <span className="text-[13px] text-[#526074] dark:text-slate-400 mt-1.5 block">
+          <span className="text-[13px] text-[#475569] dark:text-slate-400 mt-1.5 block">
             Student discounts: <code>STUDY10</code> for 10% off · <code>GROUP15</code> for 15% off for 3+ buyers.
           </span>
         </div>
@@ -312,7 +312,7 @@ export function UnlockModal({ isOpen, onClose, userEmail, onOpenSignIn }: Unlock
           {checkoutLoading ? 'Opening checkout…' : `Unlock now · $${selectedPlan === 'plan1mo' ? 19 : selectedPlan === 'plan6mo' ? 50 : 79} one-time`}
         </button>
 
-        <p className="text-center text-[13px] text-[#526074] dark:text-slate-400 mt-4">
+        <p className="text-center text-[13px] text-[#475569] dark:text-slate-400 mt-4">
           Full refund within 14 days, no questions asked. Secure payments processed by Paddle.
         </p>
       </div>
@@ -348,23 +348,23 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/75 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050814]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Mistake Log"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 rounded-2xl shadow-2xl p-6 animate-fade-up"
+        className="w-full max-w-lg bg-white dark:bg-[#0B1120] border border-[#E2E6EE] dark:border-white/[0.08] rounded-2xl shadow-2xl p-6 animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/10 mb-4">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/[0.08] mb-4">
           <h2 className="text-xl font-bold font-display text-[#0D1321] dark:text-white">
             Log a question mistake
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[#526074] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#475569] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
           >
             <IconX size={16} />
           </button>
@@ -382,7 +382,7 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
               placeholder="e.g. PSGN vs IgA Nephropathy"
               value={caseName}
               onChange={(e) => setCaseName(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px]"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#050814] text-[#0D1321] dark:text-white text-[15px]"
             />
           </div>
 
@@ -398,7 +398,7 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
                 placeholder="e.g. IgA Nephropathy"
                 value={picked}
                 onChange={(e) => setPicked(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#050814] text-[#0D1321] dark:text-white text-[15px]"
               />
             </div>
             <div>
@@ -412,7 +412,7 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
                 placeholder="e.g. PSGN"
                 value={correct}
                 onChange={(e) => setCorrect(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#050814] text-[#0D1321] dark:text-white text-[15px]"
               />
             </div>
           </div>
@@ -427,7 +427,7 @@ export function MistakeLogModal({ isOpen, onClose }: MistakeLogModalProps) {
               placeholder="e.g. Confused latency: PSGN is 2-3 weeks post-infection, IgA is 1-2 days synpharyngitic."
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#080D1A] text-[#0D1321] dark:text-white text-[15px] resize-none"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-[#F7F8FA] dark:bg-[#050814] text-[#0D1321] dark:text-white text-[15px] resize-none"
             />
           </div>
 
@@ -481,28 +481,28 @@ export function MoreMenu({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#080D1A]/75 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#050814]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Account and menu"
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-md bg-white dark:bg-[#0E1629] border-t sm:border border-[#E2E6EE] dark:border-white/10 rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 animate-slide-in sm:animate-fade-up max-h-[85vh] overflow-y-auto"
+        className="w-full sm:max-w-md bg-white dark:bg-[#0B1120] border-t sm:border border-[#E2E6EE] dark:border-white/[0.08] rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 animate-slide-in sm:animate-fade-up max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/10 mb-4">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/[0.08] mb-4">
           <div className="flex items-center gap-2.5">
             <h2 className="text-lg font-bold font-display text-[#0D1321] dark:text-white">
               {userEmail ? 'Account and menu' : 'Menu'}
             </h2>
-            <span className="text-[13px] font-medium px-2.5 py-0.5 rounded-full bg-[#F1F3F7] dark:bg-white/10 text-[#526074] dark:text-slate-300 tabular-nums">
+            <span className="text-[13px] font-medium px-2.5 py-0.5 rounded-full bg-[#F1F3F7] dark:bg-white/10 text-[#475569] dark:text-slate-300 tabular-nums">
               {masteredCount}/{totalCount} mastered
             </span>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[#526074] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#475569] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
           >
             <IconX size={16} />
           </button>
@@ -510,10 +510,10 @@ export function MoreMenu({
 
         <div className="space-y-4 text-[15px]">
           {/* Active Recall toggle */}
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F7F8FA] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10">
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F7F8FA] dark:bg-[#111B33] border border-[#E2E6EE] dark:border-white/[0.08]">
             <div>
               <span className="font-semibold text-[#0D1321] dark:text-white block">Active recall mode</span>
-              <span className="text-[13px] text-[#526074] dark:text-slate-400">Hide diagnoses until clicked</span>
+              <span className="text-[13px] text-[#475569] dark:text-slate-400">Hide diagnoses until clicked</span>
             </div>
             <button
               onClick={onToggleActiveRecall}
@@ -527,23 +527,23 @@ export function MoreMenu({
           </div>
 
           {/* Study size toggle */}
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F7F8FA] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10">
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F7F8FA] dark:bg-[#111B33] border border-[#E2E6EE] dark:border-white/[0.08]">
             <div>
               <span className="font-semibold text-[#0D1321] dark:text-white block">Study font size</span>
-              <span className="text-[13px] text-[#526074] dark:text-slate-400 tabular-nums">
+              <span className="text-[13px] text-[#475569] dark:text-slate-400 tabular-nums">
                 {studySize === 'large' ? 'Large (19px reader)' : 'Normal (16px standard)'}
               </span>
             </div>
             <button
               onClick={onToggleStudySize}
-              className="px-3 py-1.5 rounded-lg border border-[#CBD2DF] dark:border-white/10 text-[13px] font-semibold text-[#16236E] dark:text-orange-DEFAULT bg-white dark:bg-[#0E1629]"
+              className="px-3 py-1.5 rounded-lg border border-[#CBD2DF] dark:border-white/[0.08] text-[13px] font-semibold text-[#16236E] dark:text-orange-DEFAULT bg-white dark:bg-[#0B1120]"
             >
               {studySize === 'large' ? 'Large A+' : 'Normal A'}
             </button>
           </div>
 
           {/* Tools & Links */}
-          <div className="divide-y divide-[#E2E6EE] dark:divide-white/10 border-y border-[#E2E6EE] dark:border-white/10">
+          <div className="divide-y divide-[#E2E6EE] dark:divide-white/10 border-y border-[#E2E6EE] dark:border-white/[0.08]">
             <button
               onClick={() => { onClose(); onOpenShortcuts(); }}
               className="w-full flex items-center justify-between py-3 px-1 hover:text-[#16236E] dark:hover:text-orange-DEFAULT text-[#0D1321] dark:text-slate-200 font-medium transition-colors duration-150 text-left"
@@ -557,7 +557,7 @@ export function MoreMenu({
               className="w-full flex items-center justify-between py-3 px-1 hover:text-[#16236E] dark:hover:text-orange-DEFAULT text-[#0D1321] dark:text-slate-200 font-medium transition-colors duration-150 text-left"
             >
               <span>Mistake log</span>
-              <span className="text-[13px] text-[#526074] dark:text-slate-400">Review what you missed</span>
+              <span className="text-[13px] text-[#475569] dark:text-slate-400">Review what you missed</span>
             </button>
 
             <button
@@ -573,12 +573,12 @@ export function MoreMenu({
               className="w-full flex items-center justify-between py-3 px-1 hover:text-[#16236E] dark:hover:text-orange-DEFAULT text-[#0D1321] dark:text-slate-200 font-medium transition-colors duration-150 text-left"
             >
               <span>{userEmail ? 'Account profile' : 'Sign in'}</span>
-              <span className="text-[13px] text-[#526074] dark:text-slate-400">{userEmail || 'Passwordless email code'}</span>
+              <span className="text-[13px] text-[#475569] dark:text-slate-400">{userEmail || 'Passwordless email code'}</span>
             </button>
           </div>
 
           {/* Legal and disclaimer */}
-          <div className="pt-2 text-[13px] text-[#526074] dark:text-slate-400 space-y-2">
+          <div className="pt-2 text-[13px] text-[#475569] dark:text-slate-400 space-y-2">
             <div className="flex gap-4">
               <a href={`${import.meta.env.BASE_URL}terms`} className="hover:underline">Terms</a>
               <a href={`${import.meta.env.BASE_URL}privacy`} className="hover:underline">Privacy</a>

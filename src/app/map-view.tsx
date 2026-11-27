@@ -52,9 +52,9 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
   const hubCenterX = canvasWidth / 2;
 
   return (
-    <div className="relative w-full h-full bg-[#F7F8FA] dark:bg-[#080D1A] overflow-hidden flex flex-col">
+    <div className="relative w-full h-full bg-[#F7F8FA] dark:bg-[#050814] overflow-hidden flex flex-col">
       {/* Top 16-System Toolbar */}
-      <div className="flex-shrink-0 px-4 py-2 bg-white dark:bg-[#0E1629] border-b border-[#E2E6EE] dark:border-white/10 flex items-center justify-between gap-3 z-20">
+      <div className="flex-shrink-0 px-4 py-2 bg-white dark:bg-[#0B1120] border-b border-[#E2E6EE] dark:border-white/[0.08] flex items-center justify-between gap-3 z-20">
         <div className="rs-pill-strip flex items-center gap-1 pb-0.5 flex-1">
           {ATLAS_MANIFEST.systems.map((sys) => (
             <button
@@ -65,7 +65,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
                 'px-2.5 py-1.5 rounded-lg text-[13px] font-semibold transition-colors duration-150 whitespace-nowrap inline-flex items-center gap-1.5',
                 selectedSystem === sys.systemId
                   ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950'
-                  : 'text-[#526074] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/10'
+                  : 'text-[#475569] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/10'
               )}
             >
               <SystemIcon systemId={sys.systemId} size={13} />
@@ -74,7 +74,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
           ))}
         </div>
 
-        <div className="flex items-center gap-1 flex-shrink-0 bg-[#F1F3F7] dark:bg-[#131E36] p-0.5 rounded-lg">
+        <div className="flex items-center gap-1 flex-shrink-0 bg-[#F1F3F7] dark:bg-[#111B33] p-0.5 rounded-lg">
           <button
             type="button"
             onClick={handleZoomOut}
@@ -83,7 +83,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
           >
             −
           </button>
-          <span className="text-[13px] font-semibold px-1.5 text-[#526074] dark:text-slate-300 tabular-nums">
+          <span className="text-[13px] font-semibold px-1.5 text-[#475569] dark:text-slate-300 tabular-nums">
             {Math.round(zoom * 100)}%
           </span>
           <button
@@ -106,8 +106,8 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
 
       {/* Chapter Sub-Bar */}
       {currentSys.chapters.length > 0 && (
-        <div className="flex-shrink-0 px-4 py-1.5 bg-[#F7F8FA] dark:bg-[#080D1A] border-b border-[#E2E6EE] dark:border-white/10 flex items-center gap-2 z-10">
-          <span className="text-[13px] font-medium text-[#526074] dark:text-slate-400 mr-1 whitespace-nowrap tabular-nums">
+        <div className="flex-shrink-0 px-4 py-1.5 bg-[#F7F8FA] dark:bg-[#050814] border-b border-[#E2E6EE] dark:border-white/[0.08] flex items-center gap-2 z-10">
+          <span className="text-[13px] font-medium text-[#475569] dark:text-slate-400 mr-1 whitespace-nowrap tabular-nums">
             Chapter ({mapNodes.length} topics):
           </span>
           <div className="rs-pill-strip flex items-center gap-1 flex-1">
@@ -120,7 +120,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
                   'px-2.5 py-1 rounded-md text-[13px] font-semibold whitespace-nowrap transition-colors duration-150',
                   currentChapter?.id === ch.id
                     ? 'bg-orange-DEFAULT text-navy-950'
-                    : 'bg-white dark:bg-[#0E1629] text-[#526074] dark:text-slate-300 border border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF]'
+                    : 'bg-white dark:bg-[#0B1120] text-[#475569] dark:text-slate-300 border border-[#E2E6EE] dark:border-white/[0.08] hover:border-[#CBD2DF]'
                 )}
               >
                 {ch.num} {ch.short}
@@ -144,8 +144,8 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
             aria-label={`${currentSys.title} diagnostic map`}
           >
             <defs>
-              <pattern id="map-grid" width="28" height="28" patternUnits="userSpaceOnUse">
-                <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#CBD2DF" strokeOpacity="0.35" strokeWidth="1" />
+              <pattern id="map-grid" width="22" height="22" patternUnits="userSpaceOnUse">
+                <circle cx="11" cy="11" r="1.15" fill="#94A3B8" fillOpacity="0.34" />
               </pattern>
             </defs>
             <rect width={canvasWidth} height="500" rx="16" fill="url(#map-grid)" />
@@ -231,7 +231,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
                       x={colW / 2}
                       y="26"
                       textAnchor="middle"
-                      fill={isSelected ? '#080D1A' : '#FFFFFF'}
+                      fill={isSelected ? '#050814' : '#FFFFFF'}
                       fontFamily="Inter, sans-serif"
                       fontWeight="700"
                       fontSize="11.5"
@@ -257,7 +257,7 @@ export default function MapView({ onSelectCase, selectedCaseId, masteredCases }:
         </div>
       </div>
 
-      <div className="flex-shrink-0 px-4 py-2 bg-white dark:bg-[#0E1629] border-t border-[#E2E6EE] dark:border-white/10 flex flex-wrap items-center justify-between gap-2 text-[13px] text-[#526074] dark:text-slate-400">
+      <div className="flex-shrink-0 px-4 py-2 bg-white dark:bg-[#0B1120] border-t border-[#E2E6EE] dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-2 text-[13px] text-[#475569] dark:text-slate-400">
         <span>Click any diagnosis node in row 4 to open full notes, figures &amp; pearls. Scroll horizontally for wide chapters.</span>
         <span className="font-semibold text-[#16236E] dark:text-orange-DEFAULT tabular-nums">
           {`${currentSys.title} · ${currentChapter?.title || ''} (${mapNodes.length} topics)`}

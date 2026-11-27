@@ -59,7 +59,7 @@ function renderClinicalLine(text: string): React.ReactNode {
   if (match) {
     return (
       <>
-        <strong className="font-extrabold text-slate-900 dark:text-white">{match[1]} </strong>
+        <strong className="font-semibold text-[#0D1321] dark:text-white">{match[1]} </strong>
         <span>{match[2]}</span>
       </>
     );
@@ -151,9 +151,9 @@ export function CardioTopicReader({
   return (
     <div className={cn('space-y-6 rs-fade-in text-[15px]')}>
       {/* Clean Editorial Header + Sub-Section Outline */}
-      <div className="pb-5 border-b border-[#E2E6EE] dark:border-white/10 space-y-3">
+      <div className="pb-5 border-b border-[#E2E6EE] dark:border-white/[0.08] space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2 text-[13px] font-medium text-[#526074] dark:text-slate-400 tabular-nums">
+          <div className="flex flex-wrap items-center gap-2 text-[13px] font-medium text-[#475569] dark:text-slate-400 tabular-nums">
             <span className="text-[#16236E] dark:text-orange-DEFAULT font-semibold">
               {resolvedSysShort}
               {resolvedCh ? ` · Ch ${resolvedCh.num} · ${resolvedCh.short}` : ''}
@@ -181,7 +181,7 @@ export function CardioTopicReader({
                   'p-1.5 rounded-lg text-[13px] font-semibold border transition-colors duration-150',
                   isBookmarked
                     ? 'bg-[#FFF4E5] dark:bg-orange-DEFAULT/20 border-orange-DEFAULT text-[#C2550A] dark:text-orange-DEFAULT'
-                    : 'bg-white dark:bg-[#0E1629] border-[#E2E6EE] dark:border-white/10 text-[#526074] hover:text-[#0D1321] dark:hover:text-white'
+                    : 'bg-white dark:bg-[#0B1120] border-[#E2E6EE] dark:border-white/[0.08] text-[#475569] hover:text-[#0D1321] dark:hover:text-white'
                 )}
                 title="Bookmark topic (B)"
                 aria-label="Bookmark topic"
@@ -195,7 +195,7 @@ export function CardioTopicReader({
                   'px-3 py-1 rounded-lg text-[13px] font-semibold border transition-colors duration-150 inline-flex items-center gap-1.5',
                   isMastered
                     ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300'
-                    : 'bg-white dark:bg-[#0E1629] border-[#E2E6EE] dark:border-white/10 text-[#526074] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/10'
+                    : 'bg-white dark:bg-[#0B1120] border-[#E2E6EE] dark:border-white/[0.08] text-[#475569] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/10'
                 )}
               >
                 {isMastered ? (
@@ -216,7 +216,7 @@ export function CardioTopicReader({
         {/* Sub-Sections Quick-Jump Links */}
         {(noteSections.length > 1 || (topic.hySections && topic.hySections.length > 1)) && (
           <div className="pt-2 flex flex-wrap items-center gap-1.5">
-            <span className="text-[13px] font-medium text-[#526074] dark:text-slate-400 mr-1">
+            <span className="text-[13px] font-medium text-[#475569] dark:text-slate-400 mr-1">
               Sections:
             </span>
             {noteSections.map((sec) => (
@@ -224,7 +224,7 @@ export function CardioTopicReader({
                 key={sec.id}
                 type="button"
                 onClick={() => scrollToSub(`${topic.id}-${sec.id}`)}
-                className="px-2.5 py-1 rounded-lg bg-[#F1F3F7] dark:bg-[#131E36] hover:bg-[#16236E] hover:text-white dark:hover:bg-orange-DEFAULT dark:hover:text-navy-950 text-[#0D1321] dark:text-slate-200 text-[13px] font-medium transition-colors duration-150 inline-flex items-center gap-1.5 text-left"
+                className="px-2.5 py-1 rounded-lg bg-[#F1F3F7] dark:bg-[#111B33] hover:bg-[#16236E] hover:text-white dark:hover:bg-orange-DEFAULT dark:hover:text-navy-950 text-[#0D1321] dark:text-slate-200 text-[13px] font-medium transition-colors duration-150 inline-flex items-center gap-1.5 text-left"
               >
                 <span className="text-[13px] font-semibold opacity-65 tabular-nums">{sec.num}</span>
                 <span className="truncate max-w-[240px]">{sec.title}</span>
@@ -255,7 +255,7 @@ export function CardioTopicReader({
             {topic.videos.map((v) => (
               <div
                 key={v.src}
-                className="rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-[#080D1A]"
+                className="rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/[0.08] bg-[#050814]"
               >
                 <div className="bg-black">
                   <video
@@ -266,9 +266,9 @@ export function CardioTopicReader({
                     src={v.src}
                   />
                 </div>
-                <div className="p-3.5 bg-white dark:bg-[#0E1629] border-t border-[#E2E6EE] dark:border-white/10">
+                <div className="p-3.5 bg-white dark:bg-[#0B1120] border-t border-[#E2E6EE] dark:border-white/[0.08]">
                   <div className="font-semibold text-[15px] text-[#0D1321] dark:text-white mb-0.5">{v.title}</div>
-                  <p className="text-[13px] text-[#526074] dark:text-slate-300 leading-relaxed">{v.desc}</p>
+                  <p className="text-[13px] text-[#475569] dark:text-slate-300 leading-relaxed">{v.desc}</p>
                 </div>
               </div>
             ))}
@@ -278,11 +278,11 @@ export function CardioTopicReader({
 
       {/* 2. Core Notes, Figures & Tables — empty state when no blocks and no HY */}
       {!hasBlocks && !hasHy && (
-        <div className="p-6 rounded-xl bg-white dark:bg-[#0E1629] border border-dashed border-[#CBD2DF] dark:border-white/10 text-center space-y-1">
-          <p className="text-[15px] font-semibold text-[#526074] dark:text-slate-300">
+        <div className="p-6 rounded-xl bg-white dark:bg-[#0B1120] border border-dashed border-[#CBD2DF] dark:border-white/[0.08] text-center space-y-1">
+          <p className="text-[15px] font-semibold text-[#475569] dark:text-slate-300">
             No extra narrative blocks for this subtopic.
           </p>
-          <p className="text-[13px] text-[#526074] dark:text-slate-400">
+          <p className="text-[13px] text-[#475569] dark:text-slate-400">
             Use the Q&amp;A tab or neighboring chapter topics for related board vignettes.
           </p>
         </div>
@@ -296,7 +296,7 @@ export function CardioTopicReader({
             <span>Core notes ({noteSections.length} section{noteSections.length > 1 ? 's' : ''})</span>
           </div>
 
-          <div className="rounded-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 divide-y divide-[#E2E6EE] dark:divide-white/10 overflow-hidden">
+          <div className="rounded-xl bg-white dark:bg-[#0B1120] rs-obsidian-card border border-[#E2E6EE] dark:border-white/[0.08] divide-y divide-[#E2E6EE] dark:divide-white/10 overflow-hidden">
             {noteSections.map((sec) => (
               <section
                 key={sec.id}
@@ -304,7 +304,7 @@ export function CardioTopicReader({
                 className="p-5 md:p-6 space-y-3.5 scroll-mt-4"
               >
                 <h3 className="text-[17px] font-bold font-display text-[#0D1321] dark:text-white leading-snug flex items-baseline gap-2.5">
-                  <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-400 tabular-nums shrink-0">
+                  <span className="text-[13px] font-semibold text-[#475569] dark:text-slate-400 tabular-nums shrink-0">
                     {sec.num}
                   </span>
                   <span>{sec.title}</span>
@@ -332,7 +332,7 @@ export function CardioTopicReader({
                       return (
                         <figure
                           key={idx}
-                          className="my-3 rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] dark:bg-[#080D1A]/70 p-2.5"
+                          className="my-3 rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/[0.08] bg-[#F7F8FA] dark:bg-[#050814]/70 p-2.5"
                         >
                           <button
                             type="button"
@@ -346,12 +346,12 @@ export function CardioTopicReader({
                               loading="lazy"
                               className="max-h-[360px] w-auto mx-auto rounded-lg object-contain"
                             />
-                            <span className="absolute bottom-2 right-2 px-2.5 py-1 rounded-md bg-[#080D1A]/80 text-white text-[12px] font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-150 backdrop-blur-sm inline-flex items-center gap-1">
+                            <span className="absolute bottom-2 right-2 px-2.5 py-1 rounded-md bg-[#050814]/80 text-white text-[12px] font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-150 backdrop-blur-sm inline-flex items-center gap-1">
                               <IconZoomIn size={12} /> Zoom
                             </span>
                           </button>
                           {b.caption && (
-                            <figcaption className="text-center text-[13px] text-[#526074] dark:text-slate-400 mt-2 font-medium">
+                            <figcaption className="text-center text-[13px] text-[#475569] dark:text-slate-400 mt-2 font-medium">
                               {b.caption}
                             </figcaption>
                           )}
@@ -372,14 +372,14 @@ export function CardioTopicReader({
                           className="my-3 overflow-x-auto rounded-xl border border-[#E2E6EE] dark:border-white/15"
                         >
                           {bannerTitle && (
-                            <div className="px-4 py-2.5 bg-[#F1F3F7] dark:bg-[#131E36] text-[#0D1321] dark:text-white font-semibold text-[13px] border-b border-[#E2E6EE] dark:border-white/10">
+                            <div className="px-4 py-2.5 bg-[#F1F3F7] dark:bg-[#111B33] text-[#0D1321] dark:text-white font-semibold text-[13px] border-b border-[#E2E6EE] dark:border-white/[0.08]">
                               {bannerTitle}
                             </div>
                           )}
                           <table className="w-full text-left border-collapse text-[14px]">
                             {headerRow.length > 0 && (
                               <thead>
-                                <tr className="bg-[#F7F8FA] dark:bg-[#131E36] text-[#16236E] dark:text-orange-DEFAULT border-b border-[#E2E6EE] dark:border-white/10">
+                                <tr className="bg-[#F7F8FA] dark:bg-[#111B33] text-[#16236E] dark:text-orange-DEFAULT border-b border-[#E2E6EE] dark:border-white/[0.08]">
                                   {headerRow.map((cell, ci) => (
                                     <th key={ci} className="py-2.5 px-3.5 font-semibold text-[13px]">
                                       {cell}
@@ -388,7 +388,7 @@ export function CardioTopicReader({
                                 </tr>
                               </thead>
                             )}
-                            <tbody className="divide-y divide-[#E2E6EE] dark:divide-white/10 bg-white dark:bg-[#0E1629]">
+                            <tbody className="divide-y divide-[#E2E6EE] dark:divide-white/10 bg-white dark:bg-[#0B1120]">
                               {bodyRows.map((row, ri) => (
                                 <tr key={ri} className="hover:bg-[#F7F8FA] dark:hover:bg-white/[0.03] transition-colors duration-150">
                                   {row.map((cell, ci) => (
@@ -432,7 +432,7 @@ export function CardioTopicReader({
               {topic.hyImages.map((im) => (
                 <figure
                   key={im.src}
-                  className="rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-white dark:bg-[#0E1629] p-3 flex flex-col justify-between"
+                  className="rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/[0.08] bg-white dark:bg-[#0B1120] p-3 flex flex-col justify-between"
                 >
                   <button
                     type="button"
@@ -443,10 +443,10 @@ export function CardioTopicReader({
                       src={im.src}
                       alt={im.caption}
                       loading="lazy"
-                      className="max-h-[240px] w-auto mx-auto rounded-lg object-contain bg-[#F7F8FA] dark:bg-[#080D1A] p-1"
+                      className="max-h-[240px] w-auto mx-auto rounded-lg object-contain bg-[#F7F8FA] dark:bg-[#050814] p-1"
                     />
                   </button>
-                  <figcaption className="text-[13px] text-[#526074] dark:text-slate-300 font-medium mt-2 px-1 leading-snug">
+                  <figcaption className="text-[13px] text-[#475569] dark:text-slate-300 font-medium mt-2 px-1 leading-snug">
                     {im.caption}
                   </figcaption>
                 </figure>
@@ -670,9 +670,9 @@ export default function CardioHub({
   );
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-[#F7F8FA] dark:bg-[#080D1A]">
+    <div className="h-full flex flex-col overflow-hidden bg-[#F7F8FA] dark:bg-[#050814]">
       {/* 1. Compact 16-System Switcher Bar */}
-      <div className="flex-shrink-0 px-3 md:px-4 py-1.5 bg-white dark:bg-[#0E1629] border-b border-[#E2E6EE] dark:border-white/10">
+      <div className="flex-shrink-0 px-3 md:px-4 py-1.5 bg-white dark:bg-[#0B1120] border-b border-[#E2E6EE] dark:border-white/[0.08]">
         <div className="rs-pill-strip flex items-center gap-1">
           {ATLAS_MANIFEST.systems.map((sys) => {
             const active = sys.systemId === currentSysId;
@@ -686,7 +686,7 @@ export default function CardioHub({
                   'px-2.5 py-1.5 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors duration-150 inline-flex items-center gap-1.5',
                   active
                     ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950'
-                    : 'text-[#526074] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5 hover:text-[#0D1321] dark:hover:text-white'
+                    : 'text-[#475569] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5 hover:text-[#0D1321] dark:hover:text-white'
                 )}
               >
                 <SystemIcon systemId={sys.systemId} size={13} className={active ? '' : 'opacity-75'} />
@@ -698,13 +698,13 @@ export default function CardioHub({
       </div>
 
       {/* 2. Unified Single Command & Filter Bar */}
-      <div className="flex-shrink-0 px-3 md:px-5 py-2.5 bg-[#F7F8FA] dark:bg-[#080D1A] border-b border-[#E2E6EE] dark:border-white/10 flex flex-wrap items-center justify-between gap-2.5">
+      <div className="flex-shrink-0 px-3 md:px-5 py-2.5 bg-[#F7F8FA] dark:bg-[#050814] border-b border-[#E2E6EE] dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-2.5">
         <div className="flex flex-wrap items-center gap-2.5 min-w-0 flex-1">
           <div className="flex items-center gap-2 pr-1">
             <h1 className="text-[15px] font-bold font-display text-[#0D1321] dark:text-white truncate">
               {manifestSys.title}
             </h1>
-            <span className="text-[13px] text-[#526074] dark:text-slate-400 tabular-nums">
+            <span className="text-[13px] text-[#475569] dark:text-slate-400 tabular-nums">
               {masteredCount}/{stats.topics}
             </span>
           </div>
@@ -719,7 +719,7 @@ export default function CardioHub({
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2.4"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#526074] pointer-events-none"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#475569] pointer-events-none"
                 >
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -729,7 +729,7 @@ export default function CardioHub({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={mode === 'chapters' ? 'Filter topics & notes…' : 'Filter figures…'}
-                  className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-[#CBD2DF] dark:border-white/10 bg-white dark:bg-[#0E1629] text-[13px] text-[#0D1321] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#16236E]"
+                  className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-[#CBD2DF] dark:border-white/[0.08] bg-white dark:bg-[#0B1120] text-[13px] text-[#0D1321] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#16236E]"
                 />
               </div>
 
@@ -738,7 +738,7 @@ export default function CardioHub({
                   aria-label="Filter by chapter"
                   value={chapterFilter}
                   onChange={(e) => setChapterFilter(e.target.value)}
-                  className="px-2.5 py-1.5 rounded-lg border border-[#CBD2DF] dark:border-white/10 bg-white dark:bg-[#0E1629] text-[13px] font-medium text-[#0D1321] dark:text-slate-200 focus:outline-none max-w-[220px] truncate"
+                  className="px-2.5 py-1.5 rounded-lg border border-[#CBD2DF] dark:border-white/[0.08] bg-white dark:bg-[#0B1120] text-[13px] font-medium text-[#0D1321] dark:text-slate-200 focus:outline-none max-w-[220px] truncate"
                 >
                   <option value="all">All {manifestSys.chapters.length} sections</option>
                   {manifestSys.chapters.map((ch) => (
@@ -753,15 +753,15 @@ export default function CardioHub({
         </div>
 
         {/* Sub-View Mode Tabs */}
-        <div className="flex items-center gap-0.5 p-1 rounded-lg bg-[#F1F3F7] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10">
+        <div className="flex items-center gap-0.5 p-1 rounded-lg bg-[#F1F3F7] dark:bg-[#111B33] border border-[#E2E6EE] dark:border-white/[0.08]">
           <button
             type="button"
             onClick={() => setMode('chapters')}
             className={cn(
               'px-2.5 py-1 rounded-md text-[13px] font-semibold transition-colors duration-150 whitespace-nowrap inline-flex items-center gap-1.5',
               mode === 'chapters'
-                ? 'bg-white dark:bg-[#080D1A] text-[#16236E] dark:text-orange-DEFAULT shadow-2xs'
-                : 'text-[#526074] dark:text-slate-400 hover:text-[#0D1321] dark:hover:text-white'
+                ? 'bg-white dark:bg-[#050814] text-[#16236E] dark:text-orange-DEFAULT shadow-2xs'
+                : 'text-[#475569] dark:text-slate-400 hover:text-[#0D1321] dark:hover:text-white'
             )}
           >
             <IconBookOpen size={13} />
@@ -774,8 +774,8 @@ export default function CardioHub({
             className={cn(
               'px-2.5 py-1 rounded-md text-[13px] font-semibold transition-colors duration-150 whitespace-nowrap inline-flex items-center gap-1.5',
               mode === 'images'
-                ? 'bg-white dark:bg-[#080D1A] text-[#16236E] dark:text-orange-DEFAULT shadow-2xs'
-                : 'text-[#526074] dark:text-slate-400 hover:text-[#0D1321] dark:hover:text-white'
+                ? 'bg-white dark:bg-[#050814] text-[#16236E] dark:text-orange-DEFAULT shadow-2xs'
+                : 'text-[#475569] dark:text-slate-400 hover:text-[#0D1321] dark:hover:text-white'
             )}
           >
             <IconImage size={13} />
@@ -788,8 +788,8 @@ export default function CardioHub({
             className={cn(
               'px-2.5 py-1 rounded-md text-[13px] font-semibold transition-colors duration-150 whitespace-nowrap inline-flex items-center gap-1.5',
               mode === 'qa'
-                ? 'bg-white dark:bg-[#080D1A] text-[#16236E] dark:text-orange-DEFAULT shadow-2xs'
-                : 'text-[#526074] dark:text-slate-400 hover:text-[#0D1321] dark:hover:text-white'
+                ? 'bg-white dark:bg-[#050814] text-[#16236E] dark:text-orange-DEFAULT shadow-2xs'
+                : 'text-[#475569] dark:text-slate-400 hover:text-[#0D1321] dark:hover:text-white'
             )}
           >
             <IconZap size={13} />
@@ -803,8 +803,8 @@ export default function CardioHub({
               className={cn(
                 'px-2.5 py-1 rounded-md text-[13px] font-semibold transition-colors duration-150 whitespace-nowrap inline-flex items-center gap-1.5',
                 mode === 'videos'
-                  ? 'bg-white dark:bg-[#080D1A] text-[#16236E] dark:text-orange-DEFAULT shadow-2xs'
-                  : 'text-[#526074] dark:text-slate-400 hover:text-[#0D1321] dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#050814] text-[#16236E] dark:text-orange-DEFAULT shadow-2xs'
+                  : 'text-[#475569] dark:text-slate-400 hover:text-[#0D1321] dark:hover:text-white'
               )}
             >
               <IconVideo size={13} />
@@ -821,7 +821,7 @@ export default function CardioHub({
             <div className="w-9 h-9 rounded-xl bg-[#EEF2FF] dark:bg-orange-DEFAULT/15 text-[#16236E] dark:text-orange-DEFAULT flex items-center justify-center mx-auto">
               <SystemIcon systemId={currentSysId} size={20} />
             </div>
-            <p className="text-[13px] font-medium text-[#526074] dark:text-slate-400">
+            <p className="text-[13px] font-medium text-[#475569] dark:text-slate-400">
               Loading {manifestSys.title}…
             </p>
           </div>
@@ -832,21 +832,21 @@ export default function CardioHub({
       {sysData && mode === 'chapters' && (
         <div className="flex-1 overflow-hidden grid md:grid-cols-[310px_1fr] lg:grid-cols-[350px_1fr]">
           {/* Left Topic Index */}
-          <div className="h-full overflow-y-auto border-r border-[#E2E6EE] dark:border-white/10 bg-white dark:bg-[#0E1629]">
+          <div className="h-full overflow-y-auto border-r border-[#E2E6EE] dark:border-white/[0.08] bg-white dark:bg-[#0B1120]">
             {groupedSidebarChapters.map(({ chapter: ch, topics }) => {
               const isCollapsed = collapsedChapters.has(ch.id) && !searchQuery.trim();
               const chMastered = topics.filter((t) => masteredCases.has(t.id)).length;
 
               return (
-                <div key={ch.id} className="border-b border-[#E2E6EE] dark:border-white/10">
+                <div key={ch.id} className="border-b border-[#E2E6EE] dark:border-white/[0.08]">
                   {/* Sticky Chapter Header */}
                   <button
                     type="button"
                     onClick={() => toggleChapterCollapse(ch.id)}
-                    className="sticky top-0 z-10 w-full px-3.5 py-2 bg-[#F7F8FA]/95 dark:bg-[#131E36]/95 backdrop-blur-xs flex items-center justify-between gap-2 text-left hover:bg-[#F1F3F7] dark:hover:bg-[#131E36] transition-colors duration-150"
+                    className="sticky top-0 z-10 w-full px-3.5 py-2 bg-[#F7F8FA]/95 dark:bg-[#111B33]/95 backdrop-blur-xs flex items-center justify-between gap-2 text-left hover:bg-[#F1F3F7] dark:hover:bg-[#111B33] transition-colors duration-150"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-400 tabular-nums shrink-0">
+                      <span className="text-[13px] font-semibold text-[#475569] dark:text-slate-400 tabular-nums shrink-0">
                         {ch.num}
                       </span>
                       <span className="text-[13px] font-semibold text-[#0D1321] dark:text-white truncate">
@@ -854,13 +854,13 @@ export default function CardioHub({
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="text-[13px] text-[#526074] dark:text-slate-400 tabular-nums">
+                      <span className="text-[13px] text-[#475569] dark:text-slate-400 tabular-nums">
                         {chMastered}/{topics.length}
                       </span>
                       <IconChevronDown
                         size={13}
                         className={cn(
-                          'text-[#526074] transition-transform duration-150',
+                          'text-[#475569] transition-transform duration-150',
                           !isCollapsed && 'rotate-180'
                         )}
                       />
@@ -883,7 +883,7 @@ export default function CardioHub({
                             className={cn(
                               'rs-scroll-into-view w-full text-left px-3.5 py-2.5 transition-colors duration-150 border-l-[3px]',
                               isSelected
-                                ? 'border-l-[#16236E] dark:border-l-orange-DEFAULT bg-[#F1F3F7] dark:bg-[#131E36]'
+                                ? 'border-l-[#16236E] dark:border-l-orange-DEFAULT bg-[#F1F3F7] dark:bg-[#111B33]'
                                 : 'border-l-transparent hover:bg-[#F7F8FA] dark:hover:bg-white/[0.03]'
                             )}
                           >
@@ -901,10 +901,10 @@ export default function CardioHub({
                               </span>
                             </div>
                             <div className="flex items-center justify-between gap-2 mt-0.5">
-                              <p className="text-[13px] text-[#526074] dark:text-slate-400 truncate">
+                              <p className="text-[13px] text-[#475569] dark:text-slate-400 truncate">
                                 {t.summary}
                               </p>
-                              <div className="flex items-center gap-1.5 text-[13px] text-[#526074] dark:text-slate-400 shrink-0 tabular-nums">
+                              <div className="flex items-center gap-1.5 text-[13px] text-[#475569] dark:text-slate-400 shrink-0 tabular-nums">
                                 {subCount > 1 && <span>{subCount}§</span>}
                                 {t.imageCount > 0 && (
                                   <span className="inline-flex items-center gap-0.5">
@@ -959,7 +959,7 @@ export default function CardioHub({
               {systemVideos.map((vid) => (
                 <div
                   key={vid.src}
-                  className="rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-white dark:bg-[#0E1629] flex flex-col justify-between"
+                  className="rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/[0.08] bg-white dark:bg-[#0B1120] flex flex-col justify-between"
                 >
                   <div>
                     <div className="bg-black">
@@ -978,7 +978,7 @@ export default function CardioHub({
                       <h3 className="text-[15px] font-bold text-[#0D1321] dark:text-white mt-0.5 mb-1">
                         {vid.title}
                       </h3>
-                      <p className="text-[13px] text-[#526074] dark:text-slate-300 leading-relaxed line-clamp-2">
+                      <p className="text-[13px] text-[#475569] dark:text-slate-300 leading-relaxed line-clamp-2">
                         {vid.desc}
                       </p>
                     </div>
@@ -990,7 +990,7 @@ export default function CardioHub({
                         onSelectTopic(vid.topicId);
                         setMode('chapters');
                       }}
-                      className="w-full py-2 rounded-lg bg-[#F1F3F7] dark:bg-[#131E36] hover:bg-[#16236E] hover:text-white text-[#0D1321] dark:text-slate-200 text-[13px] font-semibold transition-colors duration-150"
+                      className="w-full py-2 rounded-lg bg-[#F1F3F7] dark:bg-[#111B33] hover:bg-[#16236E] hover:text-white text-[#0D1321] dark:text-slate-200 text-[13px] font-semibold transition-colors duration-150"
                     >
                       Open topic notes →
                     </button>
@@ -1010,19 +1010,19 @@ export default function CardioHub({
               <h2 className="text-[15px] md:text-base font-bold font-display text-[#0D1321] dark:text-white tabular-nums">
                 {sysData.title} Figures ({filteredImages.length} of {systemImages.length})
               </h2>
-              <span className="text-[13px] text-[#526074] dark:text-slate-400">Select any figure to enlarge</span>
+              <span className="text-[13px] text-[#475569] dark:text-slate-400">Select any figure to enlarge</span>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
               {filteredImages.map((im, idx) => (
                 <div
                   key={`${im.src}-${idx}`}
-                  className="rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-white dark:bg-[#0E1629] flex flex-col justify-between p-3"
+                  className="rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/[0.08] bg-white dark:bg-[#0B1120] flex flex-col justify-between p-3"
                 >
                   <button
                     type="button"
                     onClick={() => setLightbox({ src: im.src, caption: `${im.topicTitle} — ${im.caption}` })}
-                    className="block w-full h-40 bg-[#F7F8FA] dark:bg-[#080D1A] rounded-lg overflow-hidden p-1.5 cursor-zoom-in"
+                    className="block w-full h-40 bg-[#F7F8FA] dark:bg-[#050814] rounded-lg overflow-hidden p-1.5 cursor-zoom-in"
                   >
                     <img
                       src={im.src}
@@ -1037,7 +1037,7 @@ export default function CardioHub({
                         {im.topicTitle}
                       </span>
                     </div>
-                    <p className="text-[13px] text-[#526074] dark:text-slate-300 line-clamp-2 leading-snug">
+                    <p className="text-[13px] text-[#475569] dark:text-slate-300 line-clamp-2 leading-snug">
                       {im.caption}
                     </p>
                     {im.topicId && (
@@ -1065,14 +1065,14 @@ export default function CardioHub({
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-4xl mx-auto space-y-4">
             {/* Compact Filter + Search + Recall Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-2.5 bg-white dark:bg-[#0E1629] p-3 rounded-xl border border-[#E2E6EE] dark:border-white/10">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 bg-white dark:bg-[#0B1120] p-3 rounded-xl border border-[#E2E6EE] dark:border-white/[0.08]">
               <div className="flex items-center gap-1 flex-wrap">
                 <button
                   type="button"
                   onClick={() => setQaTypeFilter('all')}
                   className={cn(
                     'px-2.5 py-1 rounded-lg text-[13px] font-semibold transition-colors duration-150 tabular-nums',
-                    qaTypeFilter === 'all' ? 'bg-[#16236E] text-white' : 'text-[#526074] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5'
+                    qaTypeFilter === 'all' ? 'bg-[#16236E] text-white' : 'text-[#475569] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5'
                   )}
                 >
                   All ({qaCounts.all})
@@ -1083,7 +1083,7 @@ export default function CardioHub({
                     onClick={() => setQaTypeFilter('qa')}
                     className={cn(
                       'px-2.5 py-1 rounded-lg text-[13px] font-semibold transition-colors duration-150 tabular-nums',
-                      qaTypeFilter === 'qa' ? 'bg-[#16236E] text-white' : 'text-[#526074] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5'
+                      qaTypeFilter === 'qa' ? 'bg-[#16236E] text-white' : 'text-[#475569] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5'
                     )}
                   >
                     Vignettes ({qaCounts.qa})
@@ -1095,7 +1095,7 @@ export default function CardioHub({
                     onClick={() => setQaTypeFilter('mcq')}
                     className={cn(
                       'px-2.5 py-1 rounded-lg text-[13px] font-semibold transition-colors duration-150 tabular-nums',
-                      qaTypeFilter === 'mcq' ? 'bg-[#16236E] text-white' : 'text-[#526074] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5'
+                      qaTypeFilter === 'mcq' ? 'bg-[#16236E] text-white' : 'text-[#475569] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5'
                     )}
                   >
                     MCQs ({qaCounts.mcq})
@@ -1107,7 +1107,7 @@ export default function CardioHub({
                     onClick={() => setQaTypeFilter('arrow')}
                     className={cn(
                       'px-2.5 py-1 rounded-lg text-[13px] font-semibold transition-colors duration-150 inline-flex items-center gap-1 tabular-nums',
-                      qaTypeFilter === 'arrow' ? 'bg-[#16236E] text-white' : 'text-[#526074] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5'
+                      qaTypeFilter === 'arrow' ? 'bg-[#16236E] text-white' : 'text-[#475569] dark:text-slate-300 hover:bg-[#F1F3F7] dark:hover:bg-white/5'
                     )}
                   >
                     <IconArrows size={13} /> Arrows ({qaCounts.arrow})
@@ -1117,7 +1117,7 @@ export default function CardioHub({
 
               <div className="flex items-center gap-2 flex-1 min-w-[220px] justify-end">
                 <div className="relative flex-1 max-w-xs">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" className="absolute left-3 top-1/2 -translate-y-1/2 text-[#526074] pointer-events-none">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" className="absolute left-3 top-1/2 -translate-y-1/2 text-[#475569] pointer-events-none">
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
@@ -1126,7 +1126,7 @@ export default function CardioHub({
                     value={qaSearch}
                     onChange={(e) => setQaSearch(e.target.value)}
                     placeholder={`Search ${stats.rapidFireQAs} items…`}
-                    className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-[#CBD2DF] dark:border-white/10 bg-[#F7F8FA] dark:bg-[#131E36] text-[13px] text-[#0D1321] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#16236E]"
+                    className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-[#CBD2DF] dark:border-white/[0.08] bg-[#F7F8FA] dark:bg-[#111B33] text-[13px] text-[#0D1321] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#16236E]"
                   />
                 </div>
 
@@ -1144,7 +1144,7 @@ export default function CardioHub({
                     'px-2.5 py-1.5 rounded-lg text-[13px] font-semibold border transition-colors duration-150 inline-flex items-center gap-1.5 shrink-0',
                     qaRecallMode
                       ? 'bg-[#FFF4E5] dark:bg-orange-DEFAULT/15 text-[#C2550A] dark:text-orange-DEFAULT border-[#FFD29D] dark:border-orange-DEFAULT/30'
-                      : 'bg-[#F7F8FA] dark:bg-[#131E36] text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10'
+                      : 'bg-[#F7F8FA] dark:bg-[#111B33] text-[#475569] dark:text-slate-300 border-[#E2E6EE] dark:border-white/[0.08]'
                   )}
                 >
                   {qaRecallMode ? <IconEye size={13} /> : <IconEyeOff size={13} />}
@@ -1153,7 +1153,7 @@ export default function CardioHub({
               </div>
             </div>
 
-            <div className="rounded-xl border border-[#E2E6EE] dark:border-white/10 bg-white dark:bg-[#0E1629] divide-y divide-[#E2E6EE] dark:divide-white/10 overflow-hidden">
+            <div className="rounded-xl border border-[#E2E6EE] dark:border-white/[0.08] bg-white dark:bg-[#0B1120] rs-obsidian-card divide-y divide-[#E2E6EE] dark:divide-white/10 overflow-hidden">
               {filteredQAs.map((item: AtlasQAItem) => {
                 const isMcq = item.kind === 'mcq' && item.options && item.options.length >= 2;
                 const pickedIdx = mcqPicked[item.id];
@@ -1173,7 +1173,7 @@ export default function CardioHub({
                     )}
                   >
                     <div className="flex items-start gap-3">
-                      <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-400 tabular-nums flex-shrink-0 mt-0.5">
+                      <span className="text-[13px] font-semibold text-[#475569] dark:text-slate-400 tabular-nums flex-shrink-0 mt-0.5">
                         {item.num}
                       </span>
                       <div className="flex-1 space-y-2.5 min-w-0">
@@ -1207,7 +1207,7 @@ export default function CardioHub({
                                   e.stopPropagation();
                                   setLightbox({ src, caption: item.q });
                                 }}
-                                className="rounded-lg overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] dark:bg-[#080D1A] p-1 cursor-zoom-in"
+                                className="rounded-lg overflow-hidden border border-[#E2E6EE] dark:border-white/[0.08] bg-[#F7F8FA] dark:bg-[#050814] p-1 cursor-zoom-in"
                               >
                                 <img
                                   src={src}
@@ -1236,10 +1236,10 @@ export default function CardioHub({
                                   }}
                                   className={cn(
                                     'w-full text-left px-3.5 py-2.5 rounded-lg border text-[14px] transition-colors duration-150',
-                                    !mcqAnswered && 'bg-[#F7F8FA] dark:bg-[#131E36] border-[#E2E6EE] dark:border-white/10 hover:border-[#16236E] dark:hover:border-orange-DEFAULT text-[#0D1321] dark:text-slate-200',
+                                    !mcqAnswered && 'bg-[#F7F8FA] dark:bg-[#111B33] border-[#E2E6EE] dark:border-white/[0.08] hover:border-[#16236E] dark:hover:border-orange-DEFAULT text-[#0D1321] dark:text-slate-200',
                                     mcqAnswered && isCorrectOpt && 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-600 text-emerald-950 dark:text-emerald-200 font-semibold',
                                     mcqAnswered && isThisPicked && !isCorrectOpt && 'bg-red-50 dark:bg-red-950/40 border-red-500 text-red-900 dark:text-red-200',
-                                    mcqAnswered && !isCorrectOpt && !isThisPicked && 'opacity-55 border-[#E2E6EE] dark:border-white/5 text-[#526074] dark:text-slate-400'
+                                    mcqAnswered && !isCorrectOpt && !isThisPicked && 'opacity-55 border-[#E2E6EE] dark:border-white/5 text-[#475569] dark:text-slate-400'
                                   )}
                                 >
                                   {opt}
@@ -1257,7 +1257,7 @@ export default function CardioHub({
                           </div>
                         ) : (
                           !isMcq && (
-                            <div className="text-[13px] font-medium text-[#526074] dark:text-slate-400">
+                            <div className="text-[13px] font-medium text-[#475569] dark:text-slate-400">
                               Click to reveal answer →
                             </div>
                           )
@@ -1284,7 +1284,7 @@ export default function CardioHub({
             className="max-w-5xl w-full bg-white dark:bg-navy-900 rounded-2xl overflow-hidden shadow-2xl border border-white/10 rs-slide-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/10">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/[0.08]">
               <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate pr-4">
                 {lightbox.caption}
               </span>

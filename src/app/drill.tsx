@@ -222,12 +222,12 @@ export default function Drill({ onSelectCase }: DrillProps) {
   ]);
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#F7F8FA] dark:bg-[#080D1A]">
+    <div className="w-full h-full overflow-y-auto bg-[#F7F8FA] dark:bg-[#050814]">
       <div className="w-full max-w-4xl mx-auto p-4 md:p-7 space-y-5">
         {/* Top Mode & Score Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#0E1629] p-3.5 md:p-4 rounded-xl border border-[#E2E6EE] dark:border-white/10">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#0B1120] p-3.5 md:p-4 rounded-xl border border-[#E2E6EE] dark:border-white/[0.08]">
           {/* Segmented Mode Switch */}
-          <div className="flex items-center gap-1 p-1 rounded-lg bg-[#F1F3F7] dark:bg-[#131E36] border border-[#E2E6EE] dark:border-white/10">
+          <div className="flex items-center gap-1 p-1 rounded-lg bg-[#F1F3F7] dark:bg-[#111B33] border border-[#E2E6EE] dark:border-white/[0.08]">
             <button
               type="button"
               onClick={() => {
@@ -239,7 +239,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 'px-3 py-1.5 rounded-md text-[13px] font-semibold transition-colors duration-150 inline-flex items-center gap-1.5',
                 drillMode === 'flashcards'
                   ? 'bg-[#16236E] text-white'
-                  : 'text-[#526074] dark:text-slate-300 hover:text-[#0D1321] dark:hover:text-white'
+                  : 'text-[#475569] dark:text-slate-300 hover:text-[#0D1321] dark:hover:text-white'
               )}
             >
               <IconZap size={13} />
@@ -256,7 +256,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 'px-3 py-1.5 rounded-md text-[13px] font-semibold transition-colors duration-150',
                 drillMode === 'mcq'
                   ? 'bg-[#16236E] text-white'
-                  : 'text-[#526074] dark:text-slate-300 hover:text-[#0D1321] dark:hover:text-white'
+                  : 'text-[#475569] dark:text-slate-300 hover:text-[#0D1321] dark:hover:text-white'
               )}
             >
               Multiple-Choice (MCQs)
@@ -265,7 +265,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
 
           {/* Session Score */}
           <div className="flex items-center gap-2.5">
-            <div className="text-[13px] font-semibold text-[#0D1321] dark:text-slate-200 bg-[#F1F3F7] dark:bg-[#131E36] px-3 py-1.5 rounded-lg tabular-nums">
+            <div className="text-[13px] font-semibold text-[#0D1321] dark:text-slate-200 bg-[#F1F3F7] dark:bg-[#111B33] px-3 py-1.5 rounded-lg tabular-nums">
               Score: <span className="text-emerald-700 dark:text-emerald-400">{score.correct}</span>/{score.total} (
               {score.total > 0 ? Math.round((score.correct / score.total) * 100) : 0}%)
             </div>
@@ -273,7 +273,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
               <button
                 type="button"
                 onClick={handleResetScore}
-                className="text-[13px] font-medium text-[#526074] hover:text-[#0D1321] dark:hover:text-slate-200 transition-colors duration-150"
+                className="text-[13px] font-medium text-[#475569] hover:text-[#0D1321] dark:hover:text-slate-200 transition-colors duration-150"
               >
                 Reset
               </button>
@@ -299,7 +299,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                     'px-3 py-1.5 rounded-lg text-[13px] font-semibold whitespace-nowrap border transition-colors duration-150 inline-flex items-center gap-1.5',
                     active
                       ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-[#16236E] dark:border-orange-DEFAULT'
-                      : 'bg-white dark:bg-[#0E1629] text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF]'
+                      : 'bg-white dark:bg-[#0B1120] text-[#475569] dark:text-slate-300 border-[#E2E6EE] dark:border-white/[0.08] hover:border-[#CBD2DF]'
                   )}
                 >
                   <SystemIcon systemId={sys.systemId} size={13} />
@@ -324,7 +324,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                   'px-3 py-1.5 rounded-lg text-[13px] font-semibold border transition-colors duration-150',
                   bankId === b.id
                     ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-[#16236E] dark:border-orange-DEFAULT'
-                    : 'bg-white dark:bg-[#0E1629] text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF]'
+                    : 'bg-white dark:bg-[#0B1120] text-[#475569] dark:text-slate-300 border-[#E2E6EE] dark:border-white/[0.08] hover:border-[#CBD2DF]'
                 )}
               >
                 {b.label}
@@ -334,7 +334,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
         )}
 
         {loading && (
-          <div className="py-16 text-center text-[13px] font-medium text-[#526074]">
+          <div className="py-16 text-center text-[13px] font-medium text-[#475569]">
             Loading study items…
           </div>
         )}
@@ -342,7 +342,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
         {/* ==================== MODE A: 16-SYSTEM FLASHCARDS ==================== */}
         {!loading && drillMode === 'flashcards' && currentCard && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-[13px] text-[#526074] dark:text-slate-400">
+            <div className="flex items-center justify-between text-[13px] text-[#475569] dark:text-slate-400">
               <span className="font-semibold text-[#16236E] dark:text-orange-DEFAULT tabular-nums">
                 Card {currentIndex + 1} of {flashcards.length} · {sysAtlas?.title}
               </span>
@@ -350,7 +350,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 <button
                   type="button"
                   onClick={handleShuffle}
-                  className="font-medium text-[#526074] hover:text-[#0D1321] dark:hover:text-white transition-colors duration-150"
+                  className="font-medium text-[#475569] hover:text-[#0D1321] dark:hover:text-white transition-colors duration-150"
                 >
                   Shuffle
                 </button>
@@ -370,12 +370,12 @@ export default function Drill({ onSelectCase }: DrillProps) {
             <div
               onClick={() => !cardRevealed && setCardRevealed(true)}
               className={cn(
-                'p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 space-y-5 transition-colors duration-150',
+                'p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-[#E2E6EE] dark:border-white/[0.08] space-y-5 transition-colors duration-150',
                 !cardRevealed && 'cursor-pointer hover:border-[#CBD2DF] dark:hover:border-white/20'
               )}
             >
               <div className="space-y-3">
-                <span className="inline-block text-[13px] font-semibold px-2.5 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300 tabular-nums">
+                <span className="inline-block text-[13px] font-semibold px-2.5 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#111B33] text-[#475569] dark:text-slate-300 tabular-nums">
                   Prompt #{currentCard.num}
                 </span>
                 <p className="text-[16px] md:text-[18px] font-bold text-[#0D1321] dark:text-white leading-relaxed max-w-[68ch]">
@@ -389,7 +389,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                         key={src}
                         src={src}
                         alt="Clinical prompt figure"
-                        className="max-h-56 w-auto rounded-xl border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] p-1.5 object-contain"
+                        className="max-h-56 w-auto rounded-xl border border-[#E2E6EE] dark:border-white/[0.08] bg-[#F7F8FA] p-1.5 object-contain"
                       />
                     ))}
                   </div>
@@ -397,7 +397,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
               </div>
 
               {cardRevealed ? (
-                <div className="pt-5 border-t border-[#E2E6EE] dark:border-white/10 space-y-4 rs-fade-in">
+                <div className="pt-5 border-t border-[#E2E6EE] dark:border-white/[0.08] space-y-4 rs-fade-in">
                   <div className="p-4 rounded-r-xl border-l-[3px] border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/30 text-[15px] text-emerald-950 dark:text-emerald-100 leading-relaxed font-medium max-w-[68ch]">
                     <strong className="font-semibold">→ </strong>
                     {currentCard.a}
@@ -423,7 +423,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                           e.stopPropagation();
                           handleGradeFlashcard(false);
                         }}
-                        className="px-4 py-2 rounded-xl bg-[#F1F3F7] dark:bg-[#131E36] hover:bg-[#E2E6EE] dark:hover:bg-white/10 text-[#0D1321] dark:text-slate-200 text-[13px] font-semibold inline-flex items-center gap-1.5 transition-colors duration-150"
+                        className="px-4 py-2 rounded-xl bg-[#F1F3F7] dark:bg-[#111B33] hover:bg-[#E2E6EE] dark:hover:bg-white/10 text-[#0D1321] dark:text-slate-200 text-[13px] font-semibold inline-flex items-center gap-1.5 transition-colors duration-150"
                       >
                         <IconX size={13} />
                         <span>Review again</span>
@@ -438,7 +438,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                           e.stopPropagation();
                           handleStep(-1);
                         }}
-                        className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] dark:text-slate-300 hover:bg-[#F7F8FA] dark:hover:bg-white/5"
+                        className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/[0.08] text-[13px] font-semibold text-[#475569] dark:text-slate-300 hover:bg-[#F7F8FA] dark:hover:bg-white/5"
                       >
                         ← Prev
                       </button>
@@ -448,7 +448,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                           e.stopPropagation();
                           handleStep(1);
                         }}
-                        className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] dark:text-slate-300 hover:bg-[#F7F8FA] dark:hover:bg-white/5"
+                        className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/[0.08] text-[13px] font-semibold text-[#475569] dark:text-slate-300 hover:bg-[#F7F8FA] dark:hover:bg-white/5"
                       >
                         Skip →
                       </button>
@@ -456,7 +456,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                   </div>
                 </div>
               ) : (
-                <div className="pt-4 border-t border-[#E2E6EE] dark:border-white/10 flex items-center justify-between">
+                <div className="pt-4 border-t border-[#E2E6EE] dark:border-white/[0.08] flex items-center justify-between">
                   <button
                     type="button"
                     onClick={() => setCardRevealed(true)}
@@ -473,7 +473,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                         e.stopPropagation();
                         handleStep(-1);
                       }}
-                      className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] hover:bg-[#F7F8FA] dark:hover:bg-white/5"
+                      className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/[0.08] text-[13px] font-semibold text-[#475569] hover:bg-[#F7F8FA] dark:hover:bg-white/5"
                     >
                       ← Prev
                     </button>
@@ -483,7 +483,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                         e.stopPropagation();
                         handleStep(1);
                       }}
-                      className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] hover:bg-[#F7F8FA] dark:hover:bg-white/5"
+                      className="px-3 py-1.5 rounded-lg border border-[#E2E6EE] dark:border-white/[0.08] text-[13px] font-semibold text-[#475569] hover:bg-[#F7F8FA] dark:hover:bg-white/5"
                     >
                       Next →
                     </button>
@@ -505,7 +505,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 <button
                   type="button"
                   onClick={handleShuffle}
-                  className="font-medium text-[#526074] hover:text-[#0D1321] dark:hover:text-white"
+                  className="font-medium text-[#475569] hover:text-[#0D1321] dark:hover:text-white"
                 >
                   Shuffle
                 </button>
@@ -521,7 +521,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
               </div>
             </div>
 
-            <div className="p-5 md:p-6 rounded-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 space-y-4">
+            <div className="p-5 md:p-6 rounded-xl bg-white dark:bg-[#0B1120] border border-[#E2E6EE] dark:border-white/[0.08] space-y-4">
               <p className="text-[#0D1321] dark:text-slate-100 text-[15px] md:text-base font-medium leading-relaxed max-w-[68ch]">
                 {currentQ.stem}
               </p>
@@ -532,7 +532,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                       key={src}
                       src={src}
                       alt="Question clinical figure"
-                      className="max-h-60 w-auto rounded-xl border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] p-1.5 object-contain"
+                      className="max-h-60 w-auto rounded-xl border border-[#E2E6EE] dark:border-white/[0.08] bg-[#F7F8FA] p-1.5 object-contain"
                     />
                   ))}
                 </div>
@@ -553,10 +553,10 @@ export default function Drill({ onSelectCase }: DrillProps) {
                     className={cn(
                       'w-full flex items-center gap-3.5 p-3.5 rounded-xl border text-left transition-colors duration-150',
                       !submitted && isPicked && 'border-[#16236E] dark:border-orange-DEFAULT bg-[#EEF2FF]/60 dark:bg-orange-DEFAULT/15 font-semibold',
-                      !submitted && !isPicked && 'border-[#E2E6EE] dark:border-white/10 bg-white dark:bg-[#0E1629] hover:border-[#CBD2DF]',
+                      !submitted && !isPicked && 'border-[#E2E6EE] dark:border-white/[0.08] bg-white dark:bg-[#0B1120] hover:border-[#CBD2DF]',
                       submitted && isCorrect && 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-200 font-semibold',
                       submitted && !isCorrect && isPicked && 'border-red-500 bg-red-50 dark:bg-red-950/40 text-red-950 dark:text-red-200',
-                      submitted && !isCorrect && !isPicked && 'opacity-50 border-[#E2E6EE] dark:border-white/5 bg-white dark:bg-[#0E1629]'
+                      submitted && !isCorrect && !isPicked && 'opacity-50 border-[#E2E6EE] dark:border-white/5 bg-white dark:bg-[#0B1120]'
                     )}
                   >
                     <span
@@ -568,7 +568,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
                           ? 'bg-red-600 text-white'
                           : isPicked
                           ? 'bg-[#16236E] text-white'
-                          : 'bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300'
+                          : 'bg-[#F1F3F7] dark:bg-[#111B33] text-[#475569] dark:text-slate-300'
                       )}
                     >
                       {String.fromCharCode(65 + idx)}
@@ -603,14 +603,14 @@ export default function Drill({ onSelectCase }: DrillProps) {
                 <button
                   type="button"
                   onClick={() => handleStep(-1)}
-                  className="px-3 py-2 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] hover:bg-white dark:hover:bg-[#0E1629]"
+                  className="px-3 py-2 rounded-lg border border-[#E2E6EE] dark:border-white/[0.08] text-[13px] font-semibold text-[#475569] hover:bg-white dark:hover:bg-[#0B1120]"
                 >
                   ← Prev
                 </button>
                 <button
                   type="button"
                   onClick={() => handleStep(1)}
-                  className="px-3 py-2 rounded-lg border border-[#E2E6EE] dark:border-white/10 text-[13px] font-semibold text-[#526074] hover:bg-white dark:hover:bg-[#0E1629]"
+                  className="px-3 py-2 rounded-lg border border-[#E2E6EE] dark:border-white/[0.08] text-[13px] font-semibold text-[#475569] hover:bg-white dark:hover:bg-[#0B1120]"
                 >
                   Next →
                 </button>
@@ -618,7 +618,7 @@ export default function Drill({ onSelectCase }: DrillProps) {
             </div>
 
             {submitted && (
-              <div className="p-5 rounded-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 space-y-2.5 rs-fade-in">
+              <div className="p-5 rounded-xl bg-white dark:bg-[#0B1120] border border-[#E2E6EE] dark:border-white/[0.08] space-y-2.5 rs-fade-in">
                 <div
                   className={cn(
                     'text-[13px] font-semibold inline-flex items-center gap-1.5',

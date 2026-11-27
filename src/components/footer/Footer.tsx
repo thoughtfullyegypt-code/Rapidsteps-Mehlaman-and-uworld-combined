@@ -29,7 +29,7 @@ const FOOTER_COLS = [
 
 export default function Footer() {
   return (
-    <footer className="bg-navy-950 text-slate-400 pt-16 pb-10 border-t border-white/10">
+    <footer className="bg-[#050814] text-slate-400 pt-16 pb-10 border-t border-white/[0.08]">
       <div className="container-tight">
         <div className="grid grid-cols-1 md:grid-cols-[1.8fr_1fr_1fr_1fr] gap-10 mb-12">
           {/* Brand col */}
@@ -74,7 +74,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom rule */}
-        <div className="border-t border-white/10 pt-6 text-[13px] text-slate-400 text-center">
+        <div className="border-t border-white/[0.08] pt-6 text-[13px] text-slate-400 text-center">
           © 2026 Rapid Steps. Study material only, not medical advice.
         </div>
       </div>

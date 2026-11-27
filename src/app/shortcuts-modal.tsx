@@ -25,17 +25,17 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080D1A]/75 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050814]/75 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Keyboard Shortcuts"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden p-6 animate-fade-up"
+        className="w-full max-w-lg bg-white dark:bg-[#0B1120] border border-[#E2E6EE] dark:border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden p-6 animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/10 mb-4">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E2E6EE] dark:border-white/[0.08] mb-4">
           <div className="flex items-center gap-2.5">
             <span className="p-1.5 rounded-lg bg-[#FFF4E5] dark:bg-orange-DEFAULT/20 text-[#C2550A] dark:text-orange-DEFAULT">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -49,14 +49,14 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[#526074] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#475569] hover:text-[#0D1321] dark:hover:text-white hover:bg-[#F1F3F7] dark:hover:bg-white/10 transition-colors duration-150"
             aria-label="Close shortcuts modal"
           >
             <IconX size={16} />
           </button>
         </div>
 
-        <div className="divide-y divide-[#E2E6EE] dark:divide-white/10 border-y border-[#E2E6EE] dark:border-white/10 max-h-[60vh] overflow-y-auto">
+        <div className="divide-y divide-[#E2E6EE] dark:divide-white/10 border-y border-[#E2E6EE] dark:border-white/[0.08] max-h-[60vh] overflow-y-auto">
           {SHORTCUTS.map((sc, i) => (
             <div
               key={i}
@@ -71,7 +71,7 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
         </div>
 
         <div className="mt-5 text-center">
-          <p className="text-[13px] text-[#526074] dark:text-slate-400">
+          <p className="text-[13px] text-[#475569] dark:text-slate-400">
             Press <kbd className="rs-kbd">Esc</kbd> at any time to close overlays.
           </p>
         </div>

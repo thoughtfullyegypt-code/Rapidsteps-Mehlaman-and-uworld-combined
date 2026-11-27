@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Nav from '@/components/nav/Nav';
 import Footer from '@/components/footer/Footer';
@@ -55,7 +55,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-navy-950" id="top">
+    <div className="min-h-screen bg-[#050814]" id="top">
       <Nav />
 
       <main id="main">
@@ -83,14 +83,68 @@ export default function HomePage() {
 }
 
 // ============================================================
-// 1. HERO + INTEGRATED 4-TAB CLINICAL WORKBENCH
+// 1. HERO + MACHINED BEZELED CLINICAL WORKBENCH
 // ============================================================
-const QUICK_CLUES: Array<{ key: ConsoleCaseKey; label: string; tag: string }> = [
-  { key: 'psgn', label: 'Cola urine 2–3 wks post-strep', tag: 'Renal' },
-  { key: 'apl', label: 'Auer rods + t(15;17)', tag: 'Heme' },
-  { key: 'hocm', label: 'Murmur ↑ w/ Valsalva', tag: 'Cardio' },
-  { key: 'graves', label: 'Pretibial myxedema', tag: 'Endo' },
+const QUICK_CLUES: Array<{ key: ConsoleCaseKey; label: string; tag: string; highlights: string[] }> = [
+  {
+    key: 'psgn',
+    label: 'Cola urine 2–3 wks post-strep',
+    tag: 'Renal',
+    highlights: [
+      'dark, tea-colored urine',
+      'three weeks after crusted honey-colored skin lesions',
+      'dysmorphic RBCs and RBC casts',
+      'Serum C3 is markedly decreased',
+    ],
+  },
+  {
+    key: 'apl',
+    label: 'Auer rods + t(15;17)',
+    tag: 'Heme',
+    highlights: [
+      'continuous oozing from venipuncture sites',
+      'D-dimer is markedly elevated',
+      'bundles of needle-like eosinophilic rods',
+    ],
+  },
+  {
+    key: 'hocm',
+    label: 'Murmur ↑ w/ Valsalva',
+    tag: 'Cardio',
+    highlights: [
+      'syncope during wind sprints',
+      'uncle died suddenly at age 31',
+      'intensifies when he stands abruptly from a squat',
+    ],
+  },
+  {
+    key: 'graves',
+    label: 'Pretibial myxedema',
+    tag: 'Endo',
+    highlights: [
+      'weight loss despite increased appetite',
+      'gritty protruding eyes',
+      'audible bruit',
+      'waxy nonpitting plaques over her shins',
+    ],
+  },
 ];
+
+function renderHighlightedVignette(text: string, clues: string[], enabled: boolean): React.ReactNode {
+  if (!enabled || clues.length === 0) return text;
+  const escaped = clues.map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const regex = new RegExp(`(${escaped.join('|')})`, 'gi');
+  const parts = text.split(regex);
+  return parts.map((part, idx) => {
+    const isMatch = clues.some((c) => c.toLowerCase() === part.toLowerCase());
+    if (!isMatch) return <Fragment key={idx}>{part}</Fragment>;
+    return (
+      <span key={idx} className="rs-clue-highlight font-medium">
+        {part}
+      </span>
+    );
+  });
+}
 
 function HeroSection({
   activeCase,
@@ -106,54 +160,59 @@ function HeroSection({
   onQuickClue: (k: ConsoleCaseKey) => void;
 }) {
   return (
-    <section
-      className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden"
-      style={{
-        background: 'linear-gradient(180deg, #080D1A 0%, #0E1629 58%, #0F1854 100%)',
-      }}
-    >
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(960px 480px at 50% 0%, rgba(255, 140, 26, 0.08) 0%, transparent 70%)',
-        }}
-      />
-
+    <section className="rs-hero-mesh relative pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden">
       <div className="container-tight relative z-10">
         {/* Centered Typographic Focal Block */}
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-[2.25rem] sm:text-5xl lg:text-[3.6rem] text-white leading-[1.06] tracking-[-0.03em] font-extrabold font-display">
-            Recognize the clue.{' '}
-            <span className="text-orange-DEFAULT block sm:inline">Name the diagnosis.</span>
+          <h1 className="text-[2.4rem] sm:text-5xl lg:text-[4rem] text-white leading-[1.06] tracking-[-0.03em] font-extrabold font-display">
+            <span>Recognize the clue. </span>
+            <span className="bg-gradient-to-r from-[#FFA53B] to-[#FF7B00] bg-clip-text text-transparent block sm:inline">
+              Name the diagnosis.
+            </span>
           </h1>
 
           <p className="text-slate-300 text-[16px] sm:text-[18px] leading-relaxed max-w-2xl mx-auto mt-5">
-            Connect USMLE Step 1 stem buzzwords to syndromes, mechanisms, lab signatures, and exam traps with drills, stem decoding, and 5-step frameworks.
+            Connect USMLE Step 1 stem buzzwords to syndromes, mechanisms, lab signatures, and exam traps with drills, browser-local stem decoding, and 5-step frameworks.
           </p>
 
-          <div className="mt-7 flex justify-center">
+          <div className="mt-7 flex flex-col items-center gap-3">
             <Link
               to="/app/"
-              className="inline-flex items-center gap-2.5 px-7 py-3.5 text-[15px] font-semibold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-colors duration-150 min-h-[50px]"
+              className="group inline-flex items-center gap-2.5 px-7 py-3.5 text-[15px] font-semibold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-colors duration-150 min-h-[50px]"
             >
               <span>Explore 48 free cases</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className="group-hover:translate-x-0.5 transition-transform duration-150"
+              >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
+            <p className="text-[13px] text-slate-400">
+              No account or card · 3 free cases in all 16 systems · One-time prepaid access
+            </p>
           </div>
         </div>
 
-        {/* Wide Integrated Clinical Workbench */}
-        <div className="mt-12 max-w-[920px] mx-auto">
-          <HeroClinicalConsole
-            activeCase={activeCase}
-            onSelectCase={onSelectCase}
-            activeTab={activeTab}
-            onSelectTab={onSelectTab}
-            onQuickClue={onQuickClue}
-          />
+        {/* Machined Bezeled Interactive Clinical Workbench */}
+        <div className="mt-12 max-w-[960px] mx-auto">
+          <div className="rs-bezel rounded-[22px] p-1.5 sm:p-2">
+            <HeroClinicalConsole
+              activeCase={activeCase}
+              onSelectCase={onSelectCase}
+              activeTab={activeTab}
+              onSelectTab={onSelectTab}
+              onQuickClue={onQuickClue}
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -205,6 +264,7 @@ function HeroClinicalConsole({
   onQuickClue: (k: ConsoleCaseKey) => void;
 }) {
   const [atlasStage, setAtlasStage] = useState<1 | 2 | 3>(3);
+  const [clueHighlights, setClueHighlights] = useState(true);
   useEffect(() => {
     setAtlasStage(3);
   }, [activeCase]);
@@ -222,6 +282,7 @@ function HeroClinicalConsole({
   const endoFw = FRAMEWORKS[0];
 
   const c = DEMO_CASES[activeCase];
+  const activeClueMeta = QUICK_CLUES.find((q) => q.key === activeCase) || QUICK_CLUES[0];
 
   const tabs: Array<{ id: HeroTab; label: string; icon: React.ReactNode }> = [
     {
@@ -268,11 +329,13 @@ function HeroClinicalConsole({
   ];
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-white/15 bg-white text-[#0D1321] shadow-[0_24px_64px_rgba(0,0,0,0.38)] flex flex-col">
+    <div className="rounded-[16px] overflow-hidden border border-white/10 bg-white text-[#0D1321] flex flex-col">
       {/* Workbench Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 bg-[#0E1629] text-white border-b border-white/10">
-        <div className="text-[13px] font-semibold text-slate-200">
-          Interactive clinical workbench
+      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 bg-[#0B1120] text-white border-b border-white/[0.08]">
+        <div className="flex items-center gap-2.5 text-[13px] font-semibold text-slate-200">
+          <span>Rapid Steps Workbench</span>
+          <span className="text-slate-500">·</span>
+          <span className="text-slate-400 font-medium">{c.systemName}</span>
         </div>
         <Link
           to={`/app/#${activeCase}`}
@@ -301,7 +364,7 @@ function HeroClinicalConsole({
                 'flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-[13px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-standard',
                 isSelected
                   ? 'bg-white text-[#16236E] shadow-sm'
-                  : 'text-[#526074] hover:text-[#0D1321] hover:bg-white/60'
+                  : 'text-[#475569] hover:text-[#0D1321] hover:bg-white/60'
               )}
             >
               {t.icon}
@@ -312,16 +375,13 @@ function HeroClinicalConsole({
       </div>
 
       {/* Workbench Content */}
-      <div className="p-5 sm:p-7 bg-white min-h-[380px] flex flex-col justify-between">
+      <div className="p-5 sm:p-7 bg-white min-h-[410px] flex flex-col justify-between text-left">
         {/* ==================== TAB 1: ATLAS ==================== */}
         {activeTab === 'atlas' && (
           <div className="space-y-5 flex-1 flex flex-col justify-between">
             <div>
               {/* Integrated Quick-Clue Switcher */}
               <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-[#E2E6EE]">
-                <span className="text-[13px] font-semibold text-[#526074]">
-                  {c.systemName}
-                </span>
                 <div className="flex flex-wrap gap-1.5">
                   {QUICK_CLUES.map((item) => {
                     const isActive = activeCase === item.key;
@@ -334,7 +394,7 @@ function HeroClinicalConsole({
                           'px-3 py-1.5 rounded-lg text-[13px] font-medium border transition-colors duration-150',
                           isActive
                             ? 'bg-[#FFF4E5] border-[#FFD29D] text-[#0D1321] font-semibold'
-                            : 'bg-[#F7F8FA] border-[#E2E6EE] text-[#526074] hover:text-[#0D1321] hover:border-[#CBD2DF]'
+                            : 'bg-[#F7F8FA] border-[#E2E6EE] text-[#475569] hover:text-[#0D1321] hover:border-[#CBD2DF]'
                         )}
                       >
                         <span className="text-[#C2550A] font-semibold mr-1.5">{item.tag}</span>
@@ -343,25 +403,47 @@ function HeroClinicalConsole({
                     );
                   })}
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => setClueHighlights((v) => !v)}
+                  className={cn(
+                    'px-2.5 py-1 rounded-lg text-[13px] font-semibold border transition-colors duration-150 whitespace-nowrap',
+                    clueHighlights
+                      ? 'bg-[#FFF4E5] border-[#FFD29D] text-[#C2550A]'
+                      : 'bg-[#F7F8FA] border-[#E2E6EE] text-[#475569] hover:text-[#0D1321]'
+                  )}
+                >
+                  {clueHighlights ? 'Clue highlights on' : 'Clue highlights off'}
+                </button>
               </div>
 
-              {/* 3-Step Clinical Trace */}
+              {/* Left: Vignette Excerpt + Buzzword + Syndrome | Right: Dx + Mechanism + Trap */}
               <div className="mt-5 grid md:grid-cols-2 gap-4 items-start">
                 <div className="space-y-3">
-                  {/* Stem Clue */}
-                  <div className="p-4 rounded-xl bg-[#FFF4E5]/70 border-l-[3px] border-[#FF8C1A]">
-                    <div className="text-[13px] font-semibold text-[#C2550A] mb-1">
+                  <div className="p-4 rounded-xl bg-[#F7F8FA] border border-[#E2E6EE]">
+                    <div className="text-[13px] font-semibold text-[#475569] mb-1.5">
+                      Clinical vignette stem
+                    </div>
+                    <p className="text-[15px] text-[#0D1321] leading-[1.65]">
+                      {renderHighlightedVignette(c.vignette, activeClueMeta.highlights, clueHighlights)}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-r-xl bg-[#FFF4E5]/70 border-l-[3px] border-[#FF8C1A]">
+                    <div className="text-[13px] font-semibold text-[#C2550A] mb-0.5">
                       Trigger buzzword
                     </div>
                     <div className="text-[15px] font-semibold text-[#0D1321] leading-snug">
                       {c.buzzword}
                     </div>
                   </div>
+                </div>
 
-                  {/* Syndrome */}
+                <div className="space-y-3">
                   {atlasStage >= 2 ? (
-                    <div className="p-4 rounded-xl bg-[#F1F3F7] border-l-[3px] border-[#16236E]">
-                      <div className="text-[13px] font-semibold text-[#16236E] mb-1">
+                    <div className="p-3.5 rounded-r-xl bg-[#F1F3F7] border-l-[3px] border-[#16236E]">
+                      <div className="text-[13px] font-semibold text-[#16236E] mb-0.5">
                         Clinical syndrome
                       </div>
                       <div className="text-[15px] font-semibold text-[#0D1321] leading-snug">
@@ -377,10 +459,7 @@ function HeroClinicalConsole({
                       Reveal clinical syndrome →
                     </button>
                   )}
-                </div>
 
-                {/* Diagnosis + Mechanism + Exam Trap */}
-                <div>
                   {atlasStage >= 3 ? (
                     <div className="p-5 rounded-xl bg-[#16236E] text-white space-y-3">
                       <div>
@@ -417,7 +496,7 @@ function HeroClinicalConsole({
               <button
                 type="button"
                 onClick={() => setAtlasStage(atlasStage === 3 ? 1 : 3)}
-                className="font-medium text-[#526074] hover:text-[#0D1321] transition-colors duration-150"
+                className="font-medium text-[#475569] hover:text-[#0D1321] transition-colors duration-150"
               >
                 {atlasStage === 3 ? 'Hide diagnosis to self-test' : 'Show full card'}
               </button>
@@ -448,7 +527,7 @@ function HeroClinicalConsole({
                 </button>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#FFF4E5]/70 border-l-[3px] border-[#FF8C1A] mb-3.5">
+              <div className="p-4 rounded-r-xl bg-[#FFF4E5]/70 border-l-[3px] border-[#FF8C1A] mb-3.5">
                 <p className="text-[15px] font-semibold text-[#0D1321] leading-snug">
                   {currentDrill.question}
                 </p>
@@ -470,7 +549,7 @@ function HeroClinicalConsole({
                         !answered && 'bg-white border-[#E2E6EE] text-[#0D1321] hover:border-[#16236E] hover:bg-[#F7F8FA]',
                         answered && isCorrect && 'bg-emerald-50 border-emerald-600 text-emerald-950 font-semibold',
                         answered && !isCorrect && isChosen && 'bg-red-50 border-red-500 text-red-950',
-                        answered && !isCorrect && !isChosen && 'bg-[#F7F8FA] border-[#E2E6EE] text-[#526074]'
+                        answered && !isCorrect && !isChosen && 'bg-[#F7F8FA] border-[#E2E6EE] text-[#475569]'
                       )}
                     >
                       <span
@@ -479,7 +558,7 @@ function HeroClinicalConsole({
                           !answered && 'bg-[#F1F3F7] text-[#16236E]',
                           answered && isCorrect && 'bg-emerald-600 text-white',
                           answered && !isCorrect && isChosen && 'bg-red-600 text-white',
-                          answered && !isCorrect && !isChosen && 'bg-[#E2E6EE] text-[#526074]'
+                          answered && !isCorrect && !isChosen && 'bg-[#E2E6EE] text-[#475569]'
                         )}
                       >
                         {String.fromCharCode(65 + idx)}
@@ -493,7 +572,7 @@ function HeroClinicalConsole({
               {pickedOpt !== null && (
                 <div
                   className={cn(
-                    'mt-3.5 p-4 rounded-xl border-l-[3px] text-[15px] leading-relaxed',
+                    'mt-3.5 p-4 rounded-r-xl border-l-[3px] text-[15px] leading-relaxed',
                     pickedOpt === currentDrill.correct
                       ? 'bg-emerald-50 border-emerald-600 text-emerald-950'
                       : 'bg-[#FFF4E5] border-[#FF8C1A] text-[#0D1321]'
@@ -512,12 +591,12 @@ function HeroClinicalConsole({
                 <button
                   type="button"
                   onClick={() => setPickedOpt(null)}
-                  className="font-medium text-[#526074] hover:text-[#0D1321] transition-colors duration-150"
+                  className="font-medium text-[#475569] hover:text-[#0D1321] transition-colors duration-150"
                 >
                   Reset answer
                 </button>
               ) : (
-                <span className="text-[#526074]">Select A–D for instant feedback</span>
+                <span className="text-[#475569]">Select A–D for instant feedback</span>
               )}
               <Link to="/app/" className="font-semibold text-[#16236E] hover:underline">
                 Open Vignette Drill →
@@ -562,7 +641,7 @@ function HeroClinicalConsole({
 
               <div className="mt-3.5 space-y-2">
                 {decoded.noMatch ? (
-                  <div className="p-4 rounded-xl bg-[#F7F8FA] border border-[#E2E6EE] text-[15px] text-[#526074] text-center">
+                  <div className="p-4 rounded-xl bg-[#F7F8FA] border border-[#E2E6EE] text-[15px] text-[#475569] text-center">
                     No confident match yet. Try &ldquo;Auer rods&rdquo; or &ldquo;Kayser-Fleischer&rdquo;.
                   </div>
                 ) : (
@@ -580,7 +659,7 @@ function HeroClinicalConsole({
                         <div className="text-[15px] font-bold text-[#0D1321] truncate">
                           {m.diagnosis}
                         </div>
-                        <div className="text-[13px] text-[#526074] leading-snug mt-0.5">
+                        <div className="text-[13px] text-[#475569] leading-snug mt-0.5">
                           {m.detail}
                         </div>
                       </div>
@@ -589,7 +668,7 @@ function HeroClinicalConsole({
                           'text-[13px] font-semibold px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0',
                           m.confidence === 'top'
                             ? 'bg-orange-DEFAULT text-navy-950'
-                            : 'bg-[#F1F3F7] text-[#526074]'
+                            : 'bg-[#F1F3F7] text-[#475569]'
                         )}
                       >
                         {m.confidence === 'top' ? 'Top match' : 'Look-alike'}
@@ -600,7 +679,7 @@ function HeroClinicalConsole({
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#E2E6EE] text-[13px] text-[#526074]">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#E2E6EE] text-[13px] text-[#475569]">
               <span className="inline-flex items-center gap-1.5">
                 <IconShield size={14} className="text-emerald-700" />
                 <span>Runs locally in your browser. Text is never sent or saved.</span>
@@ -620,7 +699,7 @@ function HeroClinicalConsole({
                 <span className="text-[13px] font-semibold text-[#16236E]">
                   Endocrine · Thyroid Axis 5-Step Tree
                 </span>
-                <span className="text-[13px] font-medium text-[#526074] tabular-nums">
+                <span className="text-[13px] font-medium text-[#475569] tabular-nums">
                   8 core systems in app
                 </span>
               </div>
@@ -637,7 +716,7 @@ function HeroClinicalConsole({
                         'py-2 px-1 rounded-lg text-[13px] font-semibold border transition-colors duration-150 text-center tabular-nums',
                         fwStep === n
                           ? 'bg-[#16236E] text-white border-[#16236E]'
-                          : 'bg-[#F7F8FA] text-[#526074] border-[#E2E6EE] hover:text-[#0D1321] hover:border-[#CBD2DF]'
+                          : 'bg-[#F7F8FA] text-[#475569] border-[#E2E6EE] hover:text-[#0D1321] hover:border-[#CBD2DF]'
                       )}
                     >
                       {lbl}
@@ -655,26 +734,26 @@ function HeroClinicalConsole({
                   <div
                     key={br.badge}
                     className={cn(
-                      'p-3.5 rounded-xl border-l-[3px]',
+                      'p-3.5 rounded-r-xl border-l-[3px]',
                       br.tone === 'amber' && 'bg-[#FFF4E5]/70 border-[#FF8C1A]',
                       br.tone === 'teal' && 'bg-emerald-50/70 border-emerald-600',
                       br.tone === 'navy' && 'bg-[#F1F3F7] border-[#16236E]'
                     )}
                   >
-                    <div className="text-[13px] font-semibold text-[#526074] mb-1">
+                    <div className="text-[13px] font-semibold text-[#475569] mb-1">
                       {br.badge}
                     </div>
                     <div className="text-[15px] font-bold text-[#0D1321] mb-1 leading-snug">
                       {br.title}
                     </div>
-                    <p className="text-[13px] text-[#526074] leading-snug">{br.detail}</p>
+                    <p className="text-[13px] text-[#475569] leading-snug">{br.detail}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="flex items-center justify-between pt-3 border-t border-[#E2E6EE] text-[13px]">
-              <span className="text-[#526074]">Included free in the app</span>
+              <span className="text-[#475569]">Included free in the app</span>
               <Link to="/app/" className="font-semibold text-[#16236E] hover:underline">
                 Explore all 8 frameworks →
               </Link>
@@ -687,7 +766,7 @@ function HeroClinicalConsole({
 }
 
 // ============================================================
-// 2. PROOF / NUMBERS STRIP (Clean Typographic Metrics)
+// 2. PROOF / NUMBERS STRIP
 // ============================================================
 function StatsSection() {
   const { totals } = ATLAS_MANIFEST;
@@ -699,9 +778,9 @@ function StatsSection() {
   ];
 
   return (
-    <section className="py-12 border-y border-white/10 bg-[#080D1A]" aria-label="Rapid Steps in numbers">
+    <section className="py-12 border-y border-white/[0.08] bg-[#050814]" aria-label="Rapid Steps in numbers">
       <div className="container-tight">
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-white/10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-white/[0.08]">
           {STATS.map((s) => (
             <div key={s.label} className="rv py-4 px-2 sm:px-6 lg:first:pl-0 lg:last:pr-0 text-center lg:text-left">
               <div className="text-3xl sm:text-4xl font-extrabold text-white font-display tracking-tight tabular-nums mb-1">
@@ -722,7 +801,7 @@ function StatsSection() {
 // ============================================================
 function CardioSpotlightSection() {
   return (
-    <section className="section-pad bg-[#0E1629] border-b border-white/10" id="cardio-spotlight">
+    <section className="section-pad bg-[#0B1120] border-b border-white/[0.08]" id="cardio-spotlight">
       <div className="container-tight">
         <div className="rv flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="max-w-2xl">
@@ -757,14 +836,14 @@ function CardioSpotlightSection() {
         </div>
 
         {/* Hairline Grid of all 16 Systems */}
-        <div className="rv grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10">
+        <div className="rv grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/[0.08] rounded-2xl overflow-hidden border border-white/[0.08]">
           {ATLAS_MANIFEST.systems.map((sys) => (
             <Link
               key={sys.systemId}
               to={`/app/?system=${sys.systemId}`}
-              className="p-4 bg-[#080D1A] hover:bg-[#131E36] transition-colors duration-150 group flex items-start gap-3"
+              className="p-4 bg-[#050814] hover:bg-[#111B33] transition-colors duration-150 group flex items-start gap-3"
             >
-              <div className="w-9 h-9 rounded-lg bg-[#131E36] text-orange-DEFAULT flex items-center justify-center shrink-0 group-hover:bg-orange-DEFAULT group-hover:text-navy-950 transition-colors duration-150">
+              <div className="w-9 h-9 rounded-lg bg-[#111B33] text-orange-DEFAULT flex items-center justify-center shrink-0 group-hover:bg-orange-DEFAULT group-hover:text-navy-950 transition-colors duration-150">
                 <SystemIcon systemId={sys.systemId} size={18} />
               </div>
               <div className="min-w-0">
@@ -784,7 +863,7 @@ function CardioSpotlightSection() {
 }
 
 // ============================================================
-// 3. HOW IT WORKS (4-Stage Diagnostic Cognitive Flow)
+// 3. HOW IT WORKS (Static PDFs Contrast + 4-Stage Cognitive Flow)
 // ============================================================
 function PathSection() {
   const [step, setStep] = useState(3);
@@ -821,19 +900,39 @@ function PathSection() {
   ];
 
   return (
-    <section id="how" className="section-pad bg-[#080D1A]">
+    <section id="how" className="section-pad bg-[#050814]">
       <div className="container-tight">
-        <div className="text-center max-w-2xl mx-auto mb-12 rv">
+        <div className="text-center max-w-2xl mx-auto mb-10 rv">
           <h2 className="text-3xl sm:text-[2.5rem] font-extrabold font-display tracking-[-0.025em] leading-[1.12] text-white mb-4">
             Four cognitive beats from stem clue to diagnosis
           </h2>
           <p className="text-slate-300 text-[15px] leading-relaxed">
-            Textbooks organize medicine from disease → symptoms. Exam stems test you in reverse: from clue → syndrome → diagnosis → mechanism.
+            Textbooks and static PDFs list features under a disease heading. Exam stems work in reverse: clue → syndrome → diagnosis → trap.
           </p>
         </div>
 
+        {/* Contrast Strip: Static PDFs/Textbooks vs Pattern Engine */}
+        <div className="rv grid md:grid-cols-2 gap-4 max-w-4xl mx-auto mb-12">
+          <div className="p-5 rounded-2xl bg-[#0B1120] border border-white/[0.08] rs-obsidian-card">
+            <div className="text-[13px] font-semibold text-slate-400 mb-1.5">
+              Static high-yield PDFs &amp; textbooks
+            </div>
+            <p className="text-[15px] text-slate-300 leading-relaxed">
+              Flat disease-first lists give away the answer in the section header. No active recall toggle, no instant stem decoding, and look-alikes stay scattered across pages.
+            </p>
+          </div>
+          <div className="p-5 rounded-2xl bg-[#111B33] border border-orange-DEFAULT/40 rs-obsidian-card">
+            <div className="text-[13px] font-semibold text-orange-DEFAULT mb-1.5">
+              Rapid Steps interactive pattern engine
+            </div>
+            <p className="text-[15px] text-slate-200 leading-relaxed">
+              Starts from the hidden stem trigger, enforces active recall before showing diagnoses, and pairs every concept with side-by-side NBME trap comparisons.
+            </p>
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-10 items-start">
-          <div className="divide-y divide-white/10 border-y border-white/10">
+          <div className="divide-y divide-white/[0.08] border-y border-white/[0.08]">
             {PATH_STEPS.map((s, i) => {
               const active = step === i;
               return (
@@ -843,7 +942,7 @@ function PathSection() {
                   onClick={() => setStep(i)}
                   className={cn(
                     'w-full text-left flex gap-4 py-5 px-4 transition-colors duration-150',
-                    active ? 'bg-[#131E36]' : 'hover:bg-white/[0.03]'
+                    active ? 'bg-[#111B33]' : 'hover:bg-white/[0.03]'
                   )}
                 >
                   <div
@@ -892,7 +991,7 @@ function PathMapSVG({
   onSelectStep: (idx: number) => void;
 }) {
   return (
-    <div className="bg-[#0E1629] border border-white/10 rounded-2xl p-6">
+    <div className="bg-[#0B1120] border border-white/[0.08] rs-obsidian-card rounded-2xl p-6">
       <div className="flex items-center justify-between mb-3 text-[13px] font-medium text-slate-400">
         <span>Cognitive pathway</span>
         <span className="text-orange-DEFAULT">Select a node</span>
@@ -930,13 +1029,13 @@ function PathMapSVG({
                 stroke={isSelected ? s.color : 'rgba(255,255,255,0.12)'}
                 strokeWidth={isSelected ? 1.8 : 1}
               />
-              <circle cx="56" cy={y + 3} r="15" fill={s.color} />
+              <circle cx="56" cy={y + 3} r="14.5" fill={s.color} />
               <text
                 x="56"
                 y={y + 4}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fill="#080D1A"
+                fill="#050814"
                 fontSize="12"
                 fontWeight="800"
                 fontFamily="Plus Jakarta Sans, sans-serif"
@@ -946,7 +1045,7 @@ function PathMapSVG({
               <text
                 x="84"
                 y={y - 4}
-                fill="rgba(255,255,255,0.68)"
+                fill="rgba(255,255,255,0.7)"
                 fontSize="11"
                 fontFamily="Inter, sans-serif"
                 fontWeight="600"
@@ -976,13 +1075,13 @@ function PathMapSVG({
 // ============================================================
 function BentoSection() {
   return (
-    <section className="section-pad bg-[#F7F8FA] dark:bg-[#080D1A] border-t border-[#E2E6EE] dark:border-white/10" id="features">
+    <section className="section-pad bg-[#F7F8FA] dark:bg-[#050814] border-t border-[#E2E6EE] dark:border-white/[0.08]" id="features">
       <div className="container-tight">
         <div className="text-center max-w-2xl mx-auto mb-12 rv">
           <h2 className="text-3xl sm:text-[2.5rem] font-extrabold font-display tracking-[-0.025em] leading-[1.12] text-[#0D1321] dark:text-white mb-4">
             Built to teach active differentiation
           </h2>
-          <p className="text-[#526074] dark:text-slate-400 text-[15px] leading-relaxed">
+          <p className="text-[#475569] dark:text-slate-400 text-[15px] leading-relaxed">
             Try every engine live below: click map nodes, walk a 5-step decision tree, answer a vignette drill, or paste your own stem clues.
           </p>
         </div>
@@ -1002,8 +1101,8 @@ function BentoCard({ children, className }: { children: React.ReactNode; classNa
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-[#E2E6EE] dark:border-white/10',
-        'bg-white dark:bg-[#0E1629]',
+        'relative overflow-hidden rounded-2xl border border-[#E2E6EE] dark:border-white/[0.08]',
+        'bg-white dark:bg-[#0B1120] rs-obsidian-card',
         'transition-colors duration-150 rv',
         className
       )}
@@ -1027,13 +1126,13 @@ function BentoAtlas() {
           <h3 className="text-xl sm:text-[1.35rem] font-bold font-display text-[#0D1321] dark:text-white mb-2">
             See an entire organ system on one zoomable map
           </h3>
-          <p className="text-[#526074] dark:text-slate-400 text-[15px] leading-relaxed mb-5">
+          <p className="text-[#475569] dark:text-slate-400 text-[15px] leading-relaxed mb-5">
             Zoom from organ system → syndrome → stem buzzword → definitive diagnosis. Click any disease node below to inspect how look-alikes split.
           </p>
 
-          <div className="bg-[#F1F3F7] dark:bg-[#131E36] rounded-xl p-4">
+          <div className="rs-dot-canvas rounded-xl border border-[#E2E6EE] dark:border-white/[0.08] p-4">
             <div className="flex items-center justify-between mb-2 text-[13px]">
-              <span className="font-semibold text-[#526074] dark:text-slate-300">
+              <span className="font-semibold text-[#475569] dark:text-slate-300">
                 Renal · Glomerular split
               </span>
               <span className="font-semibold text-[#C2550A] dark:text-orange-DEFAULT">
@@ -1046,13 +1145,13 @@ function BentoAtlas() {
         </div>
 
         {/* Selected Node Live Inspector */}
-        <div className="mt-4 pt-4 border-t border-[#E2E6EE] dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="mt-4 pt-4 border-t border-[#E2E6EE] dark:border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="text-[15px] font-bold text-[#0D1321] dark:text-white">
               {activeCase.diagnosis}{' '}
               <span className="text-[#C2550A] dark:text-orange-DEFAULT font-semibold">· {activeCase.buzzword}</span>
             </div>
-            <div className="text-[13px] text-[#526074] dark:text-slate-400 mt-0.5">
+            <div className="text-[13px] text-[#475569] dark:text-slate-400 mt-0.5">
               {activeCase.labSignature}
             </div>
           </div>
@@ -1149,7 +1248,7 @@ function BentoAtlasSVG({
               x={node.x + node.w / 2}
               y={node.y + 22}
               textAnchor="middle"
-              fill={isSel ? '#080D1A' : '#FFFFFF'}
+              fill={isSel ? '#050814' : '#FFFFFF'}
               fontSize="12"
               fontFamily="Inter, sans-serif"
               fontWeight="700"
@@ -1178,7 +1277,7 @@ function BentoFiveStep() {
           <h3 className="text-xl sm:text-[1.35rem] font-bold font-display text-[#0D1321] dark:text-white mb-2">
             Repeatable algorithms across 8 systems
           </h3>
-          <p className="text-[#526074] dark:text-slate-400 text-[15px] leading-relaxed mb-4">
+          <p className="text-[#475569] dark:text-slate-400 text-[15px] leading-relaxed mb-4">
             When a stem lacks a classic buzzword, work top-down through 5 structured clinical checkpoints.
           </p>
 
@@ -1196,7 +1295,7 @@ function BentoFiveStep() {
                   'px-3 py-1.5 rounded-lg text-[13px] font-semibold border transition-colors duration-150',
                   fwIdx === idx
                     ? 'bg-orange-DEFAULT text-navy-950 border-orange-DEFAULT'
-                    : 'bg-[#F7F8FA] dark:bg-white/5 text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10 hover:text-[#0D1321] dark:hover:text-white'
+                    : 'bg-[#F7F8FA] dark:bg-white/5 text-[#475569] dark:text-slate-300 border-[#E2E6EE] dark:border-white/[0.08] hover:text-[#0D1321] dark:hover:text-white'
                 )}
               >
                 {item.system.split(' ')[0]}
@@ -1205,7 +1304,7 @@ function BentoFiveStep() {
           </div>
 
           {/* 5 Steps */}
-          <div className="divide-y divide-[#E2E6EE] dark:divide-white/10 border-y border-[#E2E6EE] dark:border-white/10">
+          <div className="divide-y divide-[#E2E6EE] dark:divide-white/[0.08] border-y border-[#E2E6EE] dark:border-white/[0.08]">
             {fw.steps.map((title, idx) => {
               const n = idx + 1;
               const isAct = active === n;
@@ -1218,13 +1317,13 @@ function BentoFiveStep() {
                     'w-full flex items-center gap-3 px-3 py-2.5 text-[15px] font-medium text-left transition-colors duration-150',
                     isAct
                       ? 'bg-[#16236E] text-white font-semibold'
-                      : 'text-[#0D1321] dark:text-slate-200 hover:bg-[#F7F8FA] dark:hover:bg-white/5'
+                      : 'text-[#0D1321] dark:text-slate-200 hover:bg-[#F7F8FA] dark:hover:bg-white/[0.04]'
                   )}
                 >
                   <span
                     className={cn(
                       'w-6 h-6 flex items-center justify-center rounded-md text-[13px] font-bold flex-shrink-0 tabular-nums',
-                      isAct ? 'bg-orange-DEFAULT text-navy-950' : 'bg-[#F1F3F7] dark:bg-white/10 text-[#526074] dark:text-slate-300'
+                      isAct ? 'bg-orange-DEFAULT text-navy-950' : 'bg-[#F1F3F7] dark:bg-white/10 text-[#475569] dark:text-slate-300'
                     )}
                   >
                     {n}
@@ -1237,7 +1336,7 @@ function BentoFiveStep() {
         </div>
 
         <div className="mt-4 pt-3 flex items-center justify-between text-[13px]">
-          <span className="text-[#526074] dark:text-slate-400">Free on all plans</span>
+          <span className="text-[#475569] dark:text-slate-400">Free on all plans</span>
           <Link to="/app/" className="font-semibold text-[#16236E] dark:text-orange-DEFAULT hover:underline">
             Open 5-Step Master →
           </Link>
@@ -1294,7 +1393,7 @@ function BentoDrill() {
           </button>
         </div>
 
-        <div className="bg-[#F7F8FA] dark:bg-[#131E36] border-l-[3px] border-[#16236E] dark:border-orange-DEFAULT rounded-r-xl px-4 py-3.5 mb-4">
+        <div className="bg-[#F7F8FA] dark:bg-[#111B33] border-l-[3px] border-[#16236E] dark:border-orange-DEFAULT rounded-r-xl px-4 py-3.5 mb-4">
           <p className="text-[15px] text-[#0D1321] dark:text-slate-200 leading-relaxed text-vignette">
             {q.stem}
           </p>
@@ -1311,10 +1410,10 @@ function BentoDrill() {
                 onClick={() => setSelected(i)}
                 className={cn(
                   'w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-[15px] font-medium text-left transition-colors duration-150',
-                  !revealed && 'border-[#E2E6EE] dark:border-white/10 text-[#0D1321] dark:text-slate-200 hover:border-[#16236E] dark:hover:border-orange-DEFAULT',
+                  !revealed && 'border-[#E2E6EE] dark:border-white/[0.08] text-[#0D1321] dark:text-slate-200 hover:border-[#16236E] dark:hover:border-orange-DEFAULT',
                   revealed && isCorrect && 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-600 text-emerald-950 dark:text-emerald-200 font-semibold',
                   revealed && !isCorrect && isPicked && 'bg-red-50 dark:bg-red-950/40 border-red-500 text-red-900 dark:text-red-200',
-                  revealed && !isCorrect && !isPicked && 'opacity-55 border-[#E2E6EE] dark:border-white/5 text-[#526074]'
+                  revealed && !isCorrect && !isPicked && 'opacity-55 border-[#E2E6EE] dark:border-white/5 text-[#475569]'
                 )}
               >
                 <span
@@ -1324,7 +1423,7 @@ function BentoDrill() {
                       ? 'bg-emerald-600 text-white'
                       : revealed && isPicked
                       ? 'bg-red-600 text-white'
-                      : 'bg-[#F1F3F7] dark:bg-white/10 text-[#526074] dark:text-slate-300'
+                      : 'bg-[#F1F3F7] dark:bg-white/10 text-[#475569] dark:text-slate-300'
                   )}
                 >
                   {String.fromCharCode(65 + i)}
@@ -1361,7 +1460,7 @@ function BentoDecoder() {
         <h3 className="text-xl font-bold font-display text-[#0D1321] dark:text-white mb-1.5">
           Paste a clinical stem. See the top match &amp; traps.
         </h3>
-        <p className="text-[#526074] dark:text-slate-400 text-[15px] mb-4 leading-relaxed">
+        <p className="text-[#475569] dark:text-slate-400 text-[15px] mb-4 leading-relaxed">
           Honest match confidence, never guessing when clues are insufficient. Runs 100% in your browser.
         </p>
 
@@ -1375,7 +1474,7 @@ function BentoDecoder() {
             onChange={(e) => setInputVal(e.target.value)}
             rows={3}
             placeholder="Paste a clinical vignette or type buzzwords…"
-            className="w-full px-4 py-3 text-[15px] border border-[#CBD2DF] dark:border-white/15 rounded-xl bg-[#F7F8FA] dark:bg-[#131E36] text-[#0D1321] dark:text-slate-100 placeholder-slate-400 resize-none focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT leading-relaxed"
+            className="w-full px-4 py-3 text-[15px] border border-[#CBD2DF] dark:border-white/15 rounded-xl bg-[#F7F8FA] dark:bg-[#111B33] text-[#0D1321] dark:text-slate-100 placeholder-slate-400 resize-none focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT leading-relaxed"
           />
         </div>
 
@@ -1395,7 +1494,7 @@ function BentoDecoder() {
 
         {detectedClues.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5 mb-3 text-[13px]">
-            <span className="font-semibold text-[#526074] dark:text-slate-400">Detected clues:</span>
+            <span className="font-semibold text-[#475569] dark:text-slate-400">Detected clues:</span>
             {detectedClues.slice(0, 4).map((cl) => (
               <span key={cl} className="px-2 py-0.5 rounded bg-[#FFF4E5] text-[#C2550A] font-medium">
                 {cl}
@@ -1406,7 +1505,7 @@ function BentoDecoder() {
 
         <div className="flex-1 space-y-2">
           {noMatch ? (
-            <div className="p-4 rounded-xl bg-[#F7F8FA] dark:bg-white/5 border border-[#E2E6EE] dark:border-white/10 text-[15px] text-[#526074] dark:text-slate-300 text-center">
+            <div className="p-4 rounded-xl bg-[#F7F8FA] dark:bg-white/5 border border-[#E2E6EE] dark:border-white/[0.08] text-[15px] text-[#475569] dark:text-slate-300 text-center">
               No confident match. Try a sample stem above or type a classic Step 1 trigger phrase (e.g. &ldquo;Maltese cross&rdquo;, &ldquo;Linear IgG&rdquo;, &ldquo;Valsalva&rdquo;).
             </div>
           ) : (
@@ -1417,14 +1516,14 @@ function BentoDecoder() {
                   'flex items-center justify-between px-4 py-3 rounded-xl border transition-colors duration-150 gap-3',
                   i === 0
                     ? 'bg-[#FFF4E5]/70 dark:bg-orange-DEFAULT/15 border-[#FFD29D] dark:border-orange-DEFAULT/40'
-                    : 'bg-white dark:bg-[#131E36] border-[#E2E6EE] dark:border-white/10'
+                    : 'bg-white dark:bg-[#111B33] border-[#E2E6EE] dark:border-white/[0.08]'
                 )}
               >
                 <div className="min-w-0">
                   <div className={cn('text-[15px] font-bold', i === 0 ? 'text-[#16236E] dark:text-orange-DEFAULT' : 'text-[#0D1321] dark:text-slate-200')}>
                     {r.diagnosis}
                   </div>
-                  <div className="text-[13px] text-[#526074] dark:text-slate-400 mt-0.5 leading-snug">
+                  <div className="text-[13px] text-[#475569] dark:text-slate-400 mt-0.5 leading-snug">
                     {r.system} · {r.detail}
                   </div>
                 </div>
@@ -1434,7 +1533,7 @@ function BentoDecoder() {
                     'text-[13px] font-semibold px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0 transition-colors duration-150',
                     r.confidence === 'top'
                       ? 'bg-orange-DEFAULT text-navy-950 hover:bg-orange-hover'
-                      : 'bg-[#F1F3F7] dark:bg-white/10 text-[#526074] dark:text-slate-300'
+                      : 'bg-[#F1F3F7] dark:bg-white/10 text-[#475569] dark:text-slate-300'
                   )}
                 >
                   {r.confidence === 'top' ? 'Top match →' : 'Possible'}
@@ -1468,14 +1567,21 @@ function StudyStackSection() {
       when: 'Daily timed blocks to test retrieval under exam pressure',
     },
     {
-      tool: 'Flashcards (Anki)',
+      tool: 'Static High-Yield PDFs (e.g., Mehlman)',
+      highlight: false,
+      role: 'Passive NBME repeat notes & arrow lists',
+      direction: 'Static linear pages (answer visible inline)',
+      when: 'Replaced when you need active recall, dark mode & instant stem lookup',
+    },
+    {
+      tool: 'Flashcards (Anki / AnKing)',
       highlight: false,
       role: 'Isolated fact retention via spaced repetition',
       direction: 'Single prompt → Single atomic fact',
       when: 'Locking in drug names, genes, and enzyme cofactors',
     },
     {
-      tool: 'Textbooks & Videos (First Aid / Pathoma)',
+      tool: 'Textbooks & Videos (First Aid / Bootcamp / Pathoma)',
       highlight: false,
       role: 'Foundational first-pass physiology & pathology',
       direction: 'Disease heading → List of features',
@@ -1484,28 +1590,28 @@ function StudyStackSection() {
   ];
 
   return (
-    <section id="stack" className="section-pad bg-white dark:bg-[#0E1629] border-t border-[#E2E6EE] dark:border-white/10">
+    <section id="stack" className="section-pad bg-white dark:bg-[#0B1120] border-t border-[#E2E6EE] dark:border-white/[0.08]">
       <div className="container-tight">
         <div className="text-center max-w-2xl mx-auto mb-12 rv">
           <h2 className="text-3xl sm:text-[2.5rem] font-extrabold font-display tracking-[-0.025em] leading-[1.12] text-[#0D1321] dark:text-white mb-4">
             A companion to your Q-bank, not a replacement
           </h2>
-          <p className="text-[#526074] dark:text-slate-400 text-[15px] leading-relaxed">
-            Students miss Step 1 questions when two syndromes blur together. Rapid Steps builds the visual map between First Aid reading and UWorld blocks.
+          <p className="text-[#475569] dark:text-slate-400 text-[15px] leading-relaxed">
+            Students miss Step 1 questions when two syndromes blur together. Rapid Steps builds the visual engine between First Aid, static PDFs, and UWorld blocks.
           </p>
         </div>
 
-        <div className="rv overflow-x-auto rounded-2xl border border-[#E2E6EE] dark:border-white/10 bg-white dark:bg-[#080D1A]">
-          <table className="w-full text-left border-collapse min-w-[680px]">
+        <div className="rv overflow-x-auto rounded-2xl border border-[#E2E6EE] dark:border-white/[0.08] bg-white dark:bg-[#050814]">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="border-b border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] dark:bg-[#131E36] text-[13px] font-semibold text-[#526074] dark:text-slate-300">
+              <tr className="border-b border-[#E2E6EE] dark:border-white/[0.08] bg-[#F7F8FA] dark:bg-[#111B33] text-[13px] font-semibold text-[#475569] dark:text-slate-300">
                 <th className="py-3.5 px-6">Resource</th>
                 <th className="py-3.5 px-6">Primary job</th>
                 <th className="py-3.5 px-6">Cognitive direction</th>
                 <th className="py-3.5 px-6">Best moment to use</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E6EE] dark:divide-white/10 text-[15px]">
+            <tbody className="divide-y divide-[#E2E6EE] dark:divide-white/[0.08] text-[15px]">
               {ROWS.map((r) => (
                 <tr
                   key={r.tool}
@@ -1519,8 +1625,8 @@ function StudyStackSection() {
                     {r.tool}
                   </td>
                   <td className="py-4 px-6 text-[#0D1321] dark:text-slate-200 font-medium">{r.role}</td>
-                  <td className="py-4 px-6 text-[#526074] dark:text-slate-300 text-[15px]">{r.direction}</td>
-                  <td className="py-4 px-6 text-[#526074] dark:text-slate-300">{r.when}</td>
+                  <td className="py-4 px-6 text-[#475569] dark:text-slate-300 text-[15px]">{r.direction}</td>
+                  <td className="py-4 px-6 text-[#475569] dark:text-slate-300">{r.when}</td>
                 </tr>
               ))}
             </tbody>
@@ -1547,28 +1653,28 @@ function FreePaidSection() {
     'Every look-alike exam trap & NBME-style check question',
     'All ~2,289 high-yield pathology, lab & mechanism pearls',
     'Restore your paid plan on any phone, tablet, or laptop via 6-digit email code',
-    'Prepaid one-time access: zero recurring billing or surprise renewals',
+    'Prepaid one-time access: zero recurring billing or USD card auto-renewals',
   ];
 
   return (
-    <section className="section-pad bg-[#F7F8FA] dark:bg-[#080D1A] border-t border-[#E2E6EE] dark:border-white/10">
+    <section className="section-pad bg-[#F7F8FA] dark:bg-[#050814] border-t border-[#E2E6EE] dark:border-white/[0.08]">
       <div className="container-tight">
         <div className="text-center max-w-2xl mx-auto mb-12 rv">
           <h2 className="text-3xl sm:text-[2.5rem] font-extrabold font-display tracking-[-0.025em] leading-[1.12] text-[#0D1321] dark:text-white mb-4">
             Start free. Unlock the full atlas when it clicks.
           </h2>
-          <p className="text-[#526074] dark:text-slate-400 text-[15px] leading-relaxed">
+          <p className="text-[#475569] dark:text-slate-400 text-[15px] leading-relaxed">
             Test the method across all 16 organ systems before spending a dollar.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <div className="rv rounded-2xl border border-[#E2E6EE] dark:border-white/10 p-7 sm:p-8 bg-white dark:bg-[#0E1629] flex flex-col justify-between">
+          <div className="rv rounded-2xl border border-[#E2E6EE] dark:border-white/[0.08] p-7 sm:p-8 bg-white dark:bg-[#0B1120] rs-obsidian-card flex flex-col justify-between">
             <div>
               <h3 className="text-2xl font-extrabold font-display text-[#0D1321] dark:text-white mb-1">
                 Free Explorer
               </h3>
-              <div className="text-[#526074] dark:text-slate-400 text-[13px] font-medium mb-6">
+              <div className="text-[#475569] dark:text-slate-400 text-[13px] font-medium mb-6">
                 $0 forever · No account or card needed
               </div>
               <ul className="space-y-3 mb-8">
@@ -1590,7 +1696,7 @@ function FreePaidSection() {
             </Link>
           </div>
 
-          <div className="rv rounded-2xl border-2 border-orange-DEFAULT bg-white dark:bg-[#0E1629] p-7 sm:p-8 flex flex-col justify-between">
+          <div className="rv rounded-2xl border-2 border-orange-DEFAULT bg-white dark:bg-[#0B1120] rs-obsidian-card p-7 sm:p-8 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between gap-2 mb-1">
                 <h3 className="text-2xl font-extrabold font-display text-[#0D1321] dark:text-white">
@@ -1600,7 +1706,7 @@ function FreePaidSection() {
                   Full catalog
                 </span>
               </div>
-              <div className="text-[#526074] dark:text-slate-400 text-[13px] font-medium mb-6 tabular-nums">
+              <div className="text-[#475569] dark:text-slate-400 text-[13px] font-medium mb-6 tabular-nums">
                 From $6.58/mo equiv. · Prepaid · 14-day refund
               </div>
               <ul className="space-y-3 mb-8">
@@ -1683,14 +1789,14 @@ function PricingSection() {
   };
 
   return (
-    <section id="pricing" className="section-pad bg-[#F1F3F7] dark:bg-[#080D1A] border-t border-[#E2E6EE] dark:border-white/10">
+    <section id="pricing" className="section-pad bg-[#F1F3F7] dark:bg-[#050814] border-t border-[#E2E6EE] dark:border-white/[0.08]">
       <div className="container-tight">
         <div className="text-center max-w-2xl mx-auto mb-10 rv">
           <h2 className="text-3xl sm:text-[2.5rem] font-extrabold font-display tracking-[-0.025em] leading-[1.12] text-[#0D1321] dark:text-white mb-4">
             One-time payment. Never a subscription.
           </h2>
-          <p className="text-[#526074] dark:text-slate-400 text-[15px] leading-relaxed mb-4">
-            Pay once for the runway you need. Paddle (our merchant of record) shows any local VAT/tax clearly before you pay.
+          <p className="text-[#475569] dark:text-slate-400 text-[15px] leading-relaxed mb-4">
+            Built for US and international students with zero auto-renewing USD card surprises. Paddle calculates any local VAT/tax clearly before you pay.
           </p>
           <p className="text-[13px] font-medium text-[#16236E] dark:text-slate-300">
             When your prepaid period ends, paid cases lock again and your 48 free cases stay free. Zero auto-renewals.
@@ -1702,7 +1808,7 @@ function PricingSection() {
             <div
               key={plan.id}
               className={cn(
-                'price-card rv flex flex-col justify-between',
+                'price-card rs-obsidian-card rv flex flex-col justify-between',
                 plan.featured && 'featured'
               )}
             >
@@ -1722,7 +1828,7 @@ function PricingSection() {
                   <span className="text-5xl font-extrabold text-[#16236E] dark:text-white font-display tracking-tight tabular-nums">
                     ${plan.price}
                   </span>
-                  <span className="text-[#526074] dark:text-slate-400 text-[13px] font-medium">
+                  <span className="text-[#475569] dark:text-slate-400 text-[13px] font-medium">
                     USD total
                   </span>
                 </div>
@@ -1732,11 +1838,11 @@ function PricingSection() {
                   {plan.savings ? ` · ${plan.savings}` : ''}
                 </div>
 
-                <p className="text-[15px] text-[#526074] dark:text-slate-300 mb-6 leading-relaxed">
+                <p className="text-[15px] text-[#475569] dark:text-slate-300 mb-6 leading-relaxed">
                   {plan.tagline}
                 </p>
 
-                <ul className="space-y-2.5 mb-8 border-t border-[#E2E6EE] dark:border-white/10 pt-5">
+                <ul className="space-y-2.5 mb-8 border-t border-[#E2E6EE] dark:border-white/[0.08] pt-5">
                   {PLAN_FEATURES.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-[15px] text-[#0D1321] dark:text-slate-200 leading-relaxed">
                       <svg
@@ -1774,8 +1880,8 @@ function PricingSection() {
         </div>
 
         <div className="rv max-w-3xl mx-auto text-center space-y-3">
-          <div className="flex flex-wrap items-center justify-center gap-2 text-[13px] text-[#526074] dark:text-slate-300">
-            <span className="font-medium">Student discount codes (click to copy for checkout):</span>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-[13px] text-[#475569] dark:text-slate-300">
+            <span className="font-medium">Student &amp; study-group discount codes (click to copy for checkout):</span>
             {[
               { code: 'STUDY10', desc: '10% off individual' },
               { code: 'GROUP15', desc: '15% off 3+ students' },
@@ -1784,22 +1890,22 @@ function PricingSection() {
                 key={d.code}
                 type="button"
                 onClick={() => copyDiscount(d.code)}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-[#0E1629] border border-[#CBD2DF] dark:border-white/15 font-semibold text-[#16236E] dark:text-orange-DEFAULT hover:border-orange-DEFAULT transition-colors duration-150 tabular-nums"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-[#0B1120] border border-[#CBD2DF] dark:border-white/15 font-semibold text-[#16236E] dark:text-orange-DEFAULT hover:border-orange-DEFAULT transition-colors duration-150 tabular-nums"
               >
                 <span>{copiedCode === d.code ? 'Copied' : d.code}</span>
-                <span className="font-normal text-[#526074] dark:text-slate-400">({d.desc})</span>
+                <span className="font-normal text-[#475569] dark:text-slate-400">({d.desc})</span>
               </button>
             ))}
           </div>
 
-          <p className="text-[15px] text-[#526074] dark:text-slate-400">
+          <p className="text-[15px] text-[#475569] dark:text-slate-400">
             <strong className="text-[#0D1321] dark:text-white">14-day no-questions-asked refund.</strong>{' '}
             <Link to="/refunds" className="text-[#16236E] dark:text-blue-300 font-semibold hover:underline">
               Read refund policy
             </Link>
           </p>
 
-          <p className="text-[13px] text-[#526074] dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-[13px] text-[#475569] dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
             Transparent notes: Paid plans sync account entitlement across devices via email OTP; study mastery/bookmark logs stay private in your browser&apos;s local storage. There is no per-day cap on opening cases.
           </p>
         </div>
@@ -1913,14 +2019,14 @@ function TrustFaqSection() {
 
   return (
     <>
-      <section className="section-pad bg-white dark:bg-[#0E1629] border-t border-[#E2E6EE] dark:border-white/10">
+      <section className="section-pad bg-white dark:bg-[#0B1120] border-t border-[#E2E6EE] dark:border-white/[0.08]">
         <div className="container-tight">
           <div className="text-center mb-12 rv">
             <h2 className="text-3xl sm:text-[2.5rem] font-extrabold font-display tracking-[-0.025em] leading-[1.12] text-[#0D1321] dark:text-white">
               Simple, safe and fair
             </h2>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-[#E2E6EE] dark:divide-white/10">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-[#E2E6EE] dark:divide-white/[0.08]">
             {TRUST_ITEMS.map((t) => (
               <div key={t.title} className="rv py-5 sm:px-6 lg:first:pl-0 lg:last:pr-0">
                 <div className="text-[#C2550A] dark:text-orange-DEFAULT mb-3">
@@ -1929,7 +2035,7 @@ function TrustFaqSection() {
                 <h3 className="font-bold font-display text-[#0D1321] dark:text-white mb-1.5 text-[17px]">
                   {t.title}
                 </h3>
-                <p className="text-[15px] text-[#526074] dark:text-slate-400 leading-relaxed">
+                <p className="text-[15px] text-[#475569] dark:text-slate-400 leading-relaxed">
                   {t.body}
                 </p>
               </div>
@@ -1938,13 +2044,13 @@ function TrustFaqSection() {
         </div>
       </section>
 
-      <section id="faq" className="section-pad bg-[#F7F8FA] dark:bg-[#080D1A] border-t border-[#E2E6EE] dark:border-white/10">
+      <section id="faq" className="section-pad bg-[#F7F8FA] dark:bg-[#050814] border-t border-[#E2E6EE] dark:border-white/[0.08]">
         <div className="container-tight">
           <div className="text-center max-w-2xl mx-auto mb-8 rv">
             <h2 className="text-3xl sm:text-[2.5rem] font-extrabold font-display tracking-[-0.025em] leading-[1.12] text-[#0D1321] dark:text-white mb-3">
               Questions, answered plainly
             </h2>
-            <p className="text-[#526074] dark:text-slate-400 text-[15px]">
+            <p className="text-[#475569] dark:text-slate-400 text-[15px]">
               Clear answers on free cases, prepaid billing, privacy, and how the atlas works.
             </p>
           </div>
@@ -1956,23 +2062,23 @@ function TrustFaqSection() {
               onChange={(e) => setFaqQuery(e.target.value)}
               placeholder="Filter questions (e.g., refund, offline, sync, subscription)…"
               aria-label="Filter FAQ questions"
-              className="flex-1 px-4 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-white dark:bg-[#0E1629] text-[15px] text-[#0D1321] dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16236E]"
+              className="flex-1 px-4 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-white dark:bg-[#0B1120] text-[15px] text-[#0D1321] dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16236E]"
             />
             <button
               type="button"
               onClick={() => setExpandAll((v) => !v)}
-              className="px-4 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-white dark:bg-[#0E1629] text-[13px] font-semibold text-[#16236E] dark:text-slate-200 hover:border-[#16236E] transition-colors duration-150 whitespace-nowrap"
+              className="px-4 py-2.5 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-white dark:bg-[#0B1120] text-[13px] font-semibold text-[#16236E] dark:text-slate-200 hover:border-[#16236E] transition-colors duration-150 whitespace-nowrap"
             >
               {expandAll ? 'Collapse all' : 'Expand all'}
             </button>
           </div>
 
-          <div className="max-w-2xl mx-auto divide-y divide-[#E2E6EE] dark:divide-white/10 border-y border-[#E2E6EE] dark:border-white/10 bg-white dark:bg-[#0E1629] rounded-2xl overflow-hidden px-6">
+          <div className="max-w-2xl mx-auto divide-y divide-[#E2E6EE] dark:divide-white/[0.08] border-y border-[#E2E6EE] dark:border-white/[0.08] bg-white dark:bg-[#0B1120] rs-obsidian-card rounded-2xl overflow-hidden px-6">
             {visibleFaqs.map((faq) => (
               <FaqItem key={faq.q} q={faq.q} a={faq.a} forceOpen={expandAll} />
             ))}
             {visibleFaqs.length === 0 && (
-              <p className="text-center text-[15px] text-[#526074] py-6">
+              <p className="text-center text-[15px] text-[#475569] py-6">
                 No matching FAQ found. Email{' '}
                 <a href="mailto:support@rapidsteps.tech" className="text-[#16236E] dark:text-orange-DEFAULT font-semibold underline">
                   support@rapidsteps.tech
@@ -2015,7 +2121,7 @@ function FaqItem({ q, a, forceOpen }: { q: string; a: string; forceOpen: boolean
           </svg>
         </span>
       </summary>
-      <div className="pb-5 text-[15px] text-[#526074] dark:text-slate-300 leading-relaxed">
+      <div className="pb-5 text-[15px] text-[#475569] dark:text-slate-300 leading-relaxed">
         {a}
       </div>
     </details>
@@ -2028,9 +2134,9 @@ function FaqItem({ q, a, forceOpen }: { q: string; a: string; forceOpen: boolean
 function FinalCtaSection() {
   return (
     <section
-      className="section-pad relative overflow-hidden border-t border-white/10"
+      className="section-pad relative overflow-hidden border-t border-white/[0.08]"
       style={{
-        background: 'linear-gradient(160deg, #080D1A 0%, #0E1629 45%, #0F1854 100%)',
+        background: 'linear-gradient(160deg, #050814 0%, #0B1120 48%, #0F1854 100%)',
       }}
     >
       <div className="container-tight relative z-10 text-center rv">
@@ -2042,10 +2148,21 @@ function FinalCtaSection() {
         </p>
         <Link
           to="/app/"
-          className="inline-flex items-center gap-2.5 px-8 py-3.5 text-[15px] font-semibold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-colors duration-150 min-h-[52px]"
+          className="group inline-flex items-center gap-2.5 px-8 py-3.5 text-[15px] font-semibold bg-orange-DEFAULT text-navy-950 rounded-full hover:bg-orange-hover transition-colors duration-150 min-h-[52px]"
         >
           <span>Explore 48 free cases</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+            className="group-hover:translate-x-0.5 transition-transform duration-150"
+          >
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </Link>

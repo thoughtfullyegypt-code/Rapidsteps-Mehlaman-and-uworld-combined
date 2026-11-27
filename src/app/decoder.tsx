@@ -228,10 +228,10 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
   }, [indexData, inputText, sysFilter]);
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#F7F8FA] dark:bg-[#080D1A]">
+    <div className="w-full h-full overflow-y-auto bg-[#F7F8FA] dark:bg-[#050814]">
       <div className="w-full max-w-6xl mx-auto p-4 md:p-7 space-y-6">
         {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4 bg-white dark:bg-[#0E1629] p-5 md:p-6 rounded-2xl border border-[#E2E6EE] dark:border-white/10">
+        <div className="flex flex-wrap items-start justify-between gap-4 bg-white dark:bg-[#0B1120] p-5 md:p-6 rounded-2xl border border-[#E2E6EE] dark:border-white/[0.08]">
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#C2550A] dark:text-orange-DEFAULT tabular-nums">
               <IconScan size={14} />
@@ -240,7 +240,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
             <h1 id="stem-decoder-title" className="text-xl md:text-2xl font-extrabold font-display text-[#0D1321] dark:text-white">
               Clinical Stem &amp; Buzzword Decoder
             </h1>
-            <p className="text-[15px] text-[#526074] dark:text-slate-400 max-w-2xl leading-relaxed">
+            <p className="text-[15px] text-[#475569] dark:text-slate-400 max-w-2xl leading-relaxed">
               Paste any USMLE Step 1 vignette, lab signature, histology/EM description, translocation, or physical exam clue. Ranks the top diagnosis, surfaces board look-alike traps, and pulls matching clinical vignettes locally in your browser.
             </p>
           </div>
@@ -253,7 +253,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
         {/* Organ System Scope Filter */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-400">
+            <span className="text-[13px] font-semibold text-[#475569] dark:text-slate-400">
               Filter scope by organ system
             </span>
           </div>
@@ -265,7 +265,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                 'px-3 py-1.5 rounded-lg text-[13px] font-semibold whitespace-nowrap border transition-colors duration-150',
                 sysFilter === 'all'
                   ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-[#16236E] dark:border-orange-DEFAULT'
-                  : 'bg-white dark:bg-[#0E1629] text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF]'
+                  : 'bg-white dark:bg-[#0B1120] text-[#475569] dark:text-slate-300 border-[#E2E6EE] dark:border-white/[0.08] hover:border-[#CBD2DF]'
               )}
             >
               All 16 systems
@@ -287,7 +287,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                   'px-2.5 py-1.5 rounded-lg text-[13px] font-semibold whitespace-nowrap border transition-colors duration-150 inline-flex items-center gap-1.5',
                   sysFilter === sys.systemId
                     ? 'bg-[#16236E] dark:bg-orange-DEFAULT text-white dark:text-navy-950 border-[#16236E] dark:border-orange-DEFAULT'
-                    : 'bg-white dark:bg-[#0E1629] text-[#526074] dark:text-slate-300 border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF]'
+                    : 'bg-white dark:bg-[#0B1120] text-[#475569] dark:text-slate-300 border-[#E2E6EE] dark:border-white/[0.08] hover:border-[#CBD2DF]'
                 )}
               >
                 <SystemIcon systemId={sys.systemId} size={13} />
@@ -300,7 +300,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
         {/* Sample Stems Across All 16 Systems */}
         {visibleSamples.length > 0 && (
           <div className="space-y-2">
-            <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-400 block tabular-nums">
+            <span className="text-[13px] font-semibold text-[#475569] dark:text-slate-400 block tabular-nums">
               Test a high-yield Step 1 vignette ({visibleSamples.length} presets):
             </span>
             <div className="flex flex-wrap gap-1.5">
@@ -317,7 +317,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                     'px-3 py-1.5 rounded-lg text-[13px] font-medium transition-colors duration-150 border inline-flex items-center gap-1.5',
                     activeSampleId === s.id && inputText === s.text
                       ? 'bg-orange-DEFAULT text-navy-950 border-orange-DEFAULT font-semibold'
-                      : 'bg-white dark:bg-[#0E1629] border-[#E2E6EE] dark:border-white/10 text-[#0D1321] dark:text-slate-300 hover:border-[#CBD2DF]'
+                      : 'bg-white dark:bg-[#0B1120] border-[#E2E6EE] dark:border-white/[0.08] text-[#0D1321] dark:text-slate-300 hover:border-[#CBD2DF]'
                   )}
                 >
                   <SystemIcon systemId={s.sys} size={12} />
@@ -345,7 +345,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                 setActiveSampleId('');
               }}
               placeholder="Paste any clinical vignette or buzzwords (e.g., 'painless hematuria, flank mass, polycythemia EPO VHL' or 'c-ANCA saddle nose cavitary lung nodules hematuria')…"
-              className="w-full p-4 pr-10 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-white dark:bg-[#0E1629] text-[#0D1321] dark:text-white placeholder-slate-400 text-[15px] focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT resize-y leading-relaxed"
+              className="w-full p-4 pr-10 rounded-xl border border-[#CBD2DF] dark:border-white/15 bg-white dark:bg-[#0B1120] text-[#0D1321] dark:text-white placeholder-slate-400 text-[15px] focus:outline-none focus:ring-2 focus:ring-[#16236E] dark:focus:ring-orange-DEFAULT resize-y leading-relaxed"
             />
             {inputText && (
               <button
@@ -356,22 +356,22 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                   setInputText('');
                   setActiveSampleId('');
                 }}
-                className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300 hover:bg-[#E2E6EE] dark:hover:bg-white/10 hover:text-[#0D1321] dark:hover:text-white transition-colors duration-150"
+                className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full bg-[#F1F3F7] dark:bg-[#111B33] text-[#475569] dark:text-slate-300 hover:bg-[#E2E6EE] dark:hover:bg-white/10 hover:text-[#0D1321] dark:hover:text-white transition-colors duration-150"
                 title="Clear"
               >
                 <IconX size={12} />
               </button>
             )}
           </div>
-          <div className="flex justify-between items-center text-[13px] text-[#526074] dark:text-slate-400 px-1 tabular-nums">
+          <div className="flex justify-between items-center text-[13px] text-[#475569] dark:text-slate-400 px-1 tabular-nums">
             <span>{inputText.length} characters · {analysis.clues.length} diagnostic clues weighted</span>
           </div>
         </div>
 
         {/* Detected Clues Strip */}
         {analysis.clues.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 p-3.5 rounded-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10">
-            <span className="text-[13px] font-semibold text-[#526074] dark:text-slate-400 mr-1">
+          <div className="flex flex-wrap items-center gap-1.5 p-3.5 rounded-xl bg-white dark:bg-[#0B1120] border border-[#E2E6EE] dark:border-white/[0.08]">
+            <span className="text-[13px] font-semibold text-[#475569] dark:text-slate-400 mr-1">
               Detected hooks:
             </span>
             {analysis.clues.map((clue) => (
@@ -387,7 +387,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
 
         {/* Loading State */}
         {loading && (
-          <div className="py-14 text-center text-[15px] font-medium text-[#526074]">
+          <div className="py-14 text-center text-[15px] font-medium text-[#475569]">
             Initializing 16-System Diagnostic Index…
           </div>
         )}
@@ -401,15 +401,15 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
             </div>
 
             {!inputText.trim() ? (
-              <div className="p-8 rounded-2xl bg-white dark:bg-[#0E1629] border border-dashed border-[#CBD2DF] dark:border-white/10 text-center text-[15px] text-[#526074]">
+              <div className="p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-dashed border-[#CBD2DF] dark:border-white/[0.08] text-center text-[15px] text-[#475569]">
                 Select any sample vignette above or type clinical buzzwords to rank differentials across all {ATLAS_MANIFEST.totals.topics.toLocaleString()} topics.
               </div>
             ) : analysis.topTopics.length === 0 ? (
-              <div className="p-8 rounded-2xl bg-white dark:bg-[#0E1629] border border-dashed border-[#CBD2DF] dark:border-white/10 text-center space-y-1.5">
+              <div className="p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-dashed border-[#CBD2DF] dark:border-white/[0.08] text-center space-y-1.5">
                 <p className="text-[15px] font-semibold text-[#0D1321] dark:text-slate-200">
                   Add one more specific lab, histology, or exam clue.
                 </p>
-                <p className="text-[13px] text-[#526074] dark:text-slate-400">
+                <p className="text-[13px] text-[#475569] dark:text-slate-400">
                   {sysFilter !== 'all'
                     ? 'Tip: Switch scope back to "All 16 systems" to search across every organ system.'
                     : 'Try entering specific antibodies, enzymes, murmurs, nerve roots, or pathology buzzwords.'}
@@ -426,7 +426,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                         'p-5 rounded-2xl border transition-colors duration-150',
                         isTop
                           ? 'bg-[#FFF4E5]/45 dark:bg-orange-DEFAULT/10 border-orange-DEFAULT'
-                          : 'bg-white dark:bg-[#0E1629] border-[#E2E6EE] dark:border-white/10 hover:border-[#CBD2DF] dark:hover:border-white/20'
+                          : 'bg-white dark:bg-[#0B1120] border-[#E2E6EE] dark:border-white/[0.08] hover:border-[#CBD2DF] dark:hover:border-white/20'
                       )}
                     >
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -437,12 +437,12 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                                 'text-[13px] font-semibold px-2.5 py-0.5 rounded-full tabular-nums',
                                 isTop
                                   ? 'bg-orange-DEFAULT text-navy-950'
-                                  : 'bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300'
+                                  : 'bg-[#F1F3F7] dark:bg-[#111B33] text-[#475569] dark:text-slate-300'
                               )}
                             >
                               {isTop ? '#1 Primary match' : `#${idx + 1} Differential`} · {match.pct}%
                             </span>
-                            <span className="inline-flex items-center gap-1 text-[13px] font-medium px-2.5 py-0.5 rounded-md bg-[#F1F3F7] dark:bg-[#131E36] text-[#16236E] dark:text-slate-200">
+                            <span className="inline-flex items-center gap-1 text-[13px] font-medium px-2.5 py-0.5 rounded-md bg-[#F1F3F7] dark:bg-[#111B33] text-[#16236E] dark:text-slate-200">
                               <SystemIcon systemId={match.sys} size={13} />
                               <span>{match.sysShort} · {match.ch}</span>
                             </span>
@@ -462,15 +462,15 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                               ))}
                             </ul>
                           ) : (
-                            <p className="text-[15px] text-[#526074] dark:text-slate-300 max-w-[68ch] leading-relaxed">{match.summary}</p>
+                            <p className="text-[15px] text-[#475569] dark:text-slate-300 max-w-[68ch] leading-relaxed">{match.summary}</p>
                           )}
 
                           <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                            <span className="text-[13px] text-[#526074] dark:text-slate-400">Matched clues:</span>
+                            <span className="text-[13px] text-[#475569] dark:text-slate-400">Matched clues:</span>
                             {match.matched.slice(0, 8).map((mc) => (
                               <span
                                 key={mc}
-                                className="text-[13px] font-medium px-2 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#131E36] text-[#0D1321] dark:text-slate-300"
+                                className="text-[13px] font-medium px-2 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#111B33] text-[#0D1321] dark:text-slate-300"
                               >
                                 {mc}
                               </span>
@@ -484,11 +484,11 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                             <button
                               type="button"
                               onClick={() => setLightbox({ src: match.img!, caption: match.title })}
-                              className="w-28 h-20 rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] dark:bg-[#080D1A] p-1 group relative cursor-zoom-in"
+                              className="w-28 h-20 rounded-xl overflow-hidden border border-[#E2E6EE] dark:border-white/[0.08] bg-[#F7F8FA] dark:bg-[#050814] p-1 group relative cursor-zoom-in"
                               title="Zoom clinical figure"
                             >
                               <img src={match.img} alt={match.title} loading="lazy" className="w-full h-full object-contain" />
-                              <span className="absolute bottom-1 right-1 p-0.5 rounded bg-[#080D1A]/75 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                              <span className="absolute bottom-1 right-1 p-0.5 rounded bg-[#050814]/75 text-white opacity-0 group-hover:opacity-100 transition-opacity">
                                 <IconZoomIn size={11} />
                               </span>
                             </button>
@@ -520,11 +520,11 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                   {analysis.topVignettes.map((v) => (
                     <div
                       key={v.id}
-                      className="p-4 rounded-xl bg-white dark:bg-[#0E1629] border border-[#E2E6EE] dark:border-white/10 space-y-2.5 flex flex-col justify-between"
+                      className="p-4 rounded-xl bg-white dark:bg-[#0B1120] border border-[#E2E6EE] dark:border-white/[0.08] space-y-2.5 flex flex-col justify-between"
                     >
                       <div className="space-y-2">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold px-2.5 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#131E36] text-[#526074] dark:text-slate-300">
+                          <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold px-2.5 py-0.5 rounded bg-[#F1F3F7] dark:bg-[#111B33] text-[#475569] dark:text-slate-300">
                             <SystemIcon systemId={v.sys} size={12} />
                             <span>{v.sysShort} vignette</span>
                           </span>
@@ -545,7 +545,7 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
                           <button
                             type="button"
                             onClick={() => setLightbox({ src: v.img!, caption: v.q })}
-                            className="block rounded-lg overflow-hidden border border-[#E2E6EE] dark:border-white/10 bg-[#F7F8FA] p-1 cursor-zoom-in"
+                            className="block rounded-lg overflow-hidden border border-[#E2E6EE] dark:border-white/[0.08] bg-[#F7F8FA] p-1 cursor-zoom-in"
                           >
                             <img src={v.img} alt="Vignette figure" loading="lazy" className="max-h-32 w-auto object-contain mx-auto" />
                           </button>
@@ -571,22 +571,22 @@ export default function Decoder({ onSelectCase }: DecoderProps) {
           onClick={() => setLightbox(null)}
         >
           <div
-            className="max-w-4xl w-full bg-white dark:bg-[#0E1629] rounded-2xl overflow-hidden shadow-2xl rs-slide-up"
+            className="max-w-4xl w-full bg-white dark:bg-[#0B1120] rounded-2xl overflow-hidden shadow-2xl rs-slide-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E2E6EE] dark:border-white/10">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E2E6EE] dark:border-white/[0.08]">
               <span className="text-[13px] font-semibold text-[#0D1321] dark:text-white truncate pr-4">
                 {lightbox.caption}
               </span>
               <button
                 type="button"
                 onClick={() => setLightbox(null)}
-                className="min-h-[44px] px-3 py-1 rounded-md bg-[#F1F3F7] dark:bg-[#131E36] text-[13px] font-semibold flex items-center"
+                className="min-h-[44px] px-3 py-1 rounded-md bg-[#F1F3F7] dark:bg-[#111B33] text-[13px] font-semibold flex items-center"
               >
                 Close
               </button>
             </div>
-            <div className="p-3 bg-[#F7F8FA] dark:bg-[#080D1A] flex items-center justify-center max-h-[80vh] overflow-auto">
+            <div className="p-3 bg-[#F7F8FA] dark:bg-[#050814] flex items-center justify-center max-h-[80vh] overflow-auto">
               <img src={lightbox.src} alt={lightbox.caption} className="max-h-[72vh] w-auto object-contain rounded-lg" />
             </div>
           </div>
