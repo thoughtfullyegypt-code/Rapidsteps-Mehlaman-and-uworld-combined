@@ -36,7 +36,7 @@ export default function Nav() {
           'site-nav nav fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow] duration-200 ease-standard',
           isHome && !scrolled
             ? 'bg-transparent border-b border-transparent'
-            : 'bg-[#050814]/88 backdrop-blur-xl border-b border-white/[0.08] shadow-[0_10px_30px_rgba(0,0,0,0.35)]'
+            : 'bg-[#050814]/90 backdrop-blur-xl border-b border-white/[0.08] shadow-[0_10px_30px_rgba(0,0,0,0.35)]'
         )}
       >
         <div className="container-tight">
@@ -118,7 +118,7 @@ export default function Nav() {
       {/* Mobile & Tablet Drawer */}
       <div
         className={cn(
-          'lg:hidden fixed inset-x-0 top-[68px] z-40 bg-[#050814]/98 backdrop-blur-2xl border-b border-white/[0.08] px-6 py-5 flex flex-col gap-1 shadow-2xl transition-[opacity,transform] duration-200 ease-standard',
+          'lg:hidden fixed inset-x-0 top-[68px] z-40 bg-[#050814]/95 backdrop-blur-2xl border-b border-white/[0.08] px-6 py-5 flex flex-col gap-1 shadow-2xl transition-[opacity,transform] duration-200 ease-standard',
           mobileOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
         )}
         aria-hidden={!mobileOpen}
